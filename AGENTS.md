@@ -130,9 +130,9 @@ src/
 
 tools/
   assets/                  # pixel art, font and PNG generation
-  audio/                   # planned for M8
   content/check-content.mjs# the story linter
-  qa/                      # screenshot and smoke scripts
+  qa/                      # screenshot and production smoke scripts
+  audio/                   # arrives with M8
 
 tests/
   unit/                    # vitest, node environment
