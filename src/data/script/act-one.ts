@@ -1,4 +1,4 @@
-import type { StoryScript } from '../../types/story';
+import type { StoryScript } from '../../types/story.ts';
 
 /**
  * Act I takes place in Isaac's bedroom the night before the exam. The whole
