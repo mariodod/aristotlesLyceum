@@ -5,7 +5,11 @@
  * still shows up today. The `sources` field is not decoration: the content
  * linter requires at least one reference per entry so a claim can never ship
  * without something to check it against.
+ *
+ * `author` names the character whose portrait appears beside the entry.
  */
+
+import type { CharacterId } from '../../types/story.ts';
 
 export interface CodexEntry {
   id: string;
@@ -17,12 +21,15 @@ export interface CodexEntry {
   modern: string;
   /** Works of Aristotle this entry draws on. */
   sources: string[];
+  /** Whose portrait is shown beside the entry. */
+  author?: CharacterId;
 }
 
 export const ACT_ONE_CODEX: CodexEntry[] = [
   {
     id: 'syllogism',
     title: 'The Syllogism',
+    author: 'aristotle',
     origin:
       'A conclusion follows necessarily when it is drawn from premises that are true, primary, and more evident than the conclusion. Aristotle wrote the first worked-out system of formal inference in Prior Analytics.',
     modern:
@@ -32,6 +39,7 @@ export const ACT_ONE_CODEX: CodexEntry[] = [
   {
     id: 'dialectic',
     title: 'Dialectic',
+    author: 'aristotle',
     origin:
       'Reasoning that starts from reputable opinions rather than certain first principles. The Topics is a manual for testing a claim by asking the questions that would break it.',
     modern:

@@ -13,7 +13,7 @@
 | M0  | Foundation     | Repository, toolchain, art pipeline, CI/CD, docs                    | Done        |
 | M1  | Engine         | Dialogue runtime, textbox, title, save, content linter              | Done        |
 | M2  | Act I          | The opening chapter, finished and playtested                        | In progress |
-| M3  | Art pass       | Twelve characters with expressions, portraits, three more backdrops | Not started |
+| M3  | Art pass       | Twelve characters with expressions, portraits, three more backdrops | Done        |
 | M4  | Dialectic      | The battle system and the syllogism builder                         | Not started |
 | M5  | Codex          | Journal screen complete, Act II entries authored                    | Partial     |
 | M6  | Act II         | Seven chapters, forty minutes of writing                            | Not started |
@@ -66,6 +66,28 @@ without being told.
 - [ ] The playtest. Protocol in [`m2-playtest.md`](m2-playtest.md).
 
 ### M3 — Art pass
+
+- Twelve characters with a silhouette that survives at 32x48, plus a larger
+  portrait per character for the Codex.
+- Expression sets: neutral, happy, sad, surprised, thinking, angry, tired,
+  determined.
+- Backdrops: the Lyceum walkway, the Library, Baghdad, Padua, London,
+  Königsberg, Down House, the exam room.
+
+**Done when:** every character in the cast has a sprite that reads at 1x
+without the name plate.
+
+**Progress:**
+
+- [x] The face block is shared: one set of eight expression patches is painted
+      over every character, so a new character gets every expression for free.
+- [x] Twelve characters, each with an idle, a blink and eight expressions.
+- [x] Portraits for the Dream Journal, cropped and doubled from the sprite.
+- [x] Three new backdrops: the Library of Alexandria, Down House and the
+      classroom.
+- [x] The content linter proves every character has a sprite and every
+      sprite has a frame for every expression.
+- [ ] Portraits for the remaining Act III stations come with M6 and M7.
 
 - Twelve characters with a silhouette that survives at 32×48, plus a larger
   portrait per character for the Codex.

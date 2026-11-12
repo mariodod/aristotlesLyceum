@@ -7,6 +7,34 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-11-12
+
+### Added
+
+- **M3: the art pass.** Twelve characters, a shared face block, eight
+  expressions each, portraits for the Dream Journal, and three new
+  backdrops.
+- **A shared face block.** Every character has the same head geometry, so an
+  expression is authored once and painted over the face of the whole cast.
+  Adding a character now gets every expression for free.
+- **Expressions in the game.** A line of dialogue can name an expression, and
+  the speaker plays it. Isaac complains with an angry face.
+- **Portraits in the Dream Journal.** Each entry shows the portrait of whoever
+  taught the idea, cropped and doubled from the sprite.
+- **Three new backdrops.** The Library of Alexandria, Down House, and the
+  classroom Isaac has to sit in at the end.
+- **Garment builders.** Robes, coats and frock coats are described by the width
+  of each row rather than transcribed twenty-six times.
+- **Art checks in the content linter.** Every character needs a sprite, every
+  sprite needs a frame for every expression, and every character needs a
+  portrait.
+
+### Fixed
+
+- **Faces no longer have holes.** A blank in an expression patch was being
+  painted as transparency rather than as skin, so every character had a hole
+  in the middle of the face.
+
 ## [0.2.0] - 2026-11-12
 
 ### Added

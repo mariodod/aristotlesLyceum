@@ -99,6 +99,7 @@ src/
   data/
     assets.ts              # typed access to the generated manifest
     characters.ts          # the cast: names, colours, sprite keys
+    sprite-expressions.ts  # the expression order and the frame maths
     codex/
       index.ts             # aggregates every chapter's codex entries
       act-one.ts           # entries unlocked by Act I
@@ -112,7 +113,7 @@ src/
     preload-scene.ts       # loads everything in the manifest
     title-scene.ts         # title and menu
     story-scene.ts         # plays any chapter; owns presentation only
-    codex-scene.ts         # the Dream Journal
+    codex-scene.ts         # the Dream Journal, with portraits
     settings-scene.ts      # placeholder until M8
     credits-scene.ts       # placeholder until M9
   services/
@@ -132,6 +133,7 @@ src/
 
 tools/
   assets/                  # pixel art, font and PNG generation
+    faces.mjs              # the shared face block and the expression patches
   content/check-content.mjs# the story linter
   qa/                      # screenshot and production smoke scripts
   audio/                   # arrives with M8
@@ -222,13 +224,16 @@ export const ACT_ONE: StoryScript = {
 4. **Speakers come from `CHARACTER_IDS`** in `src/types/story.ts`. Adding a
    character means adding the id there and the definition in
    `src/data/characters.ts`.
-5. **Codex entries live in a file named after the chapter that unlocks
+5. **Expressions come from `EXPRESSION_IDS`.** The scene plays the matching
+   animation on the speaker's sprite. A character without that animation
+   would not react, and the content linter reports it.
+6. **Codex entries live in a file named after the chapter that unlocks
    them** (`src/data/codex/act-two.ts`). Every entry must be unlocked by that
    chapter or the linter reports it as an orphan.
-6. **Lines are short enough to read.** The linter rejects a line over 420
+7. **Lines are short enough to read.** The linter rejects a line over 420
    characters. Aim for two or three sentences.
-7. **A chapter ends with `end`.**
-8. **A chapter owns the flags it sets.** Flags written by a `flag` step or a
+8. **A chapter ends with `end`.**
+9. **A chapter owns the flags it sets.** Flags written by a `flag` step or a
    choice's `setFlag` are cleared when that chapter starts, so replaying a
    chapter cannot inherit the previous run's choices. Flags a chapter only
    _reads_ are not owned by it, so an act can branch on what an earlier act
@@ -244,7 +249,9 @@ There is no image editor in this workflow. Art is code.
   dependencies. `drawMap` paints an authored string map through a palette.
 - `tools/assets/png.mjs` — a hand-rolled PNG encoder (zlib only).
 - `tools/assets/palette.mjs` — the shared colours.
-- `tools/assets/characters.mjs` — characters as authored pixel maps.
+- `tools/assets/faces.mjs` — the face block and the eight expression patches.
+- `tools/assets/characters.mjs` — characters as authored pixel maps, the
+  garment builders, and the portrait crop.
 - `tools/assets/backgrounds.mjs` — backdrops painted with shapes and ordered
   dithering.
 - `tools/assets/font.mjs` — the bitmap font and its BMFont XML.
@@ -256,14 +263,27 @@ There is no image editor in this workflow. Art is code.
 1. **Characters are authored maps.** A character is an array of equal-length
    strings, one character per pixel, with `.` for transparent. `validateMap`
    fails the build on a row of the wrong length, so a miscount is loud.
-2. **One outline colour for the whole cast** (`0x14121a`). Characters must
+2. **The face is shared, not authored per character.** Every character has the
+   same head geometry, and the face block — six rows of twelve columns at
+   rows 11 to 16 — is painted from the expression patches in `faces.mjs`. A
+   character only authors the hair above it and the jaw below it.
+3. **A face patch is a complete face.** Every column of a patch is painted,
+   and the blank parts are skin (`s`). A `.` in a patch is a hole in the head,
+   not a blank.
+4. **Garments are described, not transcribed.** `robeBody`, `coatBody` and
+   `frockBody` take a list of row widths and build the cloth. Do not paste
+   twenty-six identical rows into a character definition.
+5. **One outline colour for the whole cast** (`0x14121a`). Characters must
    read as one drawing system.
-3. **Backdrops keep their content above `y = 232`.** The dialogue box covers
+6. **Backdrops keep their content above `y = 232`.** The dialogue box covers
    the bottom of the screen. Furniture that hides behind the text box is
    furniture nobody sees.
-4. **The palette is shared.** Do not introduce a colour that is not in
+7. **The palette is shared.** Do not introduce a colour that is not in
    `tools/assets/palette.mjs`.
-5. **Regenerate after every generator change** and commit the result.
+8. **Regenerate after every generator change** and commit the result.
+9. **Every character needs a sprite for every expression.** The content
+   linter proves it: a character without an animation for an expression
+   would play a line of dialogue on a face that does not react.
 
 ---
 

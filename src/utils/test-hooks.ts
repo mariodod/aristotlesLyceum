@@ -27,6 +27,7 @@ export function setTestHook(patch: Partial<LyceumTestHook>): void {
     unlockedCodex: [],
     stats: { reason: 0, wisdom: 0, empathy: 0 },
     lastLine: '',
+    expression: 'neutral',
   };
 
   window.__LYCEUM_TEST__ = { ...current, ...patch };

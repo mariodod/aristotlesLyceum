@@ -7,6 +7,7 @@ import {
   CHARACTER_HEIGHT,
   CHARACTER_WIDTH,
   characterSheet,
+  renderPortrait,
 } from './characters.mjs';
 import { createPixelFont } from './font.mjs';
 import { writePng } from './png.mjs';
@@ -60,6 +61,16 @@ for (const asset of CHARACTER_ASSETS) {
     canvas: characterSheet(asset.frames),
     animations: asset.animations,
   });
+
+  const neutral = asset.frames[0];
+
+  if (neutral) {
+    writeImageAsset({
+      key: `${asset.key}-portrait`,
+      url: `assets/portraits/${asset.key.replace('char-', '')}.png`,
+      canvas: renderPortrait(neutral),
+    });
+  }
 }
 
 for (const asset of BACKDROP_ASSETS) {

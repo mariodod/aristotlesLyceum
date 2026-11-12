@@ -2,7 +2,10 @@
 
 **A 2D pixel-art narrative game about Aristotle, his philosophy, and where it still runs.**
 
-> **Status:** `v0.2.0`. The engine, the art pipeline, the dialogue runtime and
+> **Status:** `v0.3.0`. The engine, the art pipeline, the dialogue runtime and
+> Act I exist and are verified end to end. Act I is a finished five-minute
+> chapter with three endings, and the whole cast has faces that react. Act II
+> onward is still to be written. See [`PLAN.md`](PLAN.md) for the roadmap. The engine, the art pipeline, the dialogue runtime and
 > Act I exist and are verified end to end. Act I is a finished five-minute
 > chapter with three endings. Act II onward is still to be written. See
 > [`PLAN.md`](PLAN.md) for the roadmap.
@@ -44,6 +47,9 @@ Then open <http://127.0.0.1:5173>.
   said and where the same structure still runs in today's science.
 - **Act I — The Desk.** The opening chapter, playable from the title screen,
   with three choices, three branches and three named endings.
+- **The whole cast.** Twelve characters, each with an idle, a blink and eight
+  expressions, plus a portrait for the Dream Journal. The face is authored
+  once and painted over everybody.
 
 ## Documentation
 

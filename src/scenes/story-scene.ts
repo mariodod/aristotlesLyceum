@@ -5,11 +5,18 @@ import { animationKey } from '../data/assets.ts';
 import { CHARACTERS } from '../data/characters.ts';
 import { codexEntry } from '../data/codex/index.ts';
 import { chapterById } from '../data/script/registry.ts';
+import { isNeutral } from '../data/sprite-expressions.ts';
 import { TextBox } from '../entities/textbox.ts';
 import type { SaveService } from '../services/save-service.ts';
 import { DialogueRuntime } from '../systems/dialogue/dialogue-runtime.ts';
 import { collectScriptFlags } from '../systems/dialogue/script-flags.ts';
-import type { CharacterId, DialogueEvent, DialogueState, StoryScript } from '../types/story.ts';
+import type {
+  CharacterId,
+  DialogueEvent,
+  DialogueState,
+  ExpressionId,
+  StoryScript,
+} from '../types/story.ts';
 import { setTestHook } from '../utils/test-hooks.ts';
 
 interface StorySceneData {
@@ -39,6 +46,7 @@ export class StoryScene extends Phaser.Scene {
   private cardActive = false;
   private speaker: CharacterId = 'narrator';
   private currentLine = '';
+  private currentExpression: ExpressionId = 'neutral';
   private endingTitle = '';
   private endingSubtitle = '';
 
@@ -106,7 +114,7 @@ export class StoryScene extends Phaser.Scene {
     for (const event of events) {
       switch (event.type) {
         case 'say':
-          this.showLine(event.speaker, event.text);
+          this.showLine(event.speaker, event.text, event.expression);
           break;
         case 'choice':
           this.showChoices(
@@ -140,7 +148,7 @@ export class StoryScene extends Phaser.Scene {
     }
   }
 
-  private showLine(speaker: CharacterId, text: string): void {
+  private showLine(speaker: CharacterId, text: string, expression: ExpressionId): void {
     const box = this.textBox;
 
     if (!box) {
@@ -149,11 +157,35 @@ export class StoryScene extends Phaser.Scene {
 
     this.speaker = speaker;
     this.currentLine = text;
+    this.currentExpression = expression;
     const character = CHARACTERS[speaker];
     box.setSpeaker(character.name, character.color);
     box.showText(text);
     this.mode = 'line';
     this.highlightSpeaker();
+    this.applyExpression(speaker, expression);
+  }
+
+  /**
+   * Plays the expression on the speaker's sprite.
+   *
+   * The neutral expression goes back to the idle animation, so a character
+   * blinks again once they have finished reacting.
+   */
+  private applyExpression(speaker: CharacterId, expression: ExpressionId): void {
+    const sprite = this.actors.get(speaker);
+
+    if (!sprite) {
+      return;
+    }
+
+    const definition = CHARACTERS[speaker];
+    const state = isNeutral(expression) ? 'idle' : expression;
+    const key = animationKey(definition.spriteKey, state);
+
+    if (this.anims.exists(key)) {
+      sprite.play(key, true);
+    }
   }
 
   private showChoices(prompt: string, labels: string[]): void {
@@ -548,6 +580,7 @@ export class StoryScene extends Phaser.Scene {
       chapter: this.chapterId,
       lineText: box?.visibleText ?? '',
       lastLine: this.currentLine,
+      expression: this.currentExpression,
       speaker: CHARACTERS[this.speaker].name,
       typing: box?.isTyping ?? false,
       choosing: this.mode === 'choice',

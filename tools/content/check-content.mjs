@@ -9,10 +9,18 @@
  *
  * Usage: node tools/content/check-content.mjs
  */
+import { readFileSync } from 'node:fs';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { CHAPTERS } from '../../src/data/script/registry.ts';
 import { CODEX_ENTRIES } from '../../src/data/codex/index.ts';
+import { CHARACTERS } from '../../src/data/characters.ts';
+import { EXPRESSION_ORDER } from '../../src/data/sprite-expressions.ts';
 import { CHARACTER_IDS, EXPRESSION_IDS } from '../../src/types/story.ts';
 import { findUnreachableSteps } from '../../src/systems/dialogue/reachability.ts';
+
+const here = dirname(fileURLToPath(import.meta.url));
+const projectRoot = join(here, '..', '..');
 
 const problems = [];
 const MAX_LINE_LENGTH = 420;
@@ -169,6 +177,39 @@ for (const entry of CODEX_ENTRIES) {
 for (const id of unlocked) {
   if (!codexIds.has(id)) {
     report(`codex "${id}"`, 'is unlocked by a script but does not exist');
+  }
+}
+
+/*
+ * The art pack. Every character in the cast needs a sprite, and every sprite
+ * needs a frame for every expression, or a line of dialogue will play on a
+ * face that does not react.
+ */
+
+const manifest = JSON.parse(
+  readFileSync(join(projectRoot, 'src', 'data', 'asset-manifest.json'), 'utf8'),
+);
+
+const imageKeys = new Set(manifest.images.map((image) => image.key));
+const sheetKeys = new Set(manifest.spritesheets.map((sheet) => sheet.key));
+
+for (const character of Object.values(CHARACTERS)) {
+  if (character.id === 'narrator') {
+    continue;
+  }
+
+  if (!imageKeys.has(character.spriteKey) && !sheetKeys.has(character.spriteKey)) {
+    report(`character "${character.id}"`, `has no sprite named "${character.spriteKey}"`);
+  }
+}
+
+for (const sheet of manifest.spritesheets) {
+  for (const expression of EXPRESSION_ORDER) {
+    const key = `${sheet.key}-${expression}`;
+
+    if (!sheet.animations.some((animation) => animation.key === key)) {
+      report(`sprite "${sheet.key}"`, `has no "${expression}" animation`);
+    }
   }
 }
 

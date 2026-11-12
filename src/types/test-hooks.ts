@@ -14,6 +14,8 @@ export interface LyceumTestHook {
   lineText: string;
   /** Full text of the current line, revealed or not. */
   lastLine: string;
+  /** Expression the speaker is currently making. */
+  expression: string;
   /** Name on the dialogue name plate. */
   speaker: string;
   /** True while the typewriter is still revealing characters. */

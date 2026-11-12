@@ -1,5 +1,5 @@
 import { Canvas, mix } from './pixel.mjs';
-import { BEDROOM, LYCEUM } from './palette.mjs';
+import { BEDROOM, CLASSROOM, DOWNHOUSE, LIBRARY, LYCEUM } from './palette.mjs';
 
 /**
  * Ordered 4x4 Bayer matrix. Dithering two colours against this threshold
@@ -216,6 +216,229 @@ export function lyceumBackdrop(width = 640, height = 360) {
   return canvas;
 }
 
+/**
+ * The great hall of the Library of Alexandria: shelves to the ceiling, a
+ * reading table, and one lamp that the whole room is lit by.
+ */
+export function libraryBackdrop(width = 640, height = 360) {
+  const canvas = new Canvas(width, height);
+
+  ditherGradient(canvas, 0, 0, width, 236, LIBRARY.wallTop, LIBRARY.wallBottom);
+  canvas.rect(0, 236, width, height - 236, LIBRARY.floor);
+  for (let y = 248; y < height; y += 14) {
+    canvas.hline(0, y, width, LIBRARY.floorLight);
+  }
+
+  // The high window that lights the room from above.
+  canvas.rect(286, 6, 68, 44, LIBRARY.frame);
+  canvas.rect(292, 12, 56, 32, LIBRARY.light);
+  canvas.rect(318, 12, 4, 32, LIBRARY.frame);
+  canvas.rect(292, 26, 56, 4, LIBRARY.frame);
+  radialGlow(canvas, 320, 30, 150, LIBRARY.light, 0.22);
+
+  // Shelves, left and right, with scrolls and codices.
+  for (const shelfX of [24, 456]) {
+    const shelfWidth = 160;
+    canvas.rect(shelfX, 20, shelfWidth, 212, LIBRARY.shelf);
+    canvas.rect(shelfX + 6, 26, shelfWidth - 12, 200, LIBRARY.shelfDark);
+
+    for (let shelf = 0; shelf < 5; shelf += 1) {
+      const shelfY = 26 + shelf * 40;
+      canvas.rect(shelfX + 6, shelfY, shelfWidth - 12, 36, LIBRARY.shelfDark);
+
+      let x = shelfX + 10;
+      let index = 0;
+      while (x < shelfX + shelfWidth - 14) {
+        const bookWidth = 4 + ((shelf * 5 + index * 3) % 4);
+        const bookHeight = 22 + ((index + shelf) % 3) * 4;
+        const color = (index + shelf) % 3 === 0 ? LIBRARY.scroll : LIBRARY.book;
+        canvas.rect(x, shelfY + 36 - bookHeight, bookWidth, bookHeight, color);
+        canvas.rect(x, shelfY + 36 - bookHeight, bookWidth, 2, 0x00000044);
+        x += bookWidth + 2;
+        index += 1;
+      }
+
+      canvas.rect(shelfX + 6, shelfY + 36, shelfWidth - 12, 4, LIBRARY.shelf);
+    }
+  }
+
+  // The reading table, with a scroll open on it.
+  canvas.rect(150, 196, 340, 10, LIBRARY.tableLight);
+  canvas.rect(150, 206, 340, 8, LIBRARY.table);
+  canvas.rect(166, 214, 14, 80, LIBRARY.tableDark);
+  canvas.rect(460, 214, 14, 80, LIBRARY.tableDark);
+  canvas.rect(250, 186, 140, 10, LIBRARY.scroll);
+  canvas.rect(250, 186, 140, 3, 0xf0e6c8);
+  for (let line = 0; line < 2; line += 1) {
+    canvas.rect(258, 190 + line * 3, 124, 1, 0xb0a488);
+  }
+
+  // The lamp on the table.
+  canvas.rect(420, 176, 26, 8, LIBRARY.brass);
+  canvas.rect(426, 158, 14, 18, LIBRARY.brass);
+  canvas.rect(420, 150, 26, 8, LIBRARY.flame);
+  radialGlow(canvas, 433, 150, 120, LIBRARY.flame, 0.4);
+
+  // A bust of somebody nobody remembers, in a niche.
+  canvas.rect(292, 86, 56, 52, LIBRARY.niche);
+  canvas.rect(298, 92, 44, 40, LIBRARY.nicheDark);
+  canvas.ellipse(320, 108, 10, 12, LIBRARY.stone);
+  canvas.rect(310, 120, 20, 14, LIBRARY.stone);
+
+  return canvas;
+}
+
+/**
+ * Down House: the drawing room where a very slow book was written.
+ */
+export function downHouseBackdrop(width = 640, height = 360) {
+  const canvas = new Canvas(width, height);
+
+  ditherGradient(canvas, 0, 0, width, 234, DOWNHOUSE.wallTop, DOWNHOUSE.wallBottom);
+  canvas.rect(0, 234, width, height - 234, DOWNHOUSE.floor);
+  for (let y = 246; y < height; y += 12) {
+    canvas.hline(0, y, width, DOWNHOUSE.floorLight);
+  }
+
+  // The window, and the garden behind it.
+  canvas.rect(40, 28, 132, 140, DOWNHOUSE.frame);
+  canvas.rect(46, 34, 120, 128, DOWNHOUSE.garden);
+  canvas.rect(46, 34, 120, 46, DOWNHOUSE.sky);
+  canvas.ellipse(130, 56, 12, 12, DOWNHOUSE.sun);
+  for (const [cx, radius] of [
+    [70, 22],
+    [104, 15],
+  ]) {
+    canvas.ellipse(cx, 128, radius, radius * 0.8, DOWNHOUSE.bush);
+    canvas.rect(cx - 3, 140, 6, 22, 0x5e4a2e);
+  }
+  canvas.vline(106, 34, 128, DOWNHOUSE.frame);
+  canvas.hline(46, 94, 120, DOWNHOUSE.frame);
+  canvas.rect(36, 166, 140, 8, DOWNHOUSE.sill);
+
+  // Portraits of the family, hung too high.
+  for (const [x, w, h] of [
+    [214, 52, 66],
+    [280, 44, 56],
+    [338, 60, 72],
+  ]) {
+    canvas.rect(x, 34, w, h, DOWNHOUSE.gold);
+    canvas.rect(x + 4, 38, w - 8, h - 8, DOWNHOUSE.portrait);
+    canvas.ellipse(x + w / 2, 38 + (h - 8) * 0.4, 9, 11, DOWNHOUSE.paint);
+    canvas.rect(x + w / 2 - 7, 38 + (h - 8) * 0.66, 14, 12, DOWNHOUSE.paint);
+  }
+
+  // A bookcase on the right.
+  canvas.rect(452, 40, 168, 192, DOWNHOUSE.wood);
+  canvas.rect(458, 46, 156, 180, DOWNHOUSE.woodDark);
+  for (let shelf = 0; shelf < 4; shelf += 1) {
+    const shelfY = 46 + shelf * 45;
+    canvas.rect(458, shelfY, 156, 40, DOWNHOUSE.woodDark);
+
+    let x = 462;
+    let index = 0;
+    while (x < 606) {
+      const bookWidth = 5 + ((shelf * 3 + index * 5) % 5);
+      const bookHeight = 24 + ((shelf + index) % 3) * 4;
+      const color = (index + shelf) % 3 === 0 ? DOWNHOUSE.red : DOWNHOUSE.book;
+      canvas.rect(x, shelfY + 40 - bookHeight, bookWidth, bookHeight, color);
+      canvas.rect(x, shelfY + 40 - bookHeight, bookWidth, 2, 0x00000033);
+      x += bookWidth + 2;
+      index += 1;
+    }
+
+    canvas.rect(458, shelfY + 40, 156, 4, DOWNHOUSE.wood);
+  }
+
+  // The writing desk, with specimens on it.
+  canvas.rect(180, 190, 220, 10, DOWNHOUSE.wood);
+  canvas.rect(180, 200, 220, 7, DOWNHOUSE.woodDark);
+  canvas.rect(196, 207, 12, 60, DOWNHOUSE.woodDark);
+  canvas.rect(372, 207, 12, 60, DOWNHOUSE.woodDark);
+
+  // A shell, a skull, and a stack of notes.
+  canvas.rect(230, 184, 34, 6, DOWNHOUSE.paper);
+  canvas.rect(232, 180, 30, 4, DOWNHOUSE.paper);
+  canvas.ellipse(296, 186, 12, 8, DOWNHOUSE.bone);
+  canvas.ellipse(300, 182, 7, 6, DOWNHOUSE.bone);
+  canvas.rect(330, 180, 24, 10, DOWNHOUSE.bone);
+  canvas.rect(330, 180, 24, 3, DOWNHOUSE.boneDark);
+
+  // The lamp.
+  canvas.rect(420, 176, 24, 6, DOWNHOUSE.brass);
+  canvas.rect(426, 158, 12, 18, DOWNHOUSE.brass);
+  canvas.rect(418, 142, 28, 16, DOWNHOUSE.shade);
+  canvas.rect(418, 142, 28, 4, 0xf0e0b0);
+  radialGlow(canvas, 432, 146, 118, 0xffd894, 0.4);
+
+  return canvas;
+}
+
+/**
+ * The classroom. Fluorescent light, a whiteboard, and a clock that is
+ * counting down the minutes of Isaac's whole life.
+ */
+export function classroomBackdrop(width = 640, height = 360) {
+  const canvas = new Canvas(width, height);
+
+  ditherGradient(canvas, 0, 0, width, 230, CLASSROOM.wallTop, CLASSROOM.wallBottom);
+  canvas.rect(0, 230, width, height - 230, CLASSROOM.floor);
+  for (let y = 242; y < height; y += 10) {
+    canvas.hline(0, y, width, CLASSROOM.floorLight);
+  }
+
+  // Fluorescent tubes.
+  for (const x of [120, 420]) {
+    canvas.rect(x, 12, 100, 8, CLASSROOM.tube);
+    canvas.rect(x, 12, 100, 3, 0xffffff);
+    radialGlow(canvas, x + 50, 16, 130, CLASSROOM.tube, 0.3);
+  }
+
+  // The whiteboard, with a half-erased argument on it.
+  canvas.rect(196, 40, 248, 124, CLASSROOM.boardFrame);
+  canvas.rect(202, 46, 236, 112, CLASSROOM.board);
+  canvas.rect(202, 152, 236, 6, CLASSROOM.boardFrame);
+  canvas.rect(210, 62, 96, 4, CLASSROOM.chalk);
+  canvas.rect(210, 76, 140, 4, CLASSROOM.chalk);
+  canvas.rect(210, 90, 78, 4, CLASSROOM.chalk);
+  canvas.rect(210, 112, 54, 4, CLASSROOM.chalkFaint);
+  canvas.rect(300, 104, 110, 4, CLASSROOM.chalkFaint);
+
+  // The clock.
+  canvas.ellipse(560, 52, 24, 24, CLASSROOM.clock);
+  canvas.ellipse(560, 52, 19, 19, CLASSROOM.clockFace);
+  canvas.rect(559, 40, 2, 12, CLASSROOM.ink);
+  canvas.rect(560, 51, 10, 2, CLASSROOM.ink);
+
+  // A door.
+  canvas.rect(30, 62, 76, 168, CLASSROOM.door);
+  canvas.rect(30, 62, 76, 4, CLASSROOM.doorFrame);
+  canvas.rect(44, 80, 48, 44, CLASSROOM.doorGlass);
+  canvas.rect(88, 140, 6, 6, CLASSROOM.brass);
+
+  // Rows of desks, going back.
+  for (let row = 0; row < 3; row += 1) {
+    const y = 196 + row * 28;
+    const inset = row * 14;
+    for (let desk = 0; desk < 3; desk += 1) {
+      const x = 150 + inset + desk * 130;
+      canvas.rect(x, y, 96, 8, CLASSROOM.desk);
+      canvas.rect(x, y + 8, 96, 3, CLASSROOM.deskDark);
+      canvas.rect(x + 6, y + 11, 7, 22, CLASSROOM.deskDark);
+      canvas.rect(x + 82, y + 11, 7, 22, CLASSROOM.deskDark);
+    }
+  }
+
+  // A poster nobody has read.
+  canvas.rect(520, 96, 92, 66, CLASSROOM.poster);
+  canvas.rect(526, 102, 80, 54, CLASSROOM.posterInner);
+  canvas.rect(534, 112, 52, 4, CLASSROOM.chalk);
+  canvas.rect(534, 124, 64, 4, CLASSROOM.chalk);
+  canvas.rect(534, 136, 40, 4, CLASSROOM.chalk);
+
+  return canvas;
+}
+
 export const BACKDROP_ASSETS = [
   {
     key: 'backdrop-bedroom',
@@ -226,5 +449,20 @@ export const BACKDROP_ASSETS = [
     key: 'backdrop-lyceum',
     url: 'assets/backdrops/lyceum.png',
     canvas: lyceumBackdrop(),
+  },
+  {
+    key: 'backdrop-library',
+    url: 'assets/backdrops/library.png',
+    canvas: libraryBackdrop(),
+  },
+  {
+    key: 'backdrop-down-house',
+    url: 'assets/backdrops/down-house.png',
+    canvas: downHouseBackdrop(),
+  },
+  {
+    key: 'backdrop-classroom',
+    url: 'assets/backdrops/classroom.png',
+    canvas: classroomBackdrop(),
   },
 ];

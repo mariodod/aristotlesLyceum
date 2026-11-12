@@ -2,6 +2,78 @@
   "version": 1,
   "images": [
     {
+      "key": "char-isaac-portrait",
+      "url": "assets/portraits/isaac.png",
+      "width": 52,
+      "height": 52
+    },
+    {
+      "key": "char-aristotle-portrait",
+      "url": "assets/portraits/aristotle.png",
+      "width": 52,
+      "height": 52
+    },
+    {
+      "key": "char-avicenna-portrait",
+      "url": "assets/portraits/avicenna.png",
+      "width": 52,
+      "height": 52
+    },
+    {
+      "key": "char-alexandria-scribe-portrait",
+      "url": "assets/portraits/alexandria-scribe.png",
+      "width": 52,
+      "height": 52
+    },
+    {
+      "key": "char-aquinas-portrait",
+      "url": "assets/portraits/aquinas.png",
+      "width": 52,
+      "height": 52
+    },
+    {
+      "key": "char-bacon-portrait",
+      "url": "assets/portraits/bacon.png",
+      "width": 52,
+      "height": 52
+    },
+    {
+      "key": "char-descartes-portrait",
+      "url": "assets/portraits/descartes.png",
+      "width": 52,
+      "height": 52
+    },
+    {
+      "key": "char-hume-portrait",
+      "url": "assets/portraits/hume.png",
+      "width": 52,
+      "height": 52
+    },
+    {
+      "key": "char-harvey-portrait",
+      "url": "assets/portraits/harvey.png",
+      "width": 52,
+      "height": 52
+    },
+    {
+      "key": "char-darwin-portrait",
+      "url": "assets/portraits/darwin.png",
+      "width": 52,
+      "height": 52
+    },
+    {
+      "key": "char-turing-portrait",
+      "url": "assets/portraits/turing.png",
+      "width": 52,
+      "height": 52
+    },
+    {
+      "key": "char-examiner-portrait",
+      "url": "assets/portraits/examiner.png",
+      "width": 52,
+      "height": 52
+    },
+    {
       "key": "backdrop-bedroom",
       "url": "assets/backdrops/bedroom.png",
       "width": 640,
@@ -10,6 +82,24 @@
     {
       "key": "backdrop-lyceum",
       "url": "assets/backdrops/lyceum.png",
+      "width": 640,
+      "height": 360
+    },
+    {
+      "key": "backdrop-library",
+      "url": "assets/backdrops/library.png",
+      "width": 640,
+      "height": 360
+    },
+    {
+      "key": "backdrop-down-house",
+      "url": "assets/backdrops/down-house.png",
+      "width": 640,
+      "height": 360
+    },
+    {
+      "key": "backdrop-classroom",
+      "url": "assets/backdrops/classroom.png",
       "width": 640,
       "height": 360
     },
@@ -26,7 +116,7 @@
       "url": "assets/sprites/char-isaac.png",
       "frameWidth": 32,
       "frameHeight": 48,
-      "frameCount": 2,
+      "frameCount": 10,
       "animations": [
         {
           "key": "char-isaac-idle",
@@ -37,6 +127,70 @@
           ],
           "frameRate": 2.5,
           "repeat": -1
+        },
+        {
+          "key": "char-isaac-neutral",
+          "frames": [
+            2
+          ],
+          "frameRate": 1,
+          "repeat": 0
+        },
+        {
+          "key": "char-isaac-happy",
+          "frames": [
+            3
+          ],
+          "frameRate": 1,
+          "repeat": 0
+        },
+        {
+          "key": "char-isaac-sad",
+          "frames": [
+            4
+          ],
+          "frameRate": 1,
+          "repeat": 0
+        },
+        {
+          "key": "char-isaac-surprised",
+          "frames": [
+            5
+          ],
+          "frameRate": 1,
+          "repeat": 0
+        },
+        {
+          "key": "char-isaac-thinking",
+          "frames": [
+            6
+          ],
+          "frameRate": 1,
+          "repeat": 0
+        },
+        {
+          "key": "char-isaac-angry",
+          "frames": [
+            7
+          ],
+          "frameRate": 1,
+          "repeat": 0
+        },
+        {
+          "key": "char-isaac-tired",
+          "frames": [
+            8
+          ],
+          "frameRate": 1,
+          "repeat": 0
+        },
+        {
+          "key": "char-isaac-determined",
+          "frames": [
+            9
+          ],
+          "frameRate": 1,
+          "repeat": 0
         }
       ]
     },
@@ -45,15 +199,911 @@
       "url": "assets/sprites/char-aristotle.png",
       "frameWidth": 32,
       "frameHeight": 48,
-      "frameCount": 1,
+      "frameCount": 10,
       "animations": [
         {
           "key": "char-aristotle-idle",
           "frames": [
+            0,
+            1,
             0
           ],
-          "frameRate": 1,
+          "frameRate": 2.5,
           "repeat": -1
+        },
+        {
+          "key": "char-aristotle-neutral",
+          "frames": [
+            2
+          ],
+          "frameRate": 1,
+          "repeat": 0
+        },
+        {
+          "key": "char-aristotle-happy",
+          "frames": [
+            3
+          ],
+          "frameRate": 1,
+          "repeat": 0
+        },
+        {
+          "key": "char-aristotle-sad",
+          "frames": [
+            4
+          ],
+          "frameRate": 1,
+          "repeat": 0
+        },
+        {
+          "key": "char-aristotle-surprised",
+          "frames": [
+            5
+          ],
+          "frameRate": 1,
+          "repeat": 0
+        },
+        {
+          "key": "char-aristotle-thinking",
+          "frames": [
+            6
+          ],
+          "frameRate": 1,
+          "repeat": 0
+        },
+        {
+          "key": "char-aristotle-angry",
+          "frames": [
+            7
+          ],
+          "frameRate": 1,
+          "repeat": 0
+        },
+        {
+          "key": "char-aristotle-tired",
+          "frames": [
+            8
+          ],
+          "frameRate": 1,
+          "repeat": 0
+        },
+        {
+          "key": "char-aristotle-determined",
+          "frames": [
+            9
+          ],
+          "frameRate": 1,
+          "repeat": 0
+        }
+      ]
+    },
+    {
+      "key": "char-avicenna",
+      "url": "assets/sprites/char-avicenna.png",
+      "frameWidth": 32,
+      "frameHeight": 48,
+      "frameCount": 10,
+      "animations": [
+        {
+          "key": "char-avicenna-idle",
+          "frames": [
+            0,
+            1,
+            0
+          ],
+          "frameRate": 2.5,
+          "repeat": -1
+        },
+        {
+          "key": "char-avicenna-neutral",
+          "frames": [
+            2
+          ],
+          "frameRate": 1,
+          "repeat": 0
+        },
+        {
+          "key": "char-avicenna-happy",
+          "frames": [
+            3
+          ],
+          "frameRate": 1,
+          "repeat": 0
+        },
+        {
+          "key": "char-avicenna-sad",
+          "frames": [
+            4
+          ],
+          "frameRate": 1,
+          "repeat": 0
+        },
+        {
+          "key": "char-avicenna-surprised",
+          "frames": [
+            5
+          ],
+          "frameRate": 1,
+          "repeat": 0
+        },
+        {
+          "key": "char-avicenna-thinking",
+          "frames": [
+            6
+          ],
+          "frameRate": 1,
+          "repeat": 0
+        },
+        {
+          "key": "char-avicenna-angry",
+          "frames": [
+            7
+          ],
+          "frameRate": 1,
+          "repeat": 0
+        },
+        {
+          "key": "char-avicenna-tired",
+          "frames": [
+            8
+          ],
+          "frameRate": 1,
+          "repeat": 0
+        },
+        {
+          "key": "char-avicenna-determined",
+          "frames": [
+            9
+          ],
+          "frameRate": 1,
+          "repeat": 0
+        }
+      ]
+    },
+    {
+      "key": "char-alexandria-scribe",
+      "url": "assets/sprites/char-alexandria-scribe.png",
+      "frameWidth": 32,
+      "frameHeight": 48,
+      "frameCount": 10,
+      "animations": [
+        {
+          "key": "char-alexandria-scribe-idle",
+          "frames": [
+            0,
+            1,
+            0
+          ],
+          "frameRate": 2.5,
+          "repeat": -1
+        },
+        {
+          "key": "char-alexandria-scribe-neutral",
+          "frames": [
+            2
+          ],
+          "frameRate": 1,
+          "repeat": 0
+        },
+        {
+          "key": "char-alexandria-scribe-happy",
+          "frames": [
+            3
+          ],
+          "frameRate": 1,
+          "repeat": 0
+        },
+        {
+          "key": "char-alexandria-scribe-sad",
+          "frames": [
+            4
+          ],
+          "frameRate": 1,
+          "repeat": 0
+        },
+        {
+          "key": "char-alexandria-scribe-surprised",
+          "frames": [
+            5
+          ],
+          "frameRate": 1,
+          "repeat": 0
+        },
+        {
+          "key": "char-alexandria-scribe-thinking",
+          "frames": [
+            6
+          ],
+          "frameRate": 1,
+          "repeat": 0
+        },
+        {
+          "key": "char-alexandria-scribe-angry",
+          "frames": [
+            7
+          ],
+          "frameRate": 1,
+          "repeat": 0
+        },
+        {
+          "key": "char-alexandria-scribe-tired",
+          "frames": [
+            8
+          ],
+          "frameRate": 1,
+          "repeat": 0
+        },
+        {
+          "key": "char-alexandria-scribe-determined",
+          "frames": [
+            9
+          ],
+          "frameRate": 1,
+          "repeat": 0
+        }
+      ]
+    },
+    {
+      "key": "char-aquinas",
+      "url": "assets/sprites/char-aquinas.png",
+      "frameWidth": 32,
+      "frameHeight": 48,
+      "frameCount": 10,
+      "animations": [
+        {
+          "key": "char-aquinas-idle",
+          "frames": [
+            0,
+            1,
+            0
+          ],
+          "frameRate": 2.5,
+          "repeat": -1
+        },
+        {
+          "key": "char-aquinas-neutral",
+          "frames": [
+            2
+          ],
+          "frameRate": 1,
+          "repeat": 0
+        },
+        {
+          "key": "char-aquinas-happy",
+          "frames": [
+            3
+          ],
+          "frameRate": 1,
+          "repeat": 0
+        },
+        {
+          "key": "char-aquinas-sad",
+          "frames": [
+            4
+          ],
+          "frameRate": 1,
+          "repeat": 0
+        },
+        {
+          "key": "char-aquinas-surprised",
+          "frames": [
+            5
+          ],
+          "frameRate": 1,
+          "repeat": 0
+        },
+        {
+          "key": "char-aquinas-thinking",
+          "frames": [
+            6
+          ],
+          "frameRate": 1,
+          "repeat": 0
+        },
+        {
+          "key": "char-aquinas-angry",
+          "frames": [
+            7
+          ],
+          "frameRate": 1,
+          "repeat": 0
+        },
+        {
+          "key": "char-aquinas-tired",
+          "frames": [
+            8
+          ],
+          "frameRate": 1,
+          "repeat": 0
+        },
+        {
+          "key": "char-aquinas-determined",
+          "frames": [
+            9
+          ],
+          "frameRate": 1,
+          "repeat": 0
+        }
+      ]
+    },
+    {
+      "key": "char-bacon",
+      "url": "assets/sprites/char-bacon.png",
+      "frameWidth": 32,
+      "frameHeight": 48,
+      "frameCount": 10,
+      "animations": [
+        {
+          "key": "char-bacon-idle",
+          "frames": [
+            0,
+            1,
+            0
+          ],
+          "frameRate": 2.5,
+          "repeat": -1
+        },
+        {
+          "key": "char-bacon-neutral",
+          "frames": [
+            2
+          ],
+          "frameRate": 1,
+          "repeat": 0
+        },
+        {
+          "key": "char-bacon-happy",
+          "frames": [
+            3
+          ],
+          "frameRate": 1,
+          "repeat": 0
+        },
+        {
+          "key": "char-bacon-sad",
+          "frames": [
+            4
+          ],
+          "frameRate": 1,
+          "repeat": 0
+        },
+        {
+          "key": "char-bacon-surprised",
+          "frames": [
+            5
+          ],
+          "frameRate": 1,
+          "repeat": 0
+        },
+        {
+          "key": "char-bacon-thinking",
+          "frames": [
+            6
+          ],
+          "frameRate": 1,
+          "repeat": 0
+        },
+        {
+          "key": "char-bacon-angry",
+          "frames": [
+            7
+          ],
+          "frameRate": 1,
+          "repeat": 0
+        },
+        {
+          "key": "char-bacon-tired",
+          "frames": [
+            8
+          ],
+          "frameRate": 1,
+          "repeat": 0
+        },
+        {
+          "key": "char-bacon-determined",
+          "frames": [
+            9
+          ],
+          "frameRate": 1,
+          "repeat": 0
+        }
+      ]
+    },
+    {
+      "key": "char-descartes",
+      "url": "assets/sprites/char-descartes.png",
+      "frameWidth": 32,
+      "frameHeight": 48,
+      "frameCount": 10,
+      "animations": [
+        {
+          "key": "char-descartes-idle",
+          "frames": [
+            0,
+            1,
+            0
+          ],
+          "frameRate": 2.5,
+          "repeat": -1
+        },
+        {
+          "key": "char-descartes-neutral",
+          "frames": [
+            2
+          ],
+          "frameRate": 1,
+          "repeat": 0
+        },
+        {
+          "key": "char-descartes-happy",
+          "frames": [
+            3
+          ],
+          "frameRate": 1,
+          "repeat": 0
+        },
+        {
+          "key": "char-descartes-sad",
+          "frames": [
+            4
+          ],
+          "frameRate": 1,
+          "repeat": 0
+        },
+        {
+          "key": "char-descartes-surprised",
+          "frames": [
+            5
+          ],
+          "frameRate": 1,
+          "repeat": 0
+        },
+        {
+          "key": "char-descartes-thinking",
+          "frames": [
+            6
+          ],
+          "frameRate": 1,
+          "repeat": 0
+        },
+        {
+          "key": "char-descartes-angry",
+          "frames": [
+            7
+          ],
+          "frameRate": 1,
+          "repeat": 0
+        },
+        {
+          "key": "char-descartes-tired",
+          "frames": [
+            8
+          ],
+          "frameRate": 1,
+          "repeat": 0
+        },
+        {
+          "key": "char-descartes-determined",
+          "frames": [
+            9
+          ],
+          "frameRate": 1,
+          "repeat": 0
+        }
+      ]
+    },
+    {
+      "key": "char-hume",
+      "url": "assets/sprites/char-hume.png",
+      "frameWidth": 32,
+      "frameHeight": 48,
+      "frameCount": 10,
+      "animations": [
+        {
+          "key": "char-hume-idle",
+          "frames": [
+            0,
+            1,
+            0
+          ],
+          "frameRate": 2.5,
+          "repeat": -1
+        },
+        {
+          "key": "char-hume-neutral",
+          "frames": [
+            2
+          ],
+          "frameRate": 1,
+          "repeat": 0
+        },
+        {
+          "key": "char-hume-happy",
+          "frames": [
+            3
+          ],
+          "frameRate": 1,
+          "repeat": 0
+        },
+        {
+          "key": "char-hume-sad",
+          "frames": [
+            4
+          ],
+          "frameRate": 1,
+          "repeat": 0
+        },
+        {
+          "key": "char-hume-surprised",
+          "frames": [
+            5
+          ],
+          "frameRate": 1,
+          "repeat": 0
+        },
+        {
+          "key": "char-hume-thinking",
+          "frames": [
+            6
+          ],
+          "frameRate": 1,
+          "repeat": 0
+        },
+        {
+          "key": "char-hume-angry",
+          "frames": [
+            7
+          ],
+          "frameRate": 1,
+          "repeat": 0
+        },
+        {
+          "key": "char-hume-tired",
+          "frames": [
+            8
+          ],
+          "frameRate": 1,
+          "repeat": 0
+        },
+        {
+          "key": "char-hume-determined",
+          "frames": [
+            9
+          ],
+          "frameRate": 1,
+          "repeat": 0
+        }
+      ]
+    },
+    {
+      "key": "char-harvey",
+      "url": "assets/sprites/char-harvey.png",
+      "frameWidth": 32,
+      "frameHeight": 48,
+      "frameCount": 10,
+      "animations": [
+        {
+          "key": "char-harvey-idle",
+          "frames": [
+            0,
+            1,
+            0
+          ],
+          "frameRate": 2.5,
+          "repeat": -1
+        },
+        {
+          "key": "char-harvey-neutral",
+          "frames": [
+            2
+          ],
+          "frameRate": 1,
+          "repeat": 0
+        },
+        {
+          "key": "char-harvey-happy",
+          "frames": [
+            3
+          ],
+          "frameRate": 1,
+          "repeat": 0
+        },
+        {
+          "key": "char-harvey-sad",
+          "frames": [
+            4
+          ],
+          "frameRate": 1,
+          "repeat": 0
+        },
+        {
+          "key": "char-harvey-surprised",
+          "frames": [
+            5
+          ],
+          "frameRate": 1,
+          "repeat": 0
+        },
+        {
+          "key": "char-harvey-thinking",
+          "frames": [
+            6
+          ],
+          "frameRate": 1,
+          "repeat": 0
+        },
+        {
+          "key": "char-harvey-angry",
+          "frames": [
+            7
+          ],
+          "frameRate": 1,
+          "repeat": 0
+        },
+        {
+          "key": "char-harvey-tired",
+          "frames": [
+            8
+          ],
+          "frameRate": 1,
+          "repeat": 0
+        },
+        {
+          "key": "char-harvey-determined",
+          "frames": [
+            9
+          ],
+          "frameRate": 1,
+          "repeat": 0
+        }
+      ]
+    },
+    {
+      "key": "char-darwin",
+      "url": "assets/sprites/char-darwin.png",
+      "frameWidth": 32,
+      "frameHeight": 48,
+      "frameCount": 10,
+      "animations": [
+        {
+          "key": "char-darwin-idle",
+          "frames": [
+            0,
+            1,
+            0
+          ],
+          "frameRate": 2.5,
+          "repeat": -1
+        },
+        {
+          "key": "char-darwin-neutral",
+          "frames": [
+            2
+          ],
+          "frameRate": 1,
+          "repeat": 0
+        },
+        {
+          "key": "char-darwin-happy",
+          "frames": [
+            3
+          ],
+          "frameRate": 1,
+          "repeat": 0
+        },
+        {
+          "key": "char-darwin-sad",
+          "frames": [
+            4
+          ],
+          "frameRate": 1,
+          "repeat": 0
+        },
+        {
+          "key": "char-darwin-surprised",
+          "frames": [
+            5
+          ],
+          "frameRate": 1,
+          "repeat": 0
+        },
+        {
+          "key": "char-darwin-thinking",
+          "frames": [
+            6
+          ],
+          "frameRate": 1,
+          "repeat": 0
+        },
+        {
+          "key": "char-darwin-angry",
+          "frames": [
+            7
+          ],
+          "frameRate": 1,
+          "repeat": 0
+        },
+        {
+          "key": "char-darwin-tired",
+          "frames": [
+            8
+          ],
+          "frameRate": 1,
+          "repeat": 0
+        },
+        {
+          "key": "char-darwin-determined",
+          "frames": [
+            9
+          ],
+          "frameRate": 1,
+          "repeat": 0
+        }
+      ]
+    },
+    {
+      "key": "char-turing",
+      "url": "assets/sprites/char-turing.png",
+      "frameWidth": 32,
+      "frameHeight": 48,
+      "frameCount": 10,
+      "animations": [
+        {
+          "key": "char-turing-idle",
+          "frames": [
+            0,
+            1,
+            0
+          ],
+          "frameRate": 2.5,
+          "repeat": -1
+        },
+        {
+          "key": "char-turing-neutral",
+          "frames": [
+            2
+          ],
+          "frameRate": 1,
+          "repeat": 0
+        },
+        {
+          "key": "char-turing-happy",
+          "frames": [
+            3
+          ],
+          "frameRate": 1,
+          "repeat": 0
+        },
+        {
+          "key": "char-turing-sad",
+          "frames": [
+            4
+          ],
+          "frameRate": 1,
+          "repeat": 0
+        },
+        {
+          "key": "char-turing-surprised",
+          "frames": [
+            5
+          ],
+          "frameRate": 1,
+          "repeat": 0
+        },
+        {
+          "key": "char-turing-thinking",
+          "frames": [
+            6
+          ],
+          "frameRate": 1,
+          "repeat": 0
+        },
+        {
+          "key": "char-turing-angry",
+          "frames": [
+            7
+          ],
+          "frameRate": 1,
+          "repeat": 0
+        },
+        {
+          "key": "char-turing-tired",
+          "frames": [
+            8
+          ],
+          "frameRate": 1,
+          "repeat": 0
+        },
+        {
+          "key": "char-turing-determined",
+          "frames": [
+            9
+          ],
+          "frameRate": 1,
+          "repeat": 0
+        }
+      ]
+    },
+    {
+      "key": "char-examiner",
+      "url": "assets/sprites/char-examiner.png",
+      "frameWidth": 32,
+      "frameHeight": 48,
+      "frameCount": 10,
+      "animations": [
+        {
+          "key": "char-examiner-idle",
+          "frames": [
+            0,
+            1,
+            0
+          ],
+          "frameRate": 2.5,
+          "repeat": -1
+        },
+        {
+          "key": "char-examiner-neutral",
+          "frames": [
+            2
+          ],
+          "frameRate": 1,
+          "repeat": 0
+        },
+        {
+          "key": "char-examiner-happy",
+          "frames": [
+            3
+          ],
+          "frameRate": 1,
+          "repeat": 0
+        },
+        {
+          "key": "char-examiner-sad",
+          "frames": [
+            4
+          ],
+          "frameRate": 1,
+          "repeat": 0
+        },
+        {
+          "key": "char-examiner-surprised",
+          "frames": [
+            5
+          ],
+          "frameRate": 1,
+          "repeat": 0
+        },
+        {
+          "key": "char-examiner-thinking",
+          "frames": [
+            6
+          ],
+          "frameRate": 1,
+          "repeat": 0
+        },
+        {
+          "key": "char-examiner-angry",
+          "frames": [
+            7
+          ],
+          "frameRate": 1,
+          "repeat": 0
+        },
+        {
+          "key": "char-examiner-tired",
+          "frames": [
+            8
+          ],
+          "frameRate": 1,
+          "repeat": 0
+        },
+        {
+          "key": "char-examiner-determined",
+          "frames": [
+            9
+          ],
+          "frameRate": 1,
+          "repeat": 0
         }
       ]
     }

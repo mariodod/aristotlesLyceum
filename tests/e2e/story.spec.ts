@@ -102,6 +102,29 @@ test('each choice reaches a different ending', async ({ page }) => {
   }
 });
 
+test('plays the speaker with the expression the script asks for', async ({ page }) => {
+  const errors = collectPageErrors(page);
+
+  await startActOne(page);
+
+  // The opening line is the narrator's, and the narrator has no face.
+  await expect.poll(() => readHook<string>(page, 'expression')).toBe('neutral');
+
+  // Isaac's complaint about philosophy is marked angry.
+  for (let index = 0; index < 10; index += 1) {
+    const line = await readHook<string>(page, 'lastLine');
+
+    if (line.includes('Philosophy is the one subject')) {
+      break;
+    }
+
+    await nextLine(page);
+  }
+
+  await expect.poll(() => readHook<string>(page, 'expression')).toBe('angry');
+  expect(errors).toEqual([]);
+});
+
 test('opens the Dream Journal from the chapter-complete card', async ({ page }) => {
   const errors = collectPageErrors(page);
 
