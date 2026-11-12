@@ -1,0 +1,400 @@
+import Phaser from 'phaser';
+import { FONT_KEY, GAME_HEIGHT, GAME_WIDTH } from '../config/constants.ts';
+import { STAGE_TUNING } from '../config/tuning.ts';
+import { animationKey } from '../data/assets.ts';
+import { CHARACTERS } from '../data/characters.ts';
+import { codexEntry } from '../data/codex/index.ts';
+import { chapterById } from '../data/script/registry.ts';
+import { TextBox } from '../entities/textbox.ts';
+import type { SaveService } from '../services/save-service.ts';
+import { DialogueRuntime } from '../systems/dialogue/dialogue-runtime.ts';
+import type { CharacterId, DialogueEvent } from '../types/story.ts';
+import { setTestHook } from '../utils/test-hooks.ts';
+
+interface StorySceneData {
+  chapterId?: string;
+}
+
+type StoryMode = 'line' | 'choice' | 'done';
+
+/**
+ * The scene every chapter plays in.
+ *
+ * It owns the stage, the dialogue box, and the input, and it does nothing
+ * but translate runtime events into presentation. All story rules live in the
+ * script data and the runtime.
+ */
+export class StoryScene extends Phaser.Scene {
+  private runtime: DialogueRuntime | undefined;
+  private textBox: TextBox | undefined;
+  private backdrop: Phaser.GameObjects.Image | undefined;
+  private card: Phaser.GameObjects.Container | undefined;
+  private toast: Phaser.GameObjects.BitmapText | undefined;
+  private readonly actors = new Map<CharacterId, Phaser.GameObjects.Sprite>();
+  private chapterId = 'act-one';
+  private mode: StoryMode = 'line';
+  private cardActive = false;
+  private speaker: CharacterId = 'narrator';
+  private currentLine = '';
+
+  constructor() {
+    super('Story');
+  }
+
+  init(data: StorySceneData): void {
+    this.chapterId = data.chapterId ?? 'act-one';
+  }
+
+  create(): void {
+    setTestHook({ ready: true, scene: 'Story', chapter: this.chapterId });
+
+    // The scene instance survives a restart, so the actors of the previous
+    // chapter have to be dropped before the new ones are placed.
+    this.actors.clear();
+
+    const script = chapterById(this.chapterId);
+
+    if (!script) {
+      this.scene.start('Title');
+      return;
+    }
+
+    const saveService = this.registry.get('saveService') as SaveService;
+
+    this.backdrop = this.add.image(0, 0, script.backdrop).setOrigin(0).setDepth(0);
+    this.add.rectangle(0, 0, GAME_WIDTH, GAME_HEIGHT, 0x07070c, 0.18).setOrigin(0).setDepth(1);
+
+    this.textBox = new TextBox(this);
+    this.installInput();
+
+    this.runtime = new DialogueRuntime(script, saveService.dialogueState);
+    this.applyEvents(this.runtime.advance());
+  }
+
+  override update(_time: number, delta: number): void {
+    this.textBox?.update(delta);
+    this.publishHook();
+  }
+
+  private applyEvents(events: DialogueEvent[]): void {
+    for (const event of events) {
+      switch (event.type) {
+        case 'say':
+          this.showLine(event.speaker, event.text);
+          break;
+        case 'choice':
+          this.showChoices(
+            event.prompt,
+            event.options.map((option) => option.label),
+          );
+          break;
+        case 'codex':
+          this.unlockCodex(event.entry);
+          break;
+        case 'stat':
+          this.persistStats();
+          break;
+        case 'flag':
+          this.persistFlag(event.flag, event.value);
+          break;
+        case 'chapter':
+          this.showChapterCard(event.title, event.subtitle);
+          break;
+        case 'stage':
+          this.setStage(event.actors, event.backdrop);
+          break;
+        case 'end':
+          this.endChapter();
+          break;
+      }
+    }
+  }
+
+  private showLine(speaker: CharacterId, text: string): void {
+    const box = this.textBox;
+
+    if (!box) {
+      return;
+    }
+
+    this.speaker = speaker;
+    this.currentLine = text;
+    const character = CHARACTERS[speaker];
+    box.setSpeaker(character.name, character.color);
+    box.showText(text);
+    this.mode = 'line';
+    this.highlightSpeaker();
+  }
+
+  private showChoices(prompt: string, labels: string[]): void {
+    const box = this.textBox;
+
+    if (!box) {
+      return;
+    }
+
+    this.mode = 'choice';
+    box.openChoices(prompt, labels);
+    this.publishHook();
+  }
+
+  private showChapterCard(title: string, subtitle?: string): void {
+    this.cardActive = true;
+
+    const overlay = this.add.container(0, 0).setDepth(200);
+    overlay.add(this.add.rectangle(0, 0, GAME_WIDTH, GAME_HEIGHT, 0x07070c, 1).setOrigin(0));
+
+    const titleText = this.add
+      .bitmapText(GAME_WIDTH / 2, GAME_HEIGHT / 2 - 16, FONT_KEY, title)
+      .setOrigin(0.5, 0.5);
+    titleText.setScale(2);
+    titleText.setTint(0xf2c14e);
+    overlay.add(titleText);
+
+    if (subtitle) {
+      overlay.add(
+        this.add
+          .bitmapText(GAME_WIDTH / 2, GAME_HEIGHT / 2 + 12, FONT_KEY, subtitle)
+          .setOrigin(0.5, 0.5)
+          .setAlpha(0.8),
+      );
+    }
+
+    overlay.setAlpha(0);
+    this.card = overlay;
+
+    this.tweens.add({
+      targets: overlay,
+      alpha: 1,
+      duration: 420,
+      onComplete: () => {
+        this.tweens.add({
+          targets: overlay,
+          alpha: 0,
+          delay: 620,
+          duration: 420,
+          onComplete: () => {
+            overlay.destroy();
+            this.card = undefined;
+            this.cardActive = false;
+          },
+        });
+      },
+    });
+  }
+
+  private setStage(actors: { character: CharacterId; x: number }[], backdrop?: string): void {
+    for (const actor of actors) {
+      const existing = this.actors.get(actor.character);
+
+      if (existing) {
+        existing.setX(actor.x);
+        continue;
+      }
+
+      const definition = CHARACTERS[actor.character];
+
+      if (!this.textures.exists(definition.spriteKey)) {
+        continue;
+      }
+
+      const sprite = this.add
+        .sprite(actor.x, STAGE_TUNING.groundY, definition.spriteKey)
+        .setOrigin(0.5, 1)
+        .setDepth(10);
+
+      // A soft ellipse under the feet keeps the sprite from looking pasted on.
+      this.add.ellipse(actor.x, STAGE_TUNING.groundY + 1, 28, 7, 0x000000, 0.28).setDepth(9);
+
+      const idleKey = animationKey(definition.spriteKey, 'idle');
+
+      if (this.anims.exists(idleKey)) {
+        sprite.play(idleKey);
+      }
+
+      this.actors.set(actor.character, sprite);
+    }
+
+    if (backdrop && this.textures.exists(backdrop)) {
+      this.backdrop?.setTexture(backdrop);
+    }
+
+    this.highlightSpeaker();
+  }
+
+  private highlightSpeaker(): void {
+    for (const [id, sprite] of this.actors) {
+      const speaking = id === this.speaker;
+      // The dim has to stay light: the backdrops are dark, and a character
+      // that is merely "not talking" still has to be readable.
+      sprite.setAlpha(speaking ? 1 : 0.88);
+      sprite.setTint(speaking ? 0xffffff : 0xd8d4e0);
+    }
+  }
+
+  private unlockCodex(id: string): void {
+    const saveService = this.registry.get('saveService') as SaveService;
+
+    if (!saveService.unlockCodex(id)) {
+      return;
+    }
+
+    const entry = codexEntry(id);
+
+    if (!entry) {
+      return;
+    }
+
+    this.showToast(`CODEX: ${entry.title}`);
+  }
+
+  private showToast(message: string): void {
+    this.toast?.destroy();
+
+    const toast = this.add
+      .bitmapText(GAME_WIDTH - 12, 16, FONT_KEY, message)
+      .setOrigin(1, 0)
+      .setDepth(210)
+      .setTint(0xffe6a0);
+    this.toast = toast;
+
+    this.tweens.add({
+      targets: toast,
+      alpha: 0,
+      delay: 1600,
+      duration: 600,
+      onComplete: () => {
+        toast.destroy();
+
+        if (this.toast === toast) {
+          this.toast = undefined;
+        }
+      },
+    });
+  }
+
+  private persistStats(): void {
+    const saveService = this.registry.get('saveService') as SaveService;
+    const runtime = this.runtime;
+
+    if (!runtime) {
+      return;
+    }
+
+    saveService.setStats({
+      reason: runtime.getStat('reason'),
+      wisdom: runtime.getStat('wisdom'),
+      empathy: runtime.getStat('empathy'),
+    });
+  }
+
+  private persistFlag(flag: string, value: boolean): void {
+    const saveService = this.registry.get('saveService') as SaveService;
+    saveService.setFlag(flag, value);
+  }
+
+  private endChapter(): void {
+    this.mode = 'done';
+
+    const saveService = this.registry.get('saveService') as SaveService;
+    saveService.completeChapter(this.chapterId);
+
+    this.textBox?.showTextInstant('End of chapter. Press Z to return to the title.');
+  }
+
+  private confirm(): void {
+    if (this.cardActive) {
+      this.skipCard();
+      return;
+    }
+
+    if (this.mode === 'done') {
+      this.scene.start('Title');
+      return;
+    }
+
+    const box = this.textBox;
+    const runtime = this.runtime;
+
+    if (!box || !runtime) {
+      return;
+    }
+
+    if (this.mode === 'choice') {
+      const index = box.selectedChoice;
+      box.closeChoices();
+      this.applyEvents(runtime.choose(index));
+      return;
+    }
+
+    if (box.isTyping) {
+      box.revealAll();
+      return;
+    }
+
+    this.applyEvents(runtime.advance());
+  }
+
+  private skipCard(): void {
+    this.cardActive = false;
+
+    if (!this.card) {
+      return;
+    }
+
+    this.tweens.killTweensOf(this.card);
+    this.card.destroy();
+    this.card = undefined;
+  }
+
+  private moveChoice(delta: number): void {
+    if (this.mode !== 'choice') {
+      return;
+    }
+
+    this.textBox?.moveChoice(delta);
+    this.publishHook();
+  }
+
+  private installInput(): void {
+    const keyboard = this.input.keyboard;
+
+    if (!keyboard) {
+      return;
+    }
+
+    keyboard.on('keydown-Z', () => this.confirm());
+    keyboard.on('keydown-ENTER', () => this.confirm());
+    keyboard.on('keydown-SPACE', () => this.confirm());
+    keyboard.on('keydown-UP', () => this.moveChoice(-1));
+    keyboard.on('keydown-DOWN', () => this.moveChoice(1));
+  }
+
+  private publishHook(): void {
+    const box = this.textBox;
+    const saveService = this.registry.get('saveService') as SaveService;
+    const runtime = this.runtime;
+
+    setTestHook({
+      ready: true,
+      scene: 'Story',
+      chapter: this.chapterId,
+      lineText: box?.visibleText ?? '',
+      lastLine: this.currentLine,
+      speaker: CHARACTERS[this.speaker].name,
+      typing: box?.isTyping ?? false,
+      choosing: this.mode === 'choice',
+      choiceCount: box?.choiceCount ?? 0,
+      choiceIndex: box?.selectedChoice ?? 0,
+      choiceLabels: box?.choiceLabels ?? [],
+      unlockedCodex: saveService.snapshot.unlockedCodex,
+      stats: runtime
+        ? {
+            reason: runtime.getStat('reason'),
+            wisdom: runtime.getStat('wisdom'),
+            empathy: runtime.getStat('empathy'),
+          }
+        : { reason: 0, wisdom: 0, empathy: 0 },
+    });
+  }
+}

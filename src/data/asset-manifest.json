@@ -1,0 +1,69 @@
+{
+  "version": 1,
+  "images": [
+    {
+      "key": "backdrop-bedroom",
+      "url": "assets/backdrops/bedroom.png",
+      "width": 640,
+      "height": 360
+    },
+    {
+      "key": "backdrop-lyceum",
+      "url": "assets/backdrops/lyceum.png",
+      "width": 640,
+      "height": 360
+    },
+    {
+      "key": "ui-heart",
+      "url": "assets/ui/heart.png",
+      "width": 7,
+      "height": 6
+    }
+  ],
+  "spritesheets": [
+    {
+      "key": "char-isaac",
+      "url": "assets/sprites/char-isaac.png",
+      "frameWidth": 32,
+      "frameHeight": 48,
+      "frameCount": 2,
+      "animations": [
+        {
+          "key": "char-isaac-idle",
+          "frames": [
+            0,
+            1,
+            0
+          ],
+          "frameRate": 2.5,
+          "repeat": -1
+        }
+      ]
+    },
+    {
+      "key": "char-aristotle",
+      "url": "assets/sprites/char-aristotle.png",
+      "frameWidth": 32,
+      "frameHeight": 48,
+      "frameCount": 1,
+      "animations": [
+        {
+          "key": "char-aristotle-idle",
+          "frames": [
+            0
+          ],
+          "frameRate": 1,
+          "repeat": -1
+        }
+      ]
+    }
+  ],
+  "bitmapFonts": [
+    {
+      "key": "pixel-5x7",
+      "textureUrl": "assets/fonts/pixel-5x7.png",
+      "dataUrl": "assets/fonts/pixel-5x7.xml"
+    }
+  ],
+  "audio": []
+}

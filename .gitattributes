@@ -1,0 +1,6 @@
+# Normalise line endings: text files are checked out with LF on every
+# platform, so the diff of a file is never full of carriage returns.
+* text=auto eol=lf
+
+*.png binary
+*.wav binary
