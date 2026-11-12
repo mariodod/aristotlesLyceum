@@ -26,6 +26,8 @@ export interface LyceumTestHook {
   choiceIndex: number;
   /** Labels of the open choice menu. */
   choiceLabels: string[];
+  /** True when the choice labels are actually drawn on top of the panel. */
+  choiceVisible: boolean;
   /** Codex entry ids unlocked so far. */
   unlockedCodex: string[];
   /** Current value of each story stat. */

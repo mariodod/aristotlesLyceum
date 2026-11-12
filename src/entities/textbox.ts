@@ -185,6 +185,7 @@ export class TextBox extends Phaser.GameObjects.Container {
       prompt,
     );
     promptText.setTint(0xffe6a0);
+    this.add(promptText);
     this.optionTexts.push(promptText);
 
     labels.forEach((label, index) => {
@@ -194,6 +195,10 @@ export class TextBox extends Phaser.GameObjects.Container {
         FONT_KEY,
         label,
       );
+      // The option has to become a child of this container. A text object
+      // left in the scene's display list sits at depth zero and renders
+      // behind the panel, which hides the whole menu.
+      this.add(option);
       this.optionTexts.push(option);
     });
 
@@ -233,6 +238,14 @@ export class TextBox extends Phaser.GameObjects.Container {
 
   get choiceLabels(): string[] {
     return this.choiceOptions;
+  }
+
+  /**
+   * True when every option label is actually a child of this container and
+   * will therefore render on top of the panel.
+   */
+  get optionsRendered(): boolean {
+    return this.optionTexts.every((text) => text.parentContainer === this);
   }
 
   private refreshChoiceCursor(): void {

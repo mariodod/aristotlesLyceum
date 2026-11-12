@@ -292,6 +292,10 @@ There is no image editor in this workflow. Art is code.
 - Phaser `Rectangle` and `Ellipse` are centre-origin. Use `setOrigin(0, 0)`
   whenever the object is laid out against a top-left corner. This has already
   cost one debugging session; do not repeat it.
+- A game object created with `scene.add.*` belongs to the scene's display
+  list, not to a container. To draw something inside the dialogue box, add it
+  to the container as well, or it renders at depth zero behind the panel.
+  `TextBox.optionsRendered` exists to guard exactly this.
 
 ---
 

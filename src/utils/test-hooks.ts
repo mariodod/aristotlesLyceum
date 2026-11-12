@@ -21,6 +21,7 @@ export function setTestHook(patch: Partial<LyceumTestHook>): void {
     choiceCount: 0,
     choiceIndex: 0,
     choiceLabels: [],
+    choiceVisible: false,
     unlockedCodex: [],
     stats: { reason: 0, wisdom: 0, empathy: 0 },
     lastLine: '',

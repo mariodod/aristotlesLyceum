@@ -387,6 +387,7 @@ export class StoryScene extends Phaser.Scene {
       choiceCount: box?.choiceCount ?? 0,
       choiceIndex: box?.selectedChoice ?? 0,
       choiceLabels: box?.choiceLabels ?? [],
+      choiceVisible: box?.optionsRendered ?? false,
       unlockedCodex: saveService.snapshot.unlockedCodex,
       stats: runtime
         ? {

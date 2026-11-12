@@ -20,6 +20,7 @@ test('plays the opening chapter and reaches the first choice', async ({ page }) 
 
   await expect.poll(() => readHook<boolean>(page, 'choosing')).toBe(true);
   await expect.poll(() => readHook<number>(page, 'choiceCount')).toBe(3);
+  await expect.poll(() => readHook<boolean>(page, 'choiceVisible')).toBe(true);
   expect(errors).toEqual([]);
 });
 
