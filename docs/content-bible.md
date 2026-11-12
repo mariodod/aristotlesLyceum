@@ -21,14 +21,33 @@ place the idea still does work — not a vague resemblance.
 
 ### Beats
 
-1. The room, the clock, the exam in nine hours.
+1. The room, the clock, the exam in nine hours. The mug of tea he stopped
+   drinking, the phone face down, the highlighter that has never highlighted
+   anything.
 2. Isaac states that philosophy is the subject where reading every page still
-   fails you.
+   fails you. Then, more quietly, that the reading does not go anywhere.
 3. He turns the page anyway. The page he is on is _Metaphysics_ I, "All men by
    nature desire to know."
-4. He reads aloud and hears his own voice answer back.
-5. **Choice:** read on / hold the page down / shut the book.
-6. The room becomes somewhere else.
+4. He reads aloud, and hears whether he sounds like he believes it. On the
+   third reading, the words on the page have moved.
+5. **Choice:** read the next line out loud / read it again until it makes
+   sense / text his best friend that he is going to fail.
+6. The room goes somewhere else. The floor is stone, the air smells of olive
+   oil, and the window is not a window any more.
+7. Aristotle is waiting for him to finish the sentence he stopped one line
+   early.
+8. Three different endings, named on the card: _The Argument_, _The
+   Repetition_, _The Message_. All three end on the same last exchange, in
+   which Aristotle tells Isaac what he is going to do with the hours
+   afterwards.
+
+### The three endings
+
+| Ending             | The choice                                    | What it says about Isaac                                                                                                                               |
+| ------------------ | --------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **The Argument**   | Read the next line out loud                   | He wants to know _why_. That is all he ever wanted from a textbook: not the answer, just the reason to keep asking.                                    |
+| **The Repetition** | Read it again until it makes sense            | He read the same page nine hundred times because he did not want to be the sort of person who fails. That was not philosophy. That was closer to love. |
+| **The Message**    | Text his best friend that he is going to fail | He had no idea what he would do. Underneath the panic there was a question he actually wanted to answer.                                               |
 
 ### Codex unlocked
 
