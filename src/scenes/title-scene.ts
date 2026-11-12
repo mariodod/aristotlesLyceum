@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import { FONT_KEY, GAME_HEIGHT, GAME_WIDTH } from '../config/constants.ts';
 import { TITLE_TUNING } from '../config/tuning.ts';
+import { opponentById } from '../data/dialectic/opponents.ts';
 import { setTestHook } from '../utils/test-hooks.ts';
 
 /**
@@ -30,6 +31,18 @@ export class TitleScene extends Phaser.Scene {
         action: () => this.scene.start('Story', { chapterId: 'act-one' }),
       },
       { label: 'CODEX', action: () => this.scene.start('Codex') },
+      ...(import.meta.env.DEV
+        ? [
+            {
+              label: 'TRY A DIALECTIC',
+              action: () =>
+                this.scene.start('Dialectic', {
+                  opponentId: this.requestedOpponent(),
+                  returnToScene: 'Title',
+                }),
+            },
+          ]
+        : []),
       { label: 'SETTINGS', action: () => this.scene.start('Settings') },
       { label: 'CREDITS', action: () => this.scene.start('Credits') },
     ];
@@ -98,6 +111,15 @@ export class TitleScene extends Phaser.Scene {
 
   private confirm(): void {
     this.entries[this.selected]?.action();
+  }
+
+  /**
+   * The opponent asked for in the address bar, for trying the others out
+   * during development.
+   */
+  private requestedOpponent(): string {
+    const value = new URLSearchParams(window.location.search).get('opponent');
+    return value && opponentById(value) ? value : 'certainty';
   }
 
   private installInput(): void {

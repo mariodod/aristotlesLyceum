@@ -7,6 +7,37 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-11-12
+
+### Added
+
+- **M4: the dialectic.** A battle system where the opponent is an
+  argument given a face, and the only way to win it is to build a
+  syllogism that takes it apart.
+- **A real syllogism engine.** The classical mood and figure table, so a
+  categorical syllogism is valid exactly when its mood is in the list for
+  its figure. It names the mood it found: Celarent, Darii, Camestres.
+- **The four moves.** Examine, refute, claim, embrace. Only one of them
+  wins the argument; the other three exist to teach how.
+- **A builder that teaches.** It names the figure as soon as the two
+  premises are chosen and the mood as soon as the conclusion is, so a
+  player who has never heard of a syllogism learns the shape of one by
+  watching the readout.
+- **Four opponents.** Certainty, Reductionism, Pluralism and the Marking.
+  Every one has exactly one refutation, and exactly one sound argument
+  that answers nothing, so the game can say "that is a valid argument, and
+  it is not an answer to me".
+- **A `dialectic` step kind**, so a chapter can hand over to a battle and
+  pick up again at a label when the argument is won.
+- **A development entry on the title screen** so the battle can be reached
+  before Act II exists.
+
+### Fixed
+
+- **The builder would take the same premise twice.** Two copies of one
+  premise is not a syllogism, and the readout had nothing useful to say
+  about it.
+
 ## [0.3.0] - 2026-11-12
 
 ### Added

@@ -222,7 +222,7 @@ editing a scene.
 | **M1** | Dialogue runtime, textbox, title screen, save service, content linter   | **Done** (in M0)                                  |
 | **M2** | Act I complete and playtested, with a proper ending                     | In progress — written and verified; playtest open |
 | **M3** | Character art pass: 12 characters, expressions, portraits               | **Done**                                          |
-| **M4** | Dialectic system and the syllogism builder                              | Not started                                       |
+| **M4** | Dialectic system and the syllogism builder                              | **Done**                                          |
 | **M5** | Codex screen, codex entries for Act II, codex-driven hints              | Partly — screen exists, 2 entries                 |
 | **M6** | Act II written: seven chapters, ~40 minutes                             | Not started                                       |
 | **M7** | Act III written: eight stations; Act IV exam playable                   | Not started                                       |

@@ -15,6 +15,7 @@ import { fileURLToPath } from 'node:url';
 import { CHAPTERS } from '../../src/data/script/registry.ts';
 import { CODEX_ENTRIES } from '../../src/data/codex/index.ts';
 import { CHARACTERS } from '../../src/data/characters.ts';
+import { DIALECTIC_OPPONENTS } from '../../src/data/dialectic/opponents.ts';
 import { EXPRESSION_ORDER } from '../../src/data/sprite-expressions.ts';
 import { CHARACTER_IDS, EXPRESSION_IDS } from '../../src/types/story.ts';
 import { findUnreachableSteps } from '../../src/systems/dialogue/reachability.ts';
@@ -24,6 +25,8 @@ const projectRoot = join(here, '..', '..');
 
 const problems = [];
 const MAX_LINE_LENGTH = 420;
+
+const opponentIds = new Set(DIALECTIC_OPPONENTS.map((opponent) => opponent.id));
 
 function report(where, message) {
   problems.push(`${where}: ${message}`);
@@ -64,6 +67,19 @@ for (const script of CHAPTERS) {
 
       if (!labels.has(step.ifFalse)) {
         report(where, `branch at "${step.at}" targets unknown label "${step.ifFalse}"`);
+      }
+    }
+
+    if (step.kind === 'dialectic') {
+      if (!opponentIds.has(step.opponent)) {
+        report(
+          where,
+          `dialectic at "${step.at}" faces an opponent nobody has written ("${step.opponent}")`,
+        );
+      }
+
+      if (!labels.has(step.returnTo)) {
+        report(where, `dialectic at "${step.at}" returns to an unknown label ("${step.returnTo}")`);
       }
     }
 

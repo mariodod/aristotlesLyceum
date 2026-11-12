@@ -98,6 +98,8 @@ src/
     tuning.ts              # feel constants, each with the reason it exists
   data/
     assets.ts              # typed access to the generated manifest
+    dialectic/
+      opponents.ts         # the arguments the player has to take apart
     characters.ts          # the cast: names, colours, sprite keys
     sprite-expressions.ts  # the expression order and the frame maths
     codex/
@@ -108,17 +110,22 @@ src/
       act-one.ts           # Act I — The Desk
   entities/
     textbox.ts             # the dialogue box, name plate and choice menu
+    syllogism-builder.ts   # the argument builder in the dialectic
   scenes/
     boot-scene.ts          # loads the font, creates the save service
     preload-scene.ts       # loads everything in the manifest
     title-scene.ts         # title and menu
     story-scene.ts         # plays any chapter; owns presentation only
+    dialectic-scene.ts     # the battle: the opponent, the four moves
     codex-scene.ts         # the Dream Journal, with portraits
     settings-scene.ts      # placeholder until M8
     credits-scene.ts       # placeholder until M9
   services/
     save-service.ts        # localStorage progress, injectable for tests
   systems/
+    dialectic/
+      syllogism.ts        # the mood and figure table (pure)
+      battle.ts           # the battle state machine (pure)
     dialogue/
       dialogue-runtime.ts  # the script interpreter (pure)
       reachability.ts      # finds steps a script can never reach (pure)
@@ -208,6 +215,7 @@ export const ACT_ONE: StoryScript = {
 | `flag`       | Sets a boolean flag.                                                                              |
 | `jump`       | Unconditional jump to a label.                                                                    |
 | `branch`     | Jumps to one of two labels depending on a flag. This is how a chapter reaches a different ending. |
+| `dialectic`  | Hands the chapter to a battle. The scene comes back to `returnTo` when the argument is won.       |
 | `chapterEnd` | Names the ending the player reached. The scene shows it on the chapter-complete card.             |
 | `end`        | Ends the chapter. The last step must be an `end`.                                                 |
 
@@ -241,7 +249,41 @@ export const ACT_ONE: StoryScript = {
 
 ---
 
-## 6. The art pipeline
+## 6. The dialectic
+
+The battle system is two halves that do not know about each other:
+
+- **`systems/dialectic/syllogism.ts`** is the classical mood and figure
+  table. A categorical syllogism is valid if and only if its mood is in
+  the list for its figure, so the engine is a lookup and an explanation.
+- **`systems/dialectic/battle.ts`** is the state machine over the four
+  moves: examine, refute, claim, embrace. It is pure, and it is the thing
+  the unit tests point at.
+
+Three things have to stay true, and the tests check all of them:
+
+1. **Every opponent has exactly one refutation.** The propositions an
+   opponent offers contain exactly one arrangement that is both valid and
+   answers their claim. `tests/unit/syllogism.test.ts` enumerates every
+   arrangement to prove it.
+2. **Every opponent has one sound argument that answers nothing.**
+   Otherwise the game can never say "that is a valid argument, and it is
+   not an answer to me", which is a lesson worth teaching.
+3. **The decoys are the same content in the wrong form.** A player should
+   be thinking about the shape of the argument, not about spotting the odd
+   one out.
+
+### Writing an opponent
+
+An opponent is one claim, a set of propositions, and the lines they say
+in each case. Add it to `src/data/dialectic/opponents.ts` and the tests
+will tell you whether the puzzle is solvable and whether the decoys work.
+
+The builder teaches: it names the figure as soon as the two premises are
+chosen and the mood as soon as the conclusion is. A player who has never
+heard of a syllogism learns the shape of one by watching the readout.
+
+## 7. The art pipeline
 
 There is no image editor in this workflow. Art is code.
 
@@ -287,7 +329,7 @@ There is no image editor in this workflow. Art is code.
 
 ---
 
-## 7. Testing
+## 8. Testing
 
 | Layer   | Tool                            | Covers                                                                        |
 | ------- | ------------------------------- | ----------------------------------------------------------------------------- |
@@ -310,7 +352,7 @@ There is no image editor in this workflow. Art is code.
 
 ---
 
-## 8. Code style
+## 9. Code style
 
 - `kebab-case.ts` files, `PascalCase` classes and types, `camelCase` values,
   `SCREAMING_SNAKE` for module constants.
@@ -332,7 +374,7 @@ There is no image editor in this workflow. Art is code.
 
 ---
 
-## 9. Definition of done
+## 10. Definition of done
 
 A change is done when:
 
@@ -346,7 +388,15 @@ A change is done when:
 
 ---
 
-## 10. Current state
+## 11. Current state
+
+See [`PLAN.md`](PLAN.md) for the milestone plan and [`docs/roadmap.md`](docs/roadmap.md)
+for the schedule. The short version: the engine, the art pipeline, the dialogue
+runtime, the content linter, Act I and the dialectic exist and are verified end
+to end. Act I has three endings and a chapter-complete card; the human
+playtest is the one open item, and its protocol is in
+[`docs/m2-playtest.md`](docs/m2-playtest.md). Act II onward is still to be
+written.
 
 See [`PLAN.md`](PLAN.md) for the milestone plan and [`docs/roadmap.md`](docs/roadmap.md)
 for the schedule. The short version: the engine, the art pipeline, the dialogue

@@ -14,7 +14,7 @@
 | M1  | Engine         | Dialogue runtime, textbox, title, save, content linter              | Done        |
 | M2  | Act I          | The opening chapter, finished and playtested                        | In progress |
 | M3  | Art pass       | Twelve characters with expressions, portraits, three more backdrops | Done        |
-| M4  | Dialectic      | The battle system and the syllogism builder                         | Not started |
+| M4  | Dialectic      | The battle system and the syllogism builder                         | Done        |
 | M5  | Codex          | Journal screen complete, Act II entries authored                    | Partial     |
 | M6  | Act II         | Seven chapters, forty minutes of writing                            | Not started |
 | M7  | Act III & IV   | Eight stations and a playable exam                                  | Not started |
@@ -101,6 +101,29 @@ without the name plate.
 
 ### M4 — Dialectic
 
+- A standalone prototype scene with the four options.
+- The syllogism builder: pick a major premise, a minor premise and a
+  conclusion; the game checks the mood and the figure.
+- Three opponents for Act II, one for the exam.
+
+**Done when:** a player who has never heard of a syllogism can win one
+argument in under three minutes and can explain why it worked.
+
+**Progress:**
+
+- [x] The engine is the classical mood and figure table, so a syllogism
+      is valid exactly when its mood is in the list for its figure.
+- [x] The four moves: examine, refute, claim, embrace. Only one of them
+      wins the argument; the other three exist to teach how.
+- [x] The builder names the figure as soon as the two premises are chosen
+      and the mood as soon as the conclusion is, so it teaches itself.
+- [x] Four opponents: Certainty, Reductionism, Pluralism and the Marking.
+      Every one has exactly one refutation and one sound argument that
+      answers nothing, and the tests prove both.
+- [x] A development entry on the title screen so the battle can be
+      reached before Act II exists.
+- [ ] The playtest with somebody who has never heard of a syllogism. That
+      is the acceptance criterion and it needs a human.
 - A standalone prototype scene with the four options.
 - The syllogism builder: pick a major premise, a minor premise and a
   conclusion; the game checks the mood and the figure.

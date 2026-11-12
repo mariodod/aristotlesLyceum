@@ -3,6 +3,7 @@ import { APP_VERSION, GAME_HEIGHT, GAME_TITLE, GAME_WIDTH } from './config/const
 import { BootScene } from './scenes/boot-scene.ts';
 import { CodexScene } from './scenes/codex-scene.ts';
 import { CreditsScene } from './scenes/credits-scene.ts';
+import { DialecticScene } from './scenes/dialectic-scene.ts';
 import { PreloadScene } from './scenes/preload-scene.ts';
 import { SettingsScene } from './scenes/settings-scene.ts';
 import { StoryScene } from './scenes/story-scene.ts';
@@ -32,6 +33,7 @@ export function createGame(): Phaser.Game {
       PreloadScene,
       TitleScene,
       StoryScene,
+      DialecticScene,
       CodexScene,
       SettingsScene,
       CreditsScene,

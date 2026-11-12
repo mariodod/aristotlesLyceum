@@ -1,11 +1,32 @@
 import Phaser from 'phaser';
-import { FONT_KEY, TEXTBOX, TEXT_COLUMNS } from '../config/constants.ts';
+import { FONT_KEY, TEXTBOX } from '../config/constants.ts';
 import { DIALOGUE_TUNING } from '../config/tuning.ts';
 import { Typewriter } from '../systems/dialogue/typewriter.ts';
 import { wrapText } from '../systems/dialogue/text-wrap.ts';
 
 const BORDER_COLOR = 0xf6f2e8;
 const PANEL_COLOR = 0x07070c;
+
+export interface TextBoxGeometry {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  paddingX: number;
+  paddingY: number;
+  borderWidth: number;
+  /** How many characters fit on a line. */
+  columns: number;
+}
+
+/**
+ * The geometry of the standard dialogue box. The battle uses a narrower one,
+ * so the geometry is data rather than a constant.
+ */
+export const DEFAULT_TEXTBOX: TextBoxGeometry = {
+  ...TEXTBOX,
+  columns: 82,
+};
 
 /**
  * The dialogue box: a black panel with a pale border, a name plate that
@@ -15,6 +36,7 @@ const PANEL_COLOR = 0x07070c;
  * inside the same box and share its rhythm.
  */
 export class TextBox extends Phaser.GameObjects.Container {
+  private readonly geometry: TextBoxGeometry;
   private readonly background: Phaser.GameObjects.Rectangle;
   private readonly border: Phaser.GameObjects.Graphics;
   private readonly namePlate: Phaser.GameObjects.Rectangle;
@@ -30,32 +52,34 @@ export class TextBox extends Phaser.GameObjects.Container {
   private choiceOptions: string[] = [];
   private choiceIndex = 0;
 
-  constructor(scene: Phaser.Scene) {
+  constructor(scene: Phaser.Scene, geometry: TextBoxGeometry = DEFAULT_TEXTBOX) {
     super(scene, 0, 0);
     scene.add.existing(this);
+
+    this.geometry = geometry;
 
     // Phaser rectangles are centre-origin by default. These are laid out
     // against the top-left of the box, so the origin has to be moved.
     this.background = scene.add
-      .rectangle(TEXTBOX.x, TEXTBOX.y, TEXTBOX.width, TEXTBOX.height, PANEL_COLOR, 1)
+      .rectangle(geometry.x, geometry.y, geometry.width, geometry.height, PANEL_COLOR, 1)
       .setOrigin(0, 0);
 
     this.border = scene.add.graphics();
-    this.border.lineStyle(TEXTBOX.borderWidth, BORDER_COLOR, 1);
-    this.border.strokeRect(TEXTBOX.x, TEXTBOX.y, TEXTBOX.width, TEXTBOX.height);
+    this.border.lineStyle(geometry.borderWidth, BORDER_COLOR, 1);
+    this.border.strokeRect(geometry.x, geometry.y, geometry.width, geometry.height);
 
     // The plate straddles the top border of the box, and the name sits above
     // the border line so the rule never runs through the letters.
     this.namePlate = scene.add
-      .rectangle(TEXTBOX.x + 8, TEXTBOX.y - 13, 10, 16, PANEL_COLOR, 1)
+      .rectangle(geometry.x + 8, geometry.y - 13, 10, 16, PANEL_COLOR, 1)
       .setOrigin(0, 0);
     this.namePlateBorder = scene.add.graphics();
-    this.nameText = scene.add.bitmapText(TEXTBOX.x + 16, TEXTBOX.y - 11, FONT_KEY, '');
+    this.nameText = scene.add.bitmapText(geometry.x + 16, geometry.y - 11, FONT_KEY, '');
     this.nameText.setVisible(false);
 
     this.bodyText = scene.add.bitmapText(
-      TEXTBOX.x + TEXTBOX.paddingX,
-      TEXTBOX.y + TEXTBOX.paddingY,
+      geometry.x + geometry.paddingX,
+      geometry.y + geometry.paddingY,
       FONT_KEY,
       '',
     );
@@ -65,8 +89,8 @@ export class TextBox extends Phaser.GameObjects.Container {
     this.indicator.fillStyle(BORDER_COLOR, 1);
     this.indicator.fillTriangle(0, 0, 7, 0, 3, 5);
     this.indicator.setPosition(
-      TEXTBOX.x + TEXTBOX.width - TEXTBOX.paddingX - 8,
-      TEXTBOX.y + TEXTBOX.height - 14,
+      geometry.x + geometry.width - geometry.paddingX - 8,
+      geometry.y + geometry.height - 14,
     );
     this.indicator.setVisible(false);
 
@@ -98,22 +122,23 @@ export class TextBox extends Phaser.GameObjects.Container {
     this.namePlateBorder.clear();
 
     if (name.length === 0) {
-      this.namePlate.setSize(1, 1);
-      this.namePlate.setPosition(TEXTBOX.x + 8, TEXTBOX.y - 13);
+      this.namePlate.setVisible(false);
       return;
     }
+
+    this.namePlate.setVisible(true);
 
     const width = this.nameText.width + 16;
 
     this.namePlate.setSize(width, 16);
-    this.namePlate.setPosition(TEXTBOX.x + 8, TEXTBOX.y - 13);
-    this.namePlateBorder.lineStyle(TEXTBOX.borderWidth, BORDER_COLOR, 1);
-    this.namePlateBorder.strokeRect(TEXTBOX.x + 8, TEXTBOX.y - 13, width, 16);
+    this.namePlate.setPosition(this.geometry.x + 8, this.geometry.y - 13);
+    this.namePlateBorder.lineStyle(this.geometry.borderWidth, BORDER_COLOR, 1);
+    this.namePlateBorder.strokeRect(this.geometry.x + 8, this.geometry.y - 13, width, 16);
   }
 
   /** Starts a typewriter reveal of the given line. */
   showText(text: string, charactersPerSecond = DIALOGUE_TUNING.charactersPerSecond): void {
-    const wrapped = wrapText(text, TEXT_COLUMNS);
+    const wrapped = wrapText(text, this.geometry.columns);
     this.typewriter = new Typewriter(wrapped, charactersPerSecond);
     this.bodyText.setText('');
     this.bodyText.setVisible(true);
@@ -179,25 +204,25 @@ export class TextBox extends Phaser.GameObjects.Container {
     this.optionTexts.length = 0;
 
     const promptText = this.scene.add.bitmapText(
-      TEXTBOX.x + TEXTBOX.paddingX,
-      TEXTBOX.y + TEXTBOX.paddingY,
+      this.geometry.x + this.geometry.paddingX,
+      this.geometry.y + this.geometry.paddingY,
       FONT_KEY,
       prompt,
     );
     promptText.setTint(0xffe6a0);
+    // The option has to become a child of this container. A text object left
+    // in the scene's display list sits at depth zero and renders behind the
+    // panel, which hides the whole menu.
     this.add(promptText);
     this.optionTexts.push(promptText);
 
     labels.forEach((label, index) => {
       const option = this.scene.add.bitmapText(
-        TEXTBOX.x + TEXTBOX.paddingX + 16,
-        TEXTBOX.y + TEXTBOX.paddingY + 16 + index * 12,
+        this.geometry.x + this.geometry.paddingX + 16,
+        this.geometry.y + this.geometry.paddingY + 16 + index * 12,
         FONT_KEY,
         label,
       );
-      // The option has to become a child of this container. A text object
-      // left in the scene's display list sits at depth zero and renders
-      // behind the panel, which hides the whole menu.
       this.add(option);
       this.optionTexts.push(option);
     });

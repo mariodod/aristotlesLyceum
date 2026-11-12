@@ -133,6 +133,18 @@ export interface ChapterEndStep extends BaseStep {
   subtitle?: string;
 }
 
+/**
+ * Hands the chapter over to a dialectic. The scene runs the argument and
+ * comes back to the label in `returnTo` when it is won.
+ */
+export interface DialecticStep extends BaseStep {
+  kind: 'dialectic';
+  /** The opponent to face. */
+  opponent: string;
+  /** The label to continue at when the argument is won. */
+  returnTo: string;
+}
+
 export interface ChapterStep extends BaseStep {
   kind: 'chapter';
   title: string;
@@ -160,6 +172,7 @@ export type StoryStep =
   | JumpStep
   | BranchStep
   | ChapterEndStep
+  | DialecticStep
   | ChapterStep
   | StageStep
   | EndStep;
@@ -186,6 +199,7 @@ export type DialogueEvent =
   | { type: 'flag'; flag: string; value: boolean }
   | { type: 'chapter'; title: string; subtitle?: string }
   | { type: 'chapterEnd'; title: string; subtitle?: string }
+  | { type: 'dialectic'; opponent: string; returnTo: string }
   | { type: 'stage'; actors: { character: CharacterId; x: number }[]; backdrop?: string }
   | { type: 'end' };
 

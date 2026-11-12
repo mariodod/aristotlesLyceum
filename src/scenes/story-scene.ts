@@ -21,6 +21,8 @@ import { setTestHook } from '../utils/test-hooks.ts';
 
 interface StorySceneData {
   chapterId?: string;
+  /** The label to continue at, used when a chapter resumes after a battle. */
+  resumeAt?: string;
 }
 
 type StoryMode = 'line' | 'choice' | 'done';
@@ -42,6 +44,7 @@ export class StoryScene extends Phaser.Scene {
   private toast: Phaser.GameObjects.BitmapText | undefined;
   private readonly actors = new Map<CharacterId, Phaser.GameObjects.Sprite>();
   private chapterId = 'act-one';
+  private resumeAt = '';
   private mode: StoryMode = 'line';
   private cardActive = false;
   private speaker: CharacterId = 'narrator';
@@ -56,6 +59,7 @@ export class StoryScene extends Phaser.Scene {
 
   init(data: StorySceneData): void {
     this.chapterId = data.chapterId ?? 'act-one';
+    this.resumeAt = data.resumeAt ?? '';
   }
 
   create(): void {
@@ -82,7 +86,11 @@ export class StoryScene extends Phaser.Scene {
     this.textBox = new TextBox(this);
     this.installInput();
 
-    this.runtime = new DialogueRuntime(script, this.freshStateFor(script));
+    this.runtime = new DialogueRuntime(
+      script,
+      this.freshStateFor(script),
+      this.resumeAt.length > 0 ? this.resumeAt : undefined,
+    );
     this.applyEvents(this.runtime.advance());
   }
 
@@ -134,6 +142,10 @@ export class StoryScene extends Phaser.Scene {
         case 'chapter':
           this.showChapterCard(event.title, event.subtitle);
           break;
+        case 'dialectic':
+          this.startDialectic(event.opponent, event.returnTo);
+          break;
+
         case 'chapterEnd':
           this.endingTitle = event.title;
           this.endingSubtitle = event.subtitle ?? '';
@@ -392,6 +404,18 @@ export class StoryScene extends Phaser.Scene {
 
     this.mode = 'done';
     this.showEndCard();
+  }
+
+  /**
+   * Hands the chapter over to a dialectic. The battle scene comes back
+   * here when the argument is won.
+   */
+  private startDialectic(opponent: string, returnTo: string): void {
+    this.scene.start('Dialectic', {
+      opponentId: opponent,
+      chapterId: this.chapterId,
+      resumeAt: returnTo,
+    });
   }
 
   /**

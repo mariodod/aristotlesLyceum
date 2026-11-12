@@ -16,6 +16,12 @@ export interface LyceumTestHook {
   lastLine: string;
   /** Expression the speaker is currently making. */
   expression: string;
+  /** The opponent in a dialectic, once one is running. */
+  opponent: string;
+  /** How firmly the opponent holds its position. */
+  conviction: number;
+  /** True while the syllogism builder is open. */
+  building: boolean;
   /** Name on the dialogue name plate. */
   speaker: string;
   /** True while the typewriter is still revealing characters. */

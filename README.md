@@ -2,7 +2,7 @@
 
 **A 2D pixel-art narrative game about Aristotle, his philosophy, and where it still runs.**
 
-> **Status:** `v0.3.0`. The engine, the art pipeline, the dialogue runtime and
+> **Status:** `v0.4.0`. The engine, the art pipeline, the dialogue runtime and
 > Act I exist and are verified end to end. Act I is a finished five-minute
 > chapter with three endings, and the whole cast has faces that react. Act II
 > onward is still to be written. See [`PLAN.md`](PLAN.md) for the roadmap. The engine, the art pipeline, the dialogue runtime and
@@ -50,6 +50,10 @@ Then open <http://127.0.0.1:5173>.
 - **The whole cast.** Twelve characters, each with an idle, a blink and eight
   expressions, plus a portrait for the Dream Journal. The face is authored
   once and painted over everybody.
+- **The dialectic.** A battle system where the opponent is an argument given
+  a face. To win, you build a syllogism that takes it apart: a major
+  premise, a minor premise, and a conclusion, checked against the classical
+  mood and figure table.
 
 ## Documentation
 
@@ -88,6 +92,14 @@ Then open <http://127.0.0.1:5173>.
 | `npm run test:e2e`      | Browser tests                                  |
 | `npm run assets`        | Regenerate the art pack and the asset manifest |
 | `npm run content:check` | Validate every script, codex entry and source  |
+
+## Trying the dialectic
+
+The battle is part of Act II, which is not written yet, so the title screen
+has a development entry for it. Run `npm run dev` and choose
+**TRY A DIALECTIC**. The four opponents can be tried with
+`?opponent=certainty`, `?opponent=reductionism`, `?opponent=pluralism` or
+`?opponent=marking`.
 
 ## Contributing
 

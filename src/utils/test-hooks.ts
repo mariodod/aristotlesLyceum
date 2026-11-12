@@ -28,6 +28,9 @@ export function setTestHook(patch: Partial<LyceumTestHook>): void {
     stats: { reason: 0, wisdom: 0, empathy: 0 },
     lastLine: '',
     expression: 'neutral',
+    opponent: '',
+    conviction: 0,
+    building: false,
   };
 
   window.__LYCEUM_TEST__ = { ...current, ...patch };

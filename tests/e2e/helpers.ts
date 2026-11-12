@@ -24,6 +24,13 @@ export async function pressKey(page: Page, key: string): Promise<void> {
   await settleInput(page);
 }
 
+/** Presses the down arrow the given number of times. */
+export async function pressDown(page: Page, times: number): Promise<void> {
+  for (let index = 0; index < times; index += 1) {
+    await pressKey(page, 'ArrowDown');
+  }
+}
+
 /** Boots the game and waits for the title screen. */
 export async function bootToTitle(page: Page): Promise<void> {
   await page.goto('/');
@@ -127,4 +134,45 @@ export async function advanceUntilEndCard(page: Page, maxSteps = 80): Promise<vo
 
     await nextLine(page);
   }
+}
+
+/**
+ * Opens the dialectic from the development entry on the title screen.
+ *
+ * The entry is the third item: begin, codex, try a dialectic.
+ */
+export async function openDialectic(page: Page, opponent = 'certainty'): Promise<void> {
+  await page.goto(`/?opponent=${opponent}`);
+  await page.waitForFunction(() => {
+    const hook = window.__LYCEUM_TEST__;
+    return hook?.ready === true && hook.scene === 'Title';
+  });
+
+  await pressDown(page, 2);
+  await pressKey(page, 'z');
+  await page.waitForFunction(() => window.__LYCEUM_TEST__?.scene === 'Dialectic');
+}
+
+/**
+ * Builds a syllogism in the builder and tests it.
+ *
+ * The indices are positions in the list of propositions, counting from zero.
+ */
+export async function buildSyllogism(
+  page: Page,
+  major: number,
+  minor: number,
+  conclusion: number,
+): Promise<void> {
+  // REFUTE is the second of the four moves.
+  await pressDown(page, 1);
+  await pressKey(page, 'z');
+
+  for (const index of [major, minor, conclusion]) {
+    await pressDown(page, index);
+    await pressKey(page, 'z');
+  }
+
+  // The list is now TEST THE ARGUMENT, then START OVER.
+  await pressKey(page, 'z');
 }

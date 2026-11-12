@@ -24,7 +24,12 @@ export class DialogueRuntime {
   private readonly flags = new Map<string, boolean>();
   private readonly stats: DialogueState['stats'];
 
-  constructor(script: StoryScript, state?: DialogueState) {
+  constructor(
+    script: StoryScript,
+    state?: DialogueState,
+    /** The label to start at, used when a chapter resumes after a battle. */
+    startLabel?: string,
+  ) {
     this.steps = script.steps;
 
     this.steps.forEach((step, index) => {
@@ -37,6 +42,16 @@ export class DialogueRuntime {
     });
 
     this.stats = { ...(state?.stats ?? { reason: 0, wisdom: 0, empathy: 0 }) };
+
+    if (startLabel !== undefined) {
+      const start = this.labels.get(startLabel);
+
+      if (start === undefined) {
+        throw new Error(`Cannot start at unknown label "${startLabel}".`);
+      }
+
+      this.cursor = start;
+    }
 
     for (const [flag, value] of Object.entries(state?.flags ?? {})) {
       this.flags.set(flag, value);
@@ -78,6 +93,18 @@ export class DialogueRuntime {
         // A choice only unblocks through `choose`. Repeating the prompt is
         // friendlier than throwing at the player.
         return [this.choiceEvent(this.pending)];
+      }
+
+      if (this.pending.kind === 'dialectic') {
+        // The battle scene takes over the chapter, so the script cannot
+        // run past the argument until it has been won.
+        return [
+          {
+            type: 'dialectic',
+            opponent: this.pending.opponent,
+            returnTo: this.pending.returnTo,
+          },
+        ];
       }
 
       this.cursor = (this.stepIndex.get(this.pending) ?? this.cursor) + 1;
@@ -218,6 +245,14 @@ export class DialogueRuntime {
 
           this.cursor = target;
           break;
+        }
+
+        case 'dialectic': {
+          // The scene takes over from here and comes back when the
+          // argument is won, so the script blocks until then.
+          this.pending = step;
+          events.push({ type: 'dialectic', opponent: step.opponent, returnTo: step.returnTo });
+          return events;
         }
 
         case 'chapterEnd': {

@@ -1,6 +1,6 @@
 {
   "name": "aristotles-lyceum",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "private": true,
   "type": "module",
   "description": "A 2D pixel-art narrative game about Aristotle, his philosophy, and where it still runs.",
