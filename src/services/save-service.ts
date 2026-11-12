@@ -83,6 +83,16 @@ export class SaveService {
     this.write();
   }
 
+  /** Removes a flag entirely, used when a chapter re-establishes its own. */
+  clearFlag(flag: string): void {
+    if (!(flag in this.data.flags)) {
+      return;
+    }
+
+    delete this.data.flags[flag];
+    this.write();
+  }
+
   completeChapter(id: string): void {
     if (!this.data.completedChapters.includes(id)) {
       this.data.completedChapters.push(id);

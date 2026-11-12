@@ -109,6 +109,30 @@ export interface JumpStep extends BaseStep {
   to: string;
 }
 
+/**
+ * Branches on a flag. This is how a chapter reaches a different ending
+ * depending on what the player chose.
+ */
+export interface BranchStep extends BaseStep {
+  kind: 'branch';
+  /** The flag to test. */
+  flag: string;
+  /** Label to jump to when the flag is set. */
+  ifTrue: string;
+  /** Label to jump to when the flag is not set. */
+  ifFalse: string;
+}
+
+/**
+ * Names the ending the player reached. The scene shows it on the
+ * chapter-complete card.
+ */
+export interface ChapterEndStep extends BaseStep {
+  kind: 'chapterEnd';
+  title: string;
+  subtitle?: string;
+}
+
 export interface ChapterStep extends BaseStep {
   kind: 'chapter';
   title: string;
@@ -134,6 +158,8 @@ export type StoryStep =
   | StatStep
   | FlagStep
   | JumpStep
+  | BranchStep
+  | ChapterEndStep
   | ChapterStep
   | StageStep
   | EndStep;
@@ -159,6 +185,7 @@ export type DialogueEvent =
   | { type: 'stat'; stat: StatId; delta: number; total: number }
   | { type: 'flag'; flag: string; value: boolean }
   | { type: 'chapter'; title: string; subtitle?: string }
+  | { type: 'chapterEnd'; title: string; subtitle?: string }
   | { type: 'stage'; actors: { character: CharacterId; x: number }[]; backdrop?: string }
   | { type: 'end' };
 

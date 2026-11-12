@@ -8,7 +8,8 @@ import { chapterById } from '../data/script/registry.ts';
 import { TextBox } from '../entities/textbox.ts';
 import type { SaveService } from '../services/save-service.ts';
 import { DialogueRuntime } from '../systems/dialogue/dialogue-runtime.ts';
-import type { CharacterId, DialogueEvent } from '../types/story.ts';
+import { collectScriptFlags } from '../systems/dialogue/script-flags.ts';
+import type { CharacterId, DialogueEvent, DialogueState, StoryScript } from '../types/story.ts';
 import { setTestHook } from '../utils/test-hooks.ts';
 
 interface StorySceneData {
@@ -26,9 +27,11 @@ type StoryMode = 'line' | 'choice' | 'done';
  */
 export class StoryScene extends Phaser.Scene {
   private runtime: DialogueRuntime | undefined;
+  private script: StoryScript | undefined;
   private textBox: TextBox | undefined;
   private backdrop: Phaser.GameObjects.Image | undefined;
   private card: Phaser.GameObjects.Container | undefined;
+  private endCard: Phaser.GameObjects.Container | undefined;
   private toast: Phaser.GameObjects.BitmapText | undefined;
   private readonly actors = new Map<CharacterId, Phaser.GameObjects.Sprite>();
   private chapterId = 'act-one';
@@ -36,6 +39,8 @@ export class StoryScene extends Phaser.Scene {
   private cardActive = false;
   private speaker: CharacterId = 'narrator';
   private currentLine = '';
+  private endingTitle = '';
+  private endingSubtitle = '';
 
   constructor() {
     super('Story');
@@ -51,6 +56,9 @@ export class StoryScene extends Phaser.Scene {
     // The scene instance survives a restart, so the actors of the previous
     // chapter have to be dropped before the new ones are placed.
     this.actors.clear();
+    this.endCard = undefined;
+    this.endingTitle = '';
+    this.endingSubtitle = '';
 
     const script = chapterById(this.chapterId);
 
@@ -59,16 +67,34 @@ export class StoryScene extends Phaser.Scene {
       return;
     }
 
-    const saveService = this.registry.get('saveService') as SaveService;
-
+    this.script = script;
     this.backdrop = this.add.image(0, 0, script.backdrop).setOrigin(0).setDepth(0);
     this.add.rectangle(0, 0, GAME_WIDTH, GAME_HEIGHT, 0x07070c, 0.18).setOrigin(0).setDepth(1);
 
     this.textBox = new TextBox(this);
     this.installInput();
 
-    this.runtime = new DialogueRuntime(script, saveService.dialogueState);
+    this.runtime = new DialogueRuntime(script, this.freshStateFor(script));
     this.applyEvents(this.runtime.advance());
+  }
+
+  /**
+   * The saved state a chapter starts from.
+   *
+   * A chapter owns the flags it sets, so they are cleared before the chapter
+   * runs. Otherwise replaying Act I would keep the flags of the previous run
+   * and every ending would resolve the same way.
+   */
+  private freshStateFor(script: StoryScript): DialogueState {
+    const saveService = this.registry.get('saveService') as SaveService;
+    const state = saveService.dialogueState;
+
+    for (const flag of collectScriptFlags(script)) {
+      delete state.flags[flag];
+      saveService.clearFlag(flag);
+    }
+
+    return state;
   }
 
   override update(_time: number, delta: number): void {
@@ -99,6 +125,10 @@ export class StoryScene extends Phaser.Scene {
           break;
         case 'chapter':
           this.showChapterCard(event.title, event.subtitle);
+          break;
+        case 'chapterEnd':
+          this.endingTitle = event.title;
+          this.endingSubtitle = event.subtitle ?? '';
           break;
         case 'stage':
           this.setStage(event.actors, event.backdrop);
@@ -216,10 +246,41 @@ export class StoryScene extends Phaser.Scene {
     }
 
     if (backdrop && this.textures.exists(backdrop)) {
-      this.backdrop?.setTexture(backdrop);
+      this.swapBackdrop(backdrop);
     }
 
     this.highlightSpeaker();
+  }
+
+  /**
+   * Cross-fades to a new backdrop.
+   *
+   * A hard cut reads as a bug. The fade lets the narration and the picture
+   * change together, which is how the dream gets from a bedroom in Ohio to a
+   * path in Athens.
+   */
+  private swapBackdrop(key: string): void {
+    const previous = this.backdrop;
+
+    if (!previous || previous.texture.key === key) {
+      return;
+    }
+
+    const next = this.add.image(0, 0, key).setOrigin(0).setDepth(0).setAlpha(0);
+    this.backdrop = next;
+
+    this.tweens.add({
+      targets: next,
+      alpha: 1,
+      duration: STAGE_TUNING.fadeMs,
+    });
+
+    this.tweens.add({
+      targets: previous,
+      alpha: 0,
+      duration: STAGE_TUNING.fadeMs,
+      onComplete: () => previous.destroy(),
+    });
   }
 
   private highlightSpeaker(): void {
@@ -294,12 +355,106 @@ export class StoryScene extends Phaser.Scene {
   }
 
   private endChapter(): void {
-    this.mode = 'done';
-
     const saveService = this.registry.get('saveService') as SaveService;
     saveService.completeChapter(this.chapterId);
 
-    this.textBox?.showTextInstant('End of chapter. Press Z to return to the title.');
+    this.mode = 'done';
+    this.showEndCard();
+  }
+
+  /**
+   * The card a chapter ends on: what the act was called, which ending the
+   * player reached, what the stats are, and how much of the Dream Journal
+   * has been filled in.
+   */
+  private showEndCard(): void {
+    const saveService = this.registry.get('saveService') as SaveService;
+    const runtime = this.runtime;
+    const stats = runtime ? runtime.snapshot().stats : { reason: 0, wisdom: 0, empathy: 0 };
+    const codexCount = saveService.snapshot.unlockedCodex.length;
+
+    this.textBox?.setVisible(false);
+
+    const card = this.add.container(0, 0).setDepth(200);
+    card.add(this.add.rectangle(0, 0, GAME_WIDTH, GAME_HEIGHT, 0x07070c, 0.97).setOrigin(0));
+
+    const [act = 'Act', name = ''] = (this.script?.title ?? 'Act').split(' — ');
+
+    const actLabel = this.add.bitmapText(GAME_WIDTH / 2, 48, FONT_KEY, act.toUpperCase());
+    actLabel.setOrigin(0.5, 0);
+    actLabel.setTint(0xf2c14e);
+    card.add(actLabel);
+
+    const actName = this.add
+      .bitmapText(GAME_WIDTH / 2, 64, FONT_KEY, name.toUpperCase())
+      .setOrigin(0.5, 0);
+    actName.setScale(2);
+    actName.setTint(0xf6f2e8);
+    card.add(actName);
+
+    if (this.endingTitle.length > 0) {
+      const ending = this.add
+        .bitmapText(GAME_WIDTH / 2, 104, FONT_KEY, this.endingTitle)
+        .setOrigin(0.5, 0);
+      ending.setTint(0xffe6a0);
+      card.add(ending);
+
+      if (this.endingSubtitle.length > 0) {
+        card.add(
+          this.add
+            .bitmapText(GAME_WIDTH / 2, 120, FONT_KEY, this.endingSubtitle)
+            .setOrigin(0.5, 0)
+            .setAlpha(0.65),
+        );
+      }
+    }
+
+    card.add(
+      this.add
+        .bitmapText(
+          GAME_WIDTH / 2,
+          168,
+          FONT_KEY,
+          `REASON ${stats.reason}    WISDOM ${stats.wisdom}    EMPATHY ${stats.empathy}`,
+        )
+        .setOrigin(0.5, 0)
+        .setTint(0xbfb6a2),
+    );
+
+    card.add(
+      this.add
+        .bitmapText(
+          GAME_WIDTH / 2,
+          188,
+          FONT_KEY,
+          `DREAM JOURNAL: ${codexCount} ${codexCount === 1 ? 'ENTRY' : 'ENTRIES'}`,
+        )
+        .setOrigin(0.5, 0)
+        .setAlpha(0.7),
+    );
+
+    card.add(
+      this.add
+        .bitmapText(GAME_WIDTH / 2, 252, FONT_KEY, 'Z TO RETURN TO THE TITLE')
+        .setOrigin(0.5, 0)
+        .setTint(0xf6f2e8),
+    );
+
+    card.add(
+      this.add
+        .bitmapText(GAME_WIDTH / 2, 270, FONT_KEY, 'C TO READ THE DREAM JOURNAL')
+        .setOrigin(0.5, 0)
+        .setAlpha(0.6),
+    );
+
+    card.setAlpha(0);
+    this.endCard = card;
+
+    this.tweens.add({
+      targets: card,
+      alpha: 1,
+      duration: 400,
+    });
   }
 
   private confirm(): void {
@@ -312,7 +467,6 @@ export class StoryScene extends Phaser.Scene {
       this.scene.start('Title');
       return;
     }
-
     const box = this.textBox;
     const runtime = this.runtime;
 
@@ -368,6 +522,19 @@ export class StoryScene extends Phaser.Scene {
     keyboard.on('keydown-SPACE', () => this.confirm());
     keyboard.on('keydown-UP', () => this.moveChoice(-1));
     keyboard.on('keydown-DOWN', () => this.moveChoice(1));
+    keyboard.on('keydown-C', () => this.openJournal());
+  }
+
+  /**
+   * The Dream Journal is reachable from the chapter-complete card, so a
+   * player can read what they unlocked without leaving the act.
+   */
+  private openJournal(): void {
+    if (this.mode !== 'done') {
+      return;
+    }
+
+    this.scene.start('Codex');
   }
 
   private publishHook(): void {
@@ -388,6 +555,8 @@ export class StoryScene extends Phaser.Scene {
       choiceIndex: box?.selectedChoice ?? 0,
       choiceLabels: box?.choiceLabels ?? [],
       choiceVisible: box?.optionsRendered ?? false,
+      ending: this.endingTitle,
+      endCardVisible: this.endCard !== undefined,
       unlockedCodex: saveService.snapshot.unlockedCodex,
       stats: runtime
         ? {

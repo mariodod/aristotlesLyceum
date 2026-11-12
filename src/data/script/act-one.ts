@@ -1,9 +1,13 @@
-import type { StoryScript } from '../../types/story.ts';
+import type { StoryScript } from '../../types/story';
 
 /**
  * Act I takes place in Isaac's bedroom the night before the exam. The whole
  * act is one continuous shot; it exists to establish the character, the
  * stakes, and the tone before the dream starts.
+ *
+ * The chapter ends three different ways. Which one Isaac gets depends on the
+ * choice he makes at the desk, and the ending is named on the card he is
+ * given when the act is over.
  */
 export const ACT_ONE: StoryScript = {
   id: 'act-one',
@@ -13,31 +17,46 @@ export const ACT_ONE: StoryScript = {
   steps: [
     { at: 'open', kind: 'chapter', title: 'ACT I', subtitle: 'The Desk' },
     { at: 'stage-isaac', kind: 'stage', actors: [{ character: 'isaac', x: 190 }] },
+
     {
-      at: 'open-line',
+      at: 'room-1',
       kind: 'say',
       speaker: 'narrator',
-      text: 'Tuesday. 11:47 PM. The exam is in nine hours and the only book open on the desk is Aristotle.',
+      text: 'Tuesday. 11:47 PM. The exam is in nine hours, and the only book open on the desk is Aristotle.',
     },
+    {
+      at: 'room-2',
+      kind: 'say',
+      speaker: 'narrator',
+      text: 'The lamp is the only light left in the room. The window is doing its blue thing. Everything else is asleep.',
+    },
+    {
+      at: 'room-3',
+      kind: 'say',
+      speaker: 'narrator',
+      text: 'On the desk: a mug of tea he stopped drinking an hour ago, a phone face down, a highlighter that has never once highlighted anything, and page one hundred and twelve.',
+    },
+
     {
       at: 'isaac-1',
       kind: 'say',
       speaker: 'isaac',
-      text: 'Nine hours. Nine hours to become a person who understands metaphysics. That is not a thing a person can do.',
+      text: 'Nine hours to become a person who understands metaphysics. That is not a thing a person can do in nine hours.',
       expression: 'tired',
     },
     {
       at: 'isaac-2',
       kind: 'say',
       speaker: 'isaac',
-      text: 'Philosophy is the one subject where you can read every page, understand every word, and still fail the exam. That is the whole subject.',
+      text: 'Philosophy is the one subject where you can read every page, understand every word, and still fail the exam. That is the entire subject.',
       expression: 'angry',
     },
     {
       at: 'isaac-3',
       kind: 'say',
-      speaker: 'narrator',
-      text: 'He turns the page anyway. The lamp is the only light left in the room.',
+      speaker: 'isaac',
+      text: 'It is not even the reading. The reading goes somewhere. You close the book and you are still you, and the exam is still in the morning.',
+      expression: 'tired',
     },
     {
       at: 'isaac-4',
@@ -50,22 +69,36 @@ export const ACT_ONE: StoryScript = {
       at: 'isaac-5',
       kind: 'say',
       speaker: 'isaac',
-      text: 'Sure. Blah blah. Knowledge. Very useful. Tell me, Aristotle, is this going to be on the test?',
+      text: 'Sure. Blah blah. Knowledge. Very useful. Tell me, Aristotle: am I going to be able to name my own feelings by Thursday?',
       expression: 'angry',
     },
+
     {
-      at: 'isaac-6',
+      at: 'turn-1',
       kind: 'say',
       speaker: 'narrator',
-      text: 'He does not notice that the words on the page have started to move.',
+      text: 'He turns the page anyway. He has turned it about nine hundred times tonight.',
     },
     {
-      at: 'isaac-7',
+      at: 'turn-2',
       kind: 'say',
       speaker: 'isaac',
-      text: 'Wait. That is not... the letters are not doing that.',
+      text: 'The trouble with reading out loud is that you hear yourself. And then you hear whether you sound like you believe it.',
+    },
+    {
+      at: 'turn-3',
+      kind: 'say',
+      speaker: 'narrator',
+      text: 'He reads the line again. And again. On the third time, the words on the page have moved.',
+    },
+    {
+      at: 'turn-4',
+      kind: 'say',
+      speaker: 'isaac',
+      text: 'Wait. That is not. The letters are not doing that.',
       expression: 'surprised',
     },
+
     {
       at: 'choice-1',
       kind: 'choice',
@@ -74,82 +107,309 @@ export const ACT_ONE: StoryScript = {
       options: [
         {
           label: 'Read the next line out loud.',
-          goto: 'read-on',
+          goto: 'read-on-1',
           stat: { stat: 'reason', delta: 1 },
+          setFlag: 'act-one-read',
         },
         {
-          label: 'Hold the page down and keep reading.',
-          goto: 'hold-page',
+          label: 'Read it again until it makes sense.',
+          goto: 'read-again-1',
           stat: { stat: 'wisdom', delta: 1 },
+          setFlag: 'act-one-repeat',
         },
         {
-          label: 'Close the book. Go to bed.',
-          goto: 'close-book',
+          label: 'Text your best friend that you are going to fail.',
+          goto: 'text-friend-1',
           stat: { stat: 'empathy', delta: 1 },
+          setFlag: 'act-one-message',
         },
       ],
     },
+
     {
-      at: 'read-on',
+      at: 'read-on-1',
       kind: 'say',
       speaker: 'isaac',
-      text: '"...for the sake of knowing, and to know what is good..." He hears his own voice, but it is not quite his own voice.',
+      text: '"For the sake of knowing, and to know what is good." He says it out loud, and his own voice comes back half a second late, in a slightly better voice.',
       expression: 'surprised',
     },
     {
-      at: 'hold-page',
+      at: 'read-on-2',
       kind: 'say',
       speaker: 'isaac',
-      text: 'He presses the page flat with his palm and reads on, and the ink keeps moving under his hand.',
-      expression: 'determined',
+      text: 'He says it again. Same thing. The voice is not repeating him. The voice is answering.',
+      expression: 'surprised',
     },
     {
-      at: 'close-book',
+      at: 'read-on-3',
+      kind: 'say',
+      speaker: 'narrator',
+      text: 'On the fourth reading, the voice stops waiting for him to finish.',
+    },
+    { at: 'read-on-merge', kind: 'jump', to: 'merge' },
+
+    {
+      at: 'read-again-1',
       kind: 'say',
       speaker: 'isaac',
-      text: 'He shuts the book. He stands up to turn off the lamp. He does not remember which of those two things he did first.',
+      text: 'He reads it again. Then again. The words get softer and softer, the way they do at four in the morning, until they stop meaning anything at all.',
       expression: 'tired',
     },
     {
-      at: 'merge-1',
-      kind: 'jump',
-      to: 'merge-2',
+      at: 'read-again-2',
+      kind: 'say',
+      speaker: 'isaac',
+      text: 'Meaningless words are easier. He has noticed that before.',
+      expression: 'tired',
     },
     {
-      at: 'merge-2',
+      at: 'read-again-3',
+      kind: 'say',
+      speaker: 'narrator',
+      text: 'He is still reading when the page changes. He does not notice that the page has changed.',
+    },
+    { at: 'read-again-merge', kind: 'jump', to: 'merge' },
+
+    {
+      at: 'text-friend-1',
+      kind: 'say',
+      speaker: 'isaac',
+      text: 'He picks up his phone. The group chat is called AP CALCS (DO NOT OPEN). He opens it. He types: "hey if i fail philosophy tmrw can i just not have a major"',
+      expression: 'thinking',
+    },
+    {
+      at: 'text-friend-2',
+      kind: 'say',
+      speaker: 'narrator',
+      text: 'Three dots. Then a long time of nothing.',
+    },
+    {
+      at: 'text-friend-3',
+      kind: 'say',
+      speaker: 'isaac',
+      text: '"ok but like what would you even do" - and that is somehow worse than the exam.',
+      expression: 'sad',
+    },
+    {
+      at: 'text-friend-4',
+      kind: 'say',
+      speaker: 'narrator',
+      text: 'He puts the phone down. He puts his hand on the book. The page has changed. He does not notice that the page has changed.',
+    },
+    { at: 'text-friend-merge', kind: 'jump', to: 'merge' },
+
+    { at: 'merge', kind: 'jump', to: 'room-goes-1' },
+    {
+      at: 'room-goes-1',
       kind: 'say',
       speaker: 'narrator',
       text: 'The room does not go dark. It goes somewhere else.',
     },
     {
-      at: 'merge-3',
-      kind: 'say',
-      speaker: 'narrator',
-      text: 'The floor under his feet is stone. The air smells of olive oil and dust. And there is a voice, patiently, the way a teacher waits for a slow student:',
+      at: 'stage-athens',
+      kind: 'stage',
+      actors: [{ character: 'isaac', x: 245 }],
+      backdrop: 'backdrop-lyceum',
     },
     {
-      at: 'merge-4',
+      at: 'room-goes-2',
+      kind: 'say',
+      speaker: 'narrator',
+      text: 'The floor under his feet is stone. The air smells of olive oil and dust and a little rain. The window is not a window any more.',
+    },
+    {
+      at: 'room-goes-3',
+      kind: 'say',
+      speaker: 'narrator',
+      text: 'And there is a voice, patient, the way a teacher waits for a slow student:',
+    },
+    {
+      at: 'stage-aristotle',
+      kind: 'stage',
+      actors: [
+        { character: 'isaac', x: 245 },
+        { character: 'aristotle', x: 430 },
+      ],
+    },
+    {
+      at: 'aristotle-1',
       kind: 'say',
       speaker: 'aristotle',
       text: 'You have been reading me for six hours, Isaac. Shall we stop reading and start arguing?',
       expression: 'happy',
     },
     {
-      at: 'stage-aristotle',
-      kind: 'stage',
-      actors: [
-        { character: 'isaac', x: 190 },
-        { character: 'aristotle', x: 470 },
-      ],
+      at: 'isaac-react-1',
+      kind: 'say',
+      speaker: 'isaac',
+      text: 'Who -',
+      expression: 'surprised',
     },
+    {
+      at: 'aristotle-2',
+      kind: 'say',
+      speaker: 'aristotle',
+      text: 'That is a question that needs a description, not a name. We shall get to that too. First: Athens, spring, and I have been waiting six hours for you to finish the sentence.',
+      expression: 'thinking',
+    },
+    {
+      at: 'aristotle-3',
+      kind: 'say',
+      speaker: 'aristotle',
+      text: '"Such is the object of education, and the kind of knowledge that will make a soul good." You stopped one line early.',
+      expression: 'happy',
+    },
+    {
+      at: 'isaac-react-2',
+      kind: 'say',
+      speaker: 'isaac',
+      text: 'The sentence?',
+      expression: 'surprised',
+    },
+    {
+      at: 'aristotle-4',
+      kind: 'say',
+      speaker: 'aristotle',
+      text: 'The sentence. You were on the verge of knowing why you were reading. That is a better reason than an exam, and you were two lines away from it.',
+      expression: 'determined',
+    },
+
     { at: 'unlock-logic', kind: 'codex', entry: 'syllogism' },
     { at: 'unlock-dialectic', kind: 'codex', entry: 'dialectic' },
+
     {
-      at: 'merge-5',
+      at: 'look-1',
+      kind: 'say',
+      speaker: 'narrator',
+      text: 'Isaac looks down. There is a path under his feet, a colonnade to the left, and a school that is just beginning to be loud.',
+    },
+    {
+      at: 'look-2',
+      kind: 'say',
+      speaker: 'isaac',
+      text: 'Okay. Okay. This is a dream. This is obviously a dream. Dreams do not have footnotes.',
+      expression: 'thinking',
+    },
+
+    {
+      at: 'ending-route',
+      kind: 'branch',
+      flag: 'act-one-read',
+      ifTrue: 'ending-read-1',
+      ifFalse: 'ending-route-2',
+    },
+    {
+      at: 'ending-route-2',
+      kind: 'branch',
+      flag: 'act-one-repeat',
+      ifTrue: 'ending-repeat-1',
+      ifFalse: 'ending-message-1',
+    },
+
+    {
+      at: 'ending-read-1',
+      kind: 'say',
+      speaker: 'isaac',
+      text: 'He had wanted to know why. That was all he had ever wanted from a textbook: not the answer, just the reason to keep asking.',
+      expression: 'thinking',
+    },
+    {
+      at: 'ending-read-2',
+      kind: 'say',
+      speaker: 'narrator',
+      text: 'In Athens, in the spring, a man who has been dead for twenty-three centuries waits for a teenager to catch up.',
+    },
+    {
+      at: 'end-argument',
+      kind: 'chapterEnd',
+      title: 'THE ARGUMENT',
+      subtitle: 'He read the next line out loud.',
+    },
+    { at: 'end-argument-jump', kind: 'jump', to: 'final-1' },
+
+    {
+      at: 'ending-repeat-1',
+      kind: 'say',
+      speaker: 'isaac',
+      text: 'He had read the same page nine hundred times tonight because he did not want to be the sort of person who fails. That was not philosophy. That was closer to love.',
+      expression: 'tired',
+    },
+    {
+      at: 'ending-repeat-2',
+      kind: 'say',
+      speaker: 'narrator',
+      text: 'In Athens, in the spring, a man who has been dead for twenty-three centuries waits for a teenager to catch up.',
+    },
+    {
+      at: 'end-repetition',
+      kind: 'chapterEnd',
+      title: 'THE REPETITION',
+      subtitle: 'He read it again until it made sense.',
+    },
+    { at: 'end-repetition-jump', kind: 'jump', to: 'final-1' },
+
+    {
+      at: 'ending-message-1',
+      kind: 'say',
+      speaker: 'isaac',
+      text: '"Ok but like what would you even do" - and he had no idea. He still did not. But somewhere underneath all that panic there was a question he actually wanted to answer.',
+      expression: 'thinking',
+    },
+    {
+      at: 'ending-message-2',
+      kind: 'say',
+      speaker: 'narrator',
+      text: 'In Athens, in the spring, a man who has been dead for twenty-three centuries waits for a teenager to catch up.',
+    },
+    {
+      at: 'end-message',
+      kind: 'chapterEnd',
+      title: 'THE MESSAGE',
+      subtitle: 'He texted his friend, and then read on.',
+    },
+    { at: 'end-message-jump', kind: 'jump', to: 'final-1' },
+
+    {
+      at: 'final-1',
+      kind: 'say',
+      speaker: 'aristotle',
+      text: 'One more thing, Isaac, before you wake up.',
+    },
+    {
+      at: 'final-2',
+      kind: 'say',
+      speaker: 'isaac',
+      text: 'Am I going to wake up?',
+      expression: 'surprised',
+    },
+    {
+      at: 'final-3',
+      kind: 'say',
+      speaker: 'aristotle',
+      text: 'Everyone wakes up. The interesting question is what you do with the hours afterwards.',
+      expression: 'happy',
+    },
+    {
+      at: 'final-4',
+      kind: 'say',
+      speaker: 'isaac',
+      text: '...Fine. Give me the exam.',
+      expression: 'determined',
+    },
+    {
+      at: 'final-5',
+      kind: 'say',
+      speaker: 'aristotle',
+      text: 'You will not need it. You have been practising it for six hours.',
+      expression: 'happy',
+    },
+    {
+      at: 'final-6',
       kind: 'say',
       speaker: 'narrator',
       text: 'Somewhere behind Isaac, a school wakes up.',
     },
+
     { at: 'act-one-end', kind: 'end' },
   ],
 };

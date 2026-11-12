@@ -12,6 +12,7 @@
 import { CHAPTERS } from '../../src/data/script/registry.ts';
 import { CODEX_ENTRIES } from '../../src/data/codex/index.ts';
 import { CHARACTER_IDS, EXPRESSION_IDS } from '../../src/types/story.ts';
+import { findUnreachableSteps } from '../../src/systems/dialogue/reachability.ts';
 
 const problems = [];
 const MAX_LINE_LENGTH = 420;
@@ -46,6 +47,20 @@ for (const script of CHAPTERS) {
   for (const step of script.steps) {
     if (step.kind === 'jump' && !labels.has(step.to)) {
       report(where, `jump at "${step.at}" targets unknown label "${step.to}"`);
+    }
+
+    if (step.kind === 'branch') {
+      if (!labels.has(step.ifTrue)) {
+        report(where, `branch at "${step.at}" targets unknown label "${step.ifTrue}"`);
+      }
+
+      if (!labels.has(step.ifFalse)) {
+        report(where, `branch at "${step.at}" targets unknown label "${step.ifFalse}"`);
+      }
+    }
+
+    if (step.kind === 'chapterEnd' && step.title.trim().length === 0) {
+      report(where, `chapter end at "${step.at}" has no title`);
     }
 
     if (step.kind === 'choice') {
@@ -109,6 +124,10 @@ for (const script of CHAPTERS) {
 
   if (last?.kind !== 'end') {
     report(where, 'the last step is not an end step');
+  }
+
+  for (const label of findUnreachableSteps(script)) {
+    report(where, `step "${label}" can never be reached`);
   }
 }
 

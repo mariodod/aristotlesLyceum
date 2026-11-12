@@ -36,6 +36,35 @@ const SCRIPT: StoryScript = {
   ],
 };
 
+const BRANCH_SCRIPT: StoryScript = {
+  id: 'branch',
+  chapter: 'branch',
+  title: 'Branch',
+  backdrop: 'backdrop-bedroom',
+  steps: [
+    {
+      at: 'ask',
+      kind: 'choice',
+      speaker: 'isaac',
+      prompt: 'Which one?',
+      options: [
+        { label: 'Yes', goto: 'yes', setFlag: 'went-yes' },
+        { label: 'No', goto: 'no' },
+      ],
+    },
+    { at: 'yes', kind: 'say', speaker: 'isaac', text: 'Yes.' },
+    { at: 'yes-jump', kind: 'jump', to: 'route' },
+    { at: 'no', kind: 'say', speaker: 'isaac', text: 'No.' },
+    { at: 'no-jump', kind: 'jump', to: 'route' },
+    { at: 'route', kind: 'branch', flag: 'went-yes', ifTrue: 'end-yes', ifFalse: 'end-no' },
+    { at: 'end-yes', kind: 'chapterEnd', title: 'THE YES' },
+    { at: 'end-yes-jump', kind: 'jump', to: 'done' },
+    { at: 'end-no', kind: 'chapterEnd', title: 'THE NO' },
+    { at: 'end-no-jump', kind: 'jump', to: 'done' },
+    { at: 'done', kind: 'end' },
+  ],
+};
+
 function runtime() {
   return new DialogueRuntime(SCRIPT, createDialogueState());
 }
@@ -189,5 +218,54 @@ describe('DialogueRuntime', () => {
     const restored = new DialogueRuntime(SCRIPT, state);
     expect(restored.getFlag('went-right')).toBe(true);
     expect(restored.getStat('reason')).toBe(4);
+  });
+});
+
+describe('DialogueRuntime branching', () => {
+  it('routes to the ending that matches the flag', () => {
+    const state = new DialogueRuntime(BRANCH_SCRIPT);
+    state.advance();
+    state.choose(0);
+
+    const events = state.advance();
+    expect(events).toEqual([{ type: 'chapterEnd', title: 'THE YES' }, { type: 'end' }]);
+  });
+
+  it('routes to the other ending when the flag is not set', () => {
+    const state = new DialogueRuntime(BRANCH_SCRIPT);
+    state.advance();
+    state.choose(1);
+
+    const events = state.advance();
+    expect(events).toEqual([{ type: 'chapterEnd', title: 'THE NO' }, { type: 'end' }]);
+  });
+
+  it('keeps the subtitle of an ending', () => {
+    const script: StoryScript = {
+      ...BRANCH_SCRIPT,
+      steps: [
+        { at: 'end', kind: 'chapterEnd', title: 'THE YES', subtitle: 'He read on.' },
+        { at: 'done', kind: 'end' },
+      ],
+    };
+
+    const events = new DialogueRuntime(script).advance();
+    expect(events[0]).toEqual({
+      type: 'chapterEnd',
+      title: 'THE YES',
+      subtitle: 'He read on.',
+    });
+  });
+
+  it('rejects a branch that targets a label that does not exist', () => {
+    const script: StoryScript = {
+      ...BRANCH_SCRIPT,
+      steps: [
+        { at: 'route', kind: 'branch', flag: 'x', ifTrue: 'nowhere', ifFalse: 'also-nowhere' },
+      ],
+    };
+
+    const state = new DialogueRuntime(script);
+    expect(() => state.advance()).toThrow(/unknown label/);
   });
 });

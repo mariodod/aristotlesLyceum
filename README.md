@@ -2,9 +2,10 @@
 
 **A 2D pixel-art narrative game about Aristotle, his philosophy, and where it still runs.**
 
-> **Status:** `v0.1.0`. The engine, the art pipeline, the dialogue runtime and
-> Act I exist and are verified end to end. Act II onward is still to be
-> written. See [`PLAN.md`](PLAN.md) for the roadmap.
+> **Status:** `v0.2.0`. The engine, the art pipeline, the dialogue runtime and
+> Act I exist and are verified end to end. Act I is a finished five-minute
+> chapter with three endings. Act II onward is still to be written. See
+> [`PLAN.md`](PLAN.md) for the roadmap.
 
 Isaac has an exam in philosophy tomorrow. He hates the subject, decides that
 reading Aristotle will only make it worse, reads Aristotle anyway, and falls
@@ -41,7 +42,8 @@ Then open <http://127.0.0.1:5173>.
   that already carries the accents a Spanish translation will need.
 - **The Dream Journal.** The Codex that files each idea with what Aristotle
   said and where the same structure still runs in today's science.
-- **Act I — The Desk.** The opening chapter, playable from the title screen.
+- **Act I — The Desk.** The opening chapter, playable from the title screen,
+  with three choices, three branches and three named endings.
 
 ## Documentation
 
@@ -52,6 +54,7 @@ Then open <http://127.0.0.1:5173>.
 | [`docs/roadmap.md`](docs/roadmap.md)               | Milestone plan and acceptance criteria                                                                |
 | [`docs/content-bible.md`](docs/content-bible.md)   | Every chapter, every concept, and the sources behind them                                             |
 | [`docs/technical-plan.md`](docs/technical-plan.md) | Engine decisions, layering, data formats, testing strategy                                            |
+| [`docs/m2-playtest.md`](docs/m2-playtest.md)       | The protocol for testing Act I on people who have never heard of Aristotle                            |
 
 ## Technology at a glance
 

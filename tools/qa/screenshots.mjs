@@ -66,7 +66,7 @@ for (let index = 0; index < 4; index += 1) {
 await shot('03-dialogue');
 
 // Walk to the first choice.
-for (let index = 0; index < 10; index += 1) {
+for (let index = 0; index < 40; index += 1) {
   const choosing = await page.evaluate(() => window.__LYCEUM_TEST__?.choosing === true);
   if (choosing) {
     break;
@@ -75,6 +75,18 @@ for (let index = 0; index < 10; index += 1) {
   await settle(8);
 }
 await shot('04-choice');
+
+// Play through to the chapter-complete card.
+for (let index = 0; index < 160; index += 1) {
+  const done = await page.evaluate(() => window.__LYCEUM_TEST__?.endCardVisible === true);
+  if (done) {
+    break;
+  }
+  await page.keyboard.press('z');
+  await settle(6);
+}
+await settle(30);
+await shot('05-chapter-complete');
 
 await browser.close();
 

@@ -28,6 +28,10 @@ export interface LyceumTestHook {
   choiceLabels: string[];
   /** True when the choice labels are actually drawn on top of the panel. */
   choiceVisible: boolean;
+  /** Title of the ending the player reached, once the chapter is over. */
+  ending: string;
+  /** True when the chapter-complete card is showing. */
+  endCardVisible: boolean;
   /** Codex entry ids unlocked so far. */
   unlockedCodex: string[];
   /** Current value of each story stat. */

@@ -208,7 +208,9 @@ export function lyceumBackdrop(width = 640, height = 360) {
   canvas.rect(0, 288, width, 30, LYCEUM.stone);
   canvas.rect(0, 288, width, 3, 0xf2ead4);
   for (const x of columnX) {
-    canvas.rect(x + 30, 288, 22, 30, LYCEUM.shadow);
+    // A shadow on pale stone is a slightly darker stone, not a hole.
+    canvas.rect(x + 30, 288, 22, 30, LYCEUM.stoneDark);
+    canvas.rect(x + 30, 288, 22, 2, 0xd6c9a6);
   }
 
   return canvas;

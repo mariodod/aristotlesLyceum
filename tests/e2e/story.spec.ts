@@ -1,7 +1,8 @@
 import { expect, test } from '@playwright/test';
 import {
   advanceUntilChoice,
-  advanceUntilText,
+  advanceUntilEndCard,
+  chooseOption,
   collectPageErrors,
   nextLine,
   pressKey,
@@ -33,7 +34,6 @@ test('unlocks a codex entry after the first choice', async ({ page }) => {
   await pressKey(page, 'z');
 
   // The first option is "read the next line out loud", which raises reason.
-  await expect.poll(() => readHook<number>(page, 'stats')).toBeDefined();
   await expect
     .poll(async () => {
       const stats = (await readHook<{ reason: number }>(page, 'stats')) ?? { reason: 0 };
@@ -68,15 +68,49 @@ test('moves the choice cursor with the arrow keys', async ({ page }) => {
   expect(errors).toEqual([]);
 });
 
-test('reaches the end of the chapter', async ({ page }) => {
+test('reaches the chapter-complete card', async ({ page }) => {
   const errors = collectPageErrors(page);
 
   await startActOne(page);
-  await advanceUntilChoice(page);
-  await pressKey(page, 'z');
+  await advanceUntilEndCard(page);
 
-  await advanceUntilText(page, 'End of chapter');
+  await expect.poll(() => readHook<boolean>(page, 'endCardVisible')).toBe(true);
+  await expect.poll(() => readHook<string>(page, 'ending')).toBe('THE ARGUMENT');
+  expect(errors).toEqual([]);
+});
 
-  await expect.poll(() => readHook<string>(page, 'lineText')).toContain('End of chapter');
+test('each choice reaches a different ending', async ({ page }) => {
+  const endings: { option: number; ending: string; stat: string }[] = [
+    { option: 0, ending: 'THE ARGUMENT', stat: 'reason' },
+    { option: 1, ending: 'THE REPETITION', stat: 'wisdom' },
+    { option: 2, ending: 'THE MESSAGE', stat: 'empathy' },
+  ];
+
+  for (const { option, ending, stat } of endings) {
+    await startActOne(page);
+    await advanceUntilChoice(page);
+    await chooseOption(page, option);
+    await advanceUntilEndCard(page);
+
+    await expect.poll(() => readHook<string>(page, 'ending')).toBe(ending);
+    await expect
+      .poll(async () => {
+        const stats = (await readHook<Record<string, number>>(page, 'stats')) ?? {};
+        return stats[stat];
+      })
+      .toBe(1);
+  }
+});
+
+test('opens the Dream Journal from the chapter-complete card', async ({ page }) => {
+  const errors = collectPageErrors(page);
+
+  await startActOne(page);
+  await advanceUntilEndCard(page);
+
+  await expect.poll(() => readHook<boolean>(page, 'endCardVisible')).toBe(true);
+
+  await pressKey(page, 'c');
+  await expect.poll(() => readHook<string>(page, 'scene')).toBe('Codex');
   expect(errors).toEqual([]);
 });

@@ -7,6 +7,33 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-11-12
+
+### Added
+
+- **M2: Act I is a finished chapter.** Sixty-four steps and about five
+  minutes, rewritten from a placeholder into a room with a clock in it, a
+  book that moves, and a voice that has been waiting six hours.
+- **Three endings.** Each choice leads to its own branch and its own named
+  ending: _The Argument_, _The Repetition_, _The Message_.
+- **The chapter-complete card.** The act, the ending and its subtitle, the
+  stats, the number of journal entries, and a prompt for the journal.
+- **A dream transition.** The bedroom cross-fades into the Lyceum while the
+  narration says the room goes somewhere else.
+- **The `branch` and `chapterEnd` step kinds**, so a chapter can route to a
+  different ending and name it.
+- **A reachability check.** `npm run content:check` now proves that every
+  step of every chapter can actually be reached. It caught eight broken
+  labels the first time it ran.
+- **A playtest protocol.** `docs/m2-playtest.md` — who to ask, what to watch
+  for, what to ask afterwards, and how to read the results.
+
+### Fixed
+
+- **Flags no longer leak between runs.** A chapter owns the flags it sets and
+  clears them when it starts, so replaying Act I resolves the ending the
+  player just chose instead of the one the last run chose.
+
 ## [0.1.0] - 2026-11-12
 
 ### Added

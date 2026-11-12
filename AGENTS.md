@@ -120,6 +120,8 @@ src/
   systems/
     dialogue/
       dialogue-runtime.ts  # the script interpreter (pure)
+      reachability.ts      # finds steps a script can never reach (pure)
+      script-flags.ts      # the flags a script owns (pure)
       typewriter.ts        # character reveal (pure)
       text-wrap.ts         # word wrapping (pure)
   types/
@@ -193,33 +195,44 @@ export const ACT_ONE: StoryScript = {
 
 ### Step kinds
 
-| Kind      | Purpose                                                            |
-| --------- | ------------------------------------------------------------------ |
-| `chapter` | Shows the act card.                                                |
-| `stage`   | Places characters on the stage and optionally swaps the backdrop.  |
-| `say`     | One line of dialogue, with an optional expression.                 |
-| `choice`  | A menu. Options jump to a label and may move a stat or set a flag. |
-| `codex`   | Unlocks a Codex entry. The id must exist.                          |
-| `stat`    | Moves a stat directly.                                             |
-| `flag`    | Sets a boolean flag.                                               |
-| `jump`    | Unconditional jump to a label.                                     |
-| `end`     | Ends the chapter. The last step must be an `end`.                  |
+| Kind         | Purpose                                                                                           |
+| ------------ | ------------------------------------------------------------------------------------------------- |
+| `chapter`    | Shows the act card.                                                                               |
+| `stage`      | Places characters on the stage and optionally swaps the backdrop.                                 |
+| `say`        | One line of dialogue, with an optional expression.                                                |
+| `choice`     | A menu. Options jump to a label and may move a stat or set a flag.                                |
+| `codex`      | Unlocks a Codex entry. The id must exist.                                                         |
+| `stat`       | Moves a stat directly.                                                                            |
+| `flag`       | Sets a boolean flag.                                                                              |
+| `jump`       | Unconditional jump to a label.                                                                    |
+| `branch`     | Jumps to one of two labels depending on a flag. This is how a chapter reaches a different ending. |
+| `chapterEnd` | Names the ending the player reached. The scene shows it on the chapter-complete card.             |
+| `end`        | Ends the chapter. The last step must be an `end`.                                                 |
 
 ### Rules for scripts
 
-1. **Every label is unique** inside a chapter, and every `goto`/`jump` target
-   must exist. `npm run content:check` enforces both.
+1. **Every label is unique** inside a chapter, and every `goto`/`jump`/`branch`
+   target must exist. `npm run content:check` enforces both.
 2. **Branches merge explicitly.** A choice branch must jump back to a common
-   step, otherwise the steps after it run twice.
-3. **Speakers come from `CHARACTER_IDS`** in `src/types/story.ts`. Adding a
+   step, otherwise the steps after it run twice. The reachability check in
+   `systems/dialogue/reachability.ts` proves that no step is orphaned.
+3. **A choice's only continuations are its options.** The step after a choice
+   is not reachable unless an option jumps to it. That is deliberate: it is
+   what forces branches to merge.
+4. **Speakers come from `CHARACTER_IDS`** in `src/types/story.ts`. Adding a
    character means adding the id there and the definition in
    `src/data/characters.ts`.
-4. **Codex entries live in a file named after the chapter that unlocks
+5. **Codex entries live in a file named after the chapter that unlocks
    them** (`src/data/codex/act-two.ts`). Every entry must be unlocked by that
    chapter or the linter reports it as an orphan.
-5. **Lines are short enough to read.** The linter rejects a line over 420
+6. **Lines are short enough to read.** The linter rejects a line over 420
    characters. Aim for two or three sentences.
-6. **A chapter ends with `end`.**
+7. **A chapter ends with `end`.**
+8. **A chapter owns the flags it sets.** Flags written by a `flag` step or a
+   choice's `setFlag` are cleared when that chapter starts, so replaying a
+   chapter cannot inherit the previous run's choices. Flags a chapter only
+   _reads_ are not owned by it, so an act can branch on what an earlier act
+   decided. `systems/dialogue/script-flags.ts` computes the owned set.
 
 ---
 
@@ -256,12 +269,12 @@ There is no image editor in this workflow. Art is code.
 
 ## 7. Testing
 
-| Layer   | Tool                            | Covers                                                            |
-| ------- | ------------------------------- | ----------------------------------------------------------------- |
-| Unit    | Vitest                          | `systems/`, `data/`, `services/` — anything with no Phaser import |
-| Browser | Playwright                      | Scene flow, input, the dialogue box, the choice menu, save state  |
-| Content | `npm run content:check`         | Script integrity, codex references, source presence               |
-| Visual  | `node tools/qa/screenshots.mjs` | Capture the title and Act I for review                            |
+| Layer   | Tool                            | Covers                                                                        |
+| ------- | ------------------------------- | ----------------------------------------------------------------------------- |
+| Unit    | Vitest                          | `systems/`, `data/`, `services/` — anything with no Phaser import             |
+| Browser | Playwright                      | Scene flow, input, the dialogue box, the choice menu, the endings, save state |
+| Content | `npm run content:check`         | Script integrity, codex references, source presence, unreachable steps        |
+| Visual  | `node tools/qa/screenshots.mjs` | Capture the title and Act I for review                                        |
 
 ### Rules
 
@@ -316,6 +329,8 @@ A change is done when:
 ## 10. Current state
 
 See [`PLAN.md`](PLAN.md) for the milestone plan and [`docs/roadmap.md`](docs/roadmap.md)
-for the schedule. The short version: the engine, the art pipeline, the
-dialogue runtime and Act I exist and are verified end to end. Everything else
-is still to be written.
+for the schedule. The short version: the engine, the art pipeline, the dialogue
+runtime, the content linter and Act I exist and are verified end to end. Act I
+has three endings and a chapter-complete card; the human playtest is the one
+open item, and its protocol is in [`docs/m2-playtest.md`](docs/m2-playtest.md).
+Act II onward is still to be written.

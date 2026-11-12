@@ -103,3 +103,28 @@ export async function advanceUntilText(page: Page, needle: string, maxSteps = 30
     await nextLine(page);
   }
 }
+
+/** Picks the option at the given index in the open choice menu. */
+export async function chooseOption(page: Page, index: number): Promise<void> {
+  for (let step = 0; step < index; step += 1) {
+    await pressKey(page, 'ArrowDown');
+  }
+
+  await pressKey(page, 'z');
+}
+
+/** Plays a chapter through to its chapter-complete card. */
+export async function advanceUntilEndCard(page: Page, maxSteps = 80): Promise<void> {
+  for (let index = 0; index < maxSteps; index += 1) {
+    if (await readHook<boolean>(page, 'endCardVisible')) {
+      return;
+    }
+
+    if (await readHook<boolean>(page, 'choosing')) {
+      await pressKey(page, 'z');
+      continue;
+    }
+
+    await nextLine(page);
+  }
+}

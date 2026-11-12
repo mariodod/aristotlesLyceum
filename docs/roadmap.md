@@ -12,7 +12,7 @@
 | --- | -------------- | ------------------------------------------------------------------- | ----------- |
 | M0  | Foundation     | Repository, toolchain, art pipeline, CI/CD, docs                    | Done        |
 | M1  | Engine         | Dialogue runtime, textbox, title, save, content linter              | Done        |
-| M2  | Act I          | The opening chapter, finished and playtested                        | Partial     |
+| M2  | Act I          | The opening chapter, finished and playtested                        | In progress |
 | M3  | Art pass       | Twelve characters with expressions, portraits, three more backdrops | Not started |
 | M4  | Dialectic      | The battle system and the syllogism builder                         | Not started |
 | M5  | Codex          | Journal screen complete, Act II entries authored                    | Partial     |
@@ -55,6 +55,15 @@ errors, and a broken script fails `npm run content:check`.
 
 **Done when:** a non-philosopher can describe the game's premise afterwards
 without being told.
+
+**Progress:**
+
+- [x] The chapter is written: sixty-four steps, about five minutes.
+- [x] Three choices, three branches, three named endings.
+- [x] The chapter-complete card, with the ending, the stats and the journal count.
+- [x] The dream transition cross-fades the bedroom into the Lyceum.
+- [x] The choice menu, the journal and the endings are covered by browser tests.
+- [ ] The playtest. Protocol in [`m2-playtest.md`](m2-playtest.md).
 
 ### M3 — Art pass
 

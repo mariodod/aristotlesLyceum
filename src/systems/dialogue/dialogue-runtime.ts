@@ -208,6 +208,28 @@ export class DialogueRuntime {
           break;
         }
 
+        case 'branch': {
+          const label = this.flags.get(step.flag) === true ? step.ifTrue : step.ifFalse;
+          const target = this.labels.get(label);
+
+          if (target === undefined) {
+            throw new Error(`Branch at "${step.at}" targets unknown label "${label}".`);
+          }
+
+          this.cursor = target;
+          break;
+        }
+
+        case 'chapterEnd': {
+          events.push(
+            step.subtitle === undefined
+              ? { type: 'chapterEnd', title: step.title }
+              : { type: 'chapterEnd', title: step.title, subtitle: step.subtitle },
+          );
+          this.cursor += 1;
+          break;
+        }
+
         case 'chapter': {
           events.push(
             step.subtitle === undefined
