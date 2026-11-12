@@ -21,10 +21,12 @@ systems exist to serve it.
 
 | Rule                                           | Why                                                                                                                                                                                 |
 | ---------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| The project is written in **English**          | The brief arrived in Spanish, but every document, string, commit and comment in this repository is English. Spanish is a future locale, not a second language of the source.        |
+| The **source** is written in **English**       | The brief arrived in Spanish, but every document, string, commit and comment in this repository is English. The _game_ speaks more than one language: see section 7.                |
 | **No Undertale assets.**                       | We borrow a genre and a tone, never a sprite, a font, a sound or a line of text. Everything in `public/` is generated from code in `tools/`.                                        |
 | Every philosophical claim carries a **source** | The Codex is the educational spine of the game. `src/data/codex/` entries must name the Aristotelian work they come from, and `npm run content:check` enforces it.                  |
-| **Content is data, not code**                  | A chapter is a typed object in `src/data/script/`. If you need a new kind of story beat, add a step kind to the runtime and the type — do not branch on chapter ids inside a scene. |
+| **Content is data, not code**                  | A chapter is a typed object in `src/data/script/`. If you need a new kind of story beat, add a step kind to the runtime and the type - do not branch on chapter ids inside a scene. |
+| Every user-facing string is a **key**          | A string in the code is a bug waiting to happen. The interface lives in `src/i18n/ui/`, the story in the scripts, and `npm run i18n:check` proves every catalogue is complete.      |
+| Every user-facing string is a **key**          | A string in the code is a bug waiting to happen. The interface lives in `src/i18n/ui/`, the story in the scripts, and `npm run i18n:check` proves every catalogue is complete.      |
 
 ---
 
@@ -78,9 +80,11 @@ npm run test:e2e       # playwright test (browser)
 
 npm run assets         # regenerate public/assets and src/data/asset-manifest.json
 npm run content:check  # validate every script, codex entry and reference
+npm run i18n:check     # validate every catalogue against the game and the font
 ```
 
-`npm run assets` and `npm run content:check` are not optional extras. The
+`npm run assets`, `npm run content:check` and `npm run i18n:check` are not
+optional extras. The
 generated art pack and the manifest are **committed**, so a change to a
 generator must be followed by a regeneration, and a new chapter must be
 followed by a content check.
@@ -283,7 +287,90 @@ The builder teaches: it names the figure as soon as the two premises are
 chosen and the mood as soon as the conclusion is. A player who has never
 heard of a syllogism learns the shape of one by watching the readout.
 
-## 7. The art pipeline
+## 7. Localisation
+
+The game can be played in another language. That was not an accident: it was
+built in before there was more than one chapter to translate.
+
+### How it is arranged
+
+| Where                            | What lives there                                                       |
+| -------------------------------- | ---------------------------------------------------------------------- |
+| `src/i18n/ui/<locale>.json`      | The words the interface says. Every locale has one, including English. |
+| `src/i18n/content/<locale>.json` | The words the story says. Every locale except English has one.         |
+| `src/i18n/locales.ts`            | The list of languages, and which font each one uses.                   |
+| `src/services/locale-service.ts` | Which language is current, and the two lookups.                        |
+
+**The English story lives inline in the scripts.** A line in
+`src/data/script/act-one.ts` carries both the English text and a key:
+
+```ts
+{ at: 'room-1', kind: 'say', speaker: 'narrator',
+  key: 'act-one.room-1', text: 'Tuesday. 11:47 PM...' },
+```
+
+So a writer reads and edits the English in one place, and the English content
+catalogue is empty on purpose. Every other language is a catalogue with the
+same keys, and the linter proves it has all of them.
+
+### The keys
+
+| Kind               | Shape                          | Example                            |
+| ------------------ | ------------------------------ | ---------------------------------- |
+| Interface          | `ui.<group>.<name>`            | `ui.battle.refute`                 |
+| A line of dialogue | `<chapter>.<label>`            | `act-one.room-1`                   |
+| A choice           | `<chapter>.<label>.prompt`     | `act-one.choice-1.prompt`          |
+| A choice option    | `act-one.option.<n>`           | `act-one.option.0`                 |
+| An ending          | `<chapter>.<label>.title`      | `act-one.end-argument.title`       |
+| A Codex entry      | `codex.<id>.<field>`           | `codex.syllogism.origin`           |
+| An opponent's line | `dialectic.<opponent>.<field>` | `dialectic.certainty.claim`        |
+| A proposition      | `dialectic.<proposition id>`   | `dialectic.certainty-opinion-none` |
+
+### The two lookups
+
+- `locale.t(key)` — the interface. Falls back to the English catalogue, then to
+  the key itself.
+- `locale.tc(key, fallback)` — the story. Falls back to the English text the
+  script already carries.
+
+A counted string uses `locale.tn(key, count)`, which looks for `key.one` and
+`key.many`. A language that needs more forms can add them.
+
+### The linter
+
+`npm run i18n:check` proves, for every language:
+
+1. every key the game uses exists in the catalogue;
+2. the catalogue has no keys the game does not use;
+3. the placeholders in a translation match the English;
+4. **every character in the catalogue can be drawn by the font.**
+
+The last one is the one that matters. A bitmap font has no fallback, so a
+single accented letter the atlas does not have becomes a blank box in the
+middle of a sentence. The check reads the glyph table from the font generator
+and compares it against every catalogue.
+
+### Adding a language
+
+1. Write `src/i18n/ui/<locale>.json` and `src/i18n/content/<locale>.json`.
+   The linter tells you every key you are missing.
+2. Add the language to `src/i18n/locales.ts`, with the font it uses.
+3. If it needs a font the game does not have, add the atlas and its metrics
+   to `src/i18n/types.ts` and the manifest.
+
+The layout works out how many characters fit on a line from the font's
+advance, so a wider font wraps differently without anything else changing.
+
+### Rules for writing content
+
+- **Every line of dialogue gets a key.** The key is derived from the step's
+  label, which is unique inside a chapter.
+- **The engine speaks in keys, not in English.** `analyseSyllogism` returns a
+  message key and its parameters; the presentation layer says it. If a system
+  module produces prose, it is doing it wrong.
+- **Do not put a string in the code.** Every user-facing string is a key.
+
+## 8. The art pipeline
 
 There is no image editor in this workflow. Art is code.
 
@@ -329,14 +416,15 @@ There is no image editor in this workflow. Art is code.
 
 ---
 
-## 8. Testing
+## 9. Testing
 
-| Layer   | Tool                            | Covers                                                                        |
-| ------- | ------------------------------- | ----------------------------------------------------------------------------- |
-| Unit    | Vitest                          | `systems/`, `data/`, `services/` — anything with no Phaser import             |
-| Browser | Playwright                      | Scene flow, input, the dialogue box, the choice menu, the endings, save state |
-| Content | `npm run content:check`         | Script integrity, codex references, source presence, unreachable steps        |
-| Visual  | `node tools/qa/screenshots.mjs` | Capture the title and Act I for review                                        |
+| Layer        | Tool                            | Covers                                                                            |
+| ------------ | ------------------------------- | --------------------------------------------------------------------------------- |
+| Unit         | Vitest                          | `systems/`, `data/`, `services/` — anything with no Phaser import                 |
+| Browser      | Playwright                      | Scene flow, input, the dialogue box, the choice menu, the endings, save state     |
+| Content      | `npm run content:check`         | Script integrity, codex references, source presence, unreachable steps            |
+| Localisation | `npm run i18n:check`            | Missing and unused keys, mismatched placeholders, characters the font cannot draw |
+| Visual       | `node tools/qa/screenshots.mjs` | Capture the title and Act I for review                                            |
 
 ### Rules
 
@@ -352,7 +440,7 @@ There is no image editor in this workflow. Art is code.
 
 ---
 
-## 9. Code style
+## 10. Code style
 
 - `kebab-case.ts` files, `PascalCase` classes and types, `camelCase` values,
   `SCREAMING_SNAKE` for module constants.
@@ -374,12 +462,12 @@ There is no image editor in this workflow. Art is code.
 
 ---
 
-## 10. Definition of done
+## 11. Definition of done
 
 A change is done when:
 
 - `npm run typecheck`, `npm run lint`, `npm run format:check`, `npm run test`
-  and `npm run content:check` all pass;
+  and `npm run content:check` and `npm run i18n:check` all pass;
 - `npm run build` succeeds;
 - new behaviour is covered by a unit test or a browser test;
 - new art is regenerated and committed with its generator;
@@ -388,7 +476,7 @@ A change is done when:
 
 ---
 
-## 11. Current state
+## 12. Current state
 
 See [`PLAN.md`](PLAN.md) for the milestone plan and [`docs/roadmap.md`](docs/roadmap.md)
 for the schedule. The short version: the engine, the art pipeline, the dialogue

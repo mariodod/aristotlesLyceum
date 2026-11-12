@@ -137,6 +137,31 @@ export async function advanceUntilEndCard(page: Page, maxSteps = 80): Promise<vo
 }
 
 /**
+ * Opens the settings from the title screen and switches the language.
+ *
+ * The settings entry is the fourth one in development: begin, codex, try a
+ * dialectic, settings.
+ */
+export async function setLanguage(page: Page, language: 'English' | 'Español'): Promise<void> {
+  await bootToTitle(page);
+  await pressDown(page, 3);
+  await pressKey(page, 'z');
+  await page.waitForFunction(() => window.__LYCEUM_TEST__?.scene === 'Settings');
+
+  const current = await page.evaluate(() => localStorage.getItem('aristotles-lyceum.locale.v1'));
+
+  if (current === (language === 'Español' ? 'es' : 'en')) {
+    await pressKey(page, 'z');
+    await page.waitForFunction(() => window.__LYCEUM_TEST__?.scene === 'Title');
+    return;
+  }
+
+  await pressDown(page, 1);
+  await pressKey(page, 'z');
+  await page.waitForFunction(() => window.__LYCEUM_TEST__?.scene === 'Title');
+}
+
+/**
  * Opens the dialectic from the development entry on the title screen.
  *
  * The entry is the third item: begin, codex, try a dialectic.

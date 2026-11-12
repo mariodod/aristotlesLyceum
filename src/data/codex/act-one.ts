@@ -21,6 +21,14 @@ export interface CodexEntry {
   modern: string;
   /** Works of Aristotle this entry draws on. */
   sources: string[];
+  /** The catalogue key for the title. */
+  titleKey?: string;
+  /** The catalogue key for the origin text. */
+  originKey?: string;
+  /** The catalogue key for the modern text. */
+  modernKey?: string;
+  /** The catalogue key for the sources. */
+  sourcesKey?: string;
   /** Whose portrait is shown beside the entry. */
   author?: CharacterId;
 }
@@ -29,6 +37,10 @@ export const ACT_ONE_CODEX: CodexEntry[] = [
   {
     id: 'syllogism',
     title: 'The Syllogism',
+    titleKey: 'codex.syllogism.title',
+    originKey: 'codex.syllogism.origin',
+    modernKey: 'codex.syllogism.modern',
+    sourcesKey: 'codex.syllogism.sources',
     author: 'aristotle',
     origin:
       'A conclusion follows necessarily when it is drawn from premises that are true, primary, and more evident than the conclusion. Aristotle wrote the first worked-out system of formal inference in Prior Analytics.',
@@ -39,6 +51,10 @@ export const ACT_ONE_CODEX: CodexEntry[] = [
   {
     id: 'dialectic',
     title: 'Dialectic',
+    titleKey: 'codex.dialectic.title',
+    originKey: 'codex.dialectic.origin',
+    modernKey: 'codex.dialectic.modern',
+    sourcesKey: 'codex.dialectic.sources',
     author: 'aristotle',
     origin:
       'Reasoning that starts from reputable opinions rather than certain first principles. The Topics is a manual for testing a claim by asking the questions that would break it.',

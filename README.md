@@ -2,7 +2,7 @@
 
 **A 2D pixel-art narrative game about Aristotle, his philosophy, and where it still runs.**
 
-> **Status:** `v0.4.0`. The engine, the art pipeline, the dialogue runtime and
+> **Status:** `v0.5.0`. The engine, the art pipeline, the dialogue runtime and
 > Act I exist and are verified end to end. Act I is a finished five-minute
 > chapter with three endings, and the whole cast has faces that react. Act II
 > onward is still to be written. See [`PLAN.md`](PLAN.md) for the roadmap. The engine, the art pipeline, the dialogue runtime and
@@ -54,6 +54,10 @@ Then open <http://127.0.0.1:5173>.
   a face. To win, you build a syllogism that takes it apart: a major
   premise, a minor premise, and a conclusion, checked against the classical
   mood and figure table.
+- **More than one language.** The game ships in English and Spanish. The
+  language is chosen in the settings and applied immediately. Every catalogue
+  is checked by `npm run i18n:check`, which proves it is complete and that the
+  font can draw every character in it.
 
 ## Documentation
 
@@ -80,18 +84,24 @@ Then open <http://127.0.0.1:5173>.
 
 ## Scripts
 
-| Command                 | Purpose                                        |
-| ----------------------- | ---------------------------------------------- |
-| `npm run dev`           | Development server                             |
-| `npm run build`         | Typecheck and build to `dist/`                 |
-| `npm run preview`       | Serve the production build                     |
-| `npm run typecheck`     | `tsc --noEmit`                                 |
-| `npm run lint`          | ESLint                                         |
-| `npm run format`        | Prettier, write mode                           |
-| `npm run test`          | Unit tests                                     |
-| `npm run test:e2e`      | Browser tests                                  |
-| `npm run assets`        | Regenerate the art pack and the asset manifest |
-| `npm run content:check` | Validate every script, codex entry and source  |
+| Command                 | Purpose                                                  |
+| ----------------------- | -------------------------------------------------------- |
+| `npm run dev`           | Development server                                       |
+| `npm run build`         | Typecheck and build to `dist/`                           |
+| `npm run preview`       | Serve the production build                               |
+| `npm run typecheck`     | `tsc --noEmit`                                           |
+| `npm run lint`          | ESLint                                                   |
+| `npm run format`        | Prettier, write mode                                     |
+| `npm run test`          | Unit tests                                               |
+| `npm run test:e2e`      | Browser tests                                            |
+| `npm run assets`        | Regenerate the art pack and the asset manifest           |
+| `npm run content:check` | Validate every script, codex entry and source            |
+| `npm run i18n:check`    | Validate every translation against the game and the font |
+
+## Playing in Spanish
+
+The language is in **Settings**, and it changes immediately. The whole of Act
+I, the Dream Journal and the dialectic are translated.
 
 ## Trying the dialectic
 

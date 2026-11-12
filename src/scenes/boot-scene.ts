@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import { ASSET_MANIFEST, assetUrl } from '../data/assets.ts';
+import { LocaleService } from '../services/locale-service.ts';
 import { SaveService } from '../services/save-service.ts';
 import { setTestHook } from '../utils/test-hooks.ts';
 
@@ -22,6 +23,7 @@ export class BootScene extends Phaser.Scene {
     setTestHook({ ready: false, scene: 'Boot' });
 
     this.registry.set('saveService', new SaveService());
+    this.registry.set('localeService', new LocaleService());
 
     this.scene.start('Preload');
   }

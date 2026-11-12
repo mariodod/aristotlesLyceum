@@ -6,7 +6,9 @@ import { CHARACTERS } from '../data/characters.ts';
 import { codexEntry } from '../data/codex/index.ts';
 import { chapterById } from '../data/script/registry.ts';
 import { isNeutral } from '../data/sprite-expressions.ts';
-import { TextBox } from '../entities/textbox.ts';
+import { DEFAULT_TEXTBOX, TextBox } from '../entities/textbox.ts';
+import { metricsFor } from '../i18n/types.ts';
+import type { LocaleService } from '../services/locale-service.ts';
 import type { SaveService } from '../services/save-service.ts';
 import { DialogueRuntime } from '../systems/dialogue/dialogue-runtime.ts';
 import { collectScriptFlags } from '../systems/dialogue/script-flags.ts';
@@ -49,9 +51,13 @@ export class StoryScene extends Phaser.Scene {
   private cardActive = false;
   private speaker: CharacterId = 'narrator';
   private currentLine = '';
+  private choicePrompt = '';
   private currentExpression: ExpressionId = 'neutral';
   private endingTitle = '';
   private endingSubtitle = '';
+  private endingKey: string | undefined = undefined;
+  private endingSubtitleKey: string | undefined = undefined;
+  private locale: LocaleService | undefined;
 
   constructor() {
     super('Story');
@@ -65,12 +71,18 @@ export class StoryScene extends Phaser.Scene {
   create(): void {
     setTestHook({ ready: true, scene: 'Story', chapter: this.chapterId });
 
+    this.locale = this.registry.get('localeService') as LocaleService;
+
     // The scene instance survives a restart, so the actors of the previous
     // chapter have to be dropped before the new ones are placed.
     this.actors.clear();
     this.endCard = undefined;
     this.endingTitle = '';
     this.endingSubtitle = '';
+    this.endingKey = undefined;
+    this.endingSubtitleKey = undefined;
+    this.currentLine = '';
+    this.currentExpression = 'neutral';
 
     const script = chapterById(this.chapterId);
 
@@ -83,7 +95,10 @@ export class StoryScene extends Phaser.Scene {
     this.backdrop = this.add.image(0, 0, script.backdrop).setOrigin(0).setDepth(0);
     this.add.rectangle(0, 0, GAME_WIDTH, GAME_HEIGHT, 0x07070c, 0.18).setOrigin(0).setDepth(1);
 
-    this.textBox = new TextBox(this);
+    this.textBox = new TextBox(this, {
+      ...DEFAULT_TEXTBOX,
+      advance: metricsFor(this.locale?.definition.fontKey ?? 'pixel-5x7').advance,
+    });
     this.installInput();
 
     this.runtime = new DialogueRuntime(
@@ -122,12 +137,12 @@ export class StoryScene extends Phaser.Scene {
     for (const event of events) {
       switch (event.type) {
         case 'say':
-          this.showLine(event.speaker, event.text, event.expression);
+          this.showLine(event.speaker, event.text, event.key, event.expression);
           break;
         case 'choice':
           this.showChoices(
-            event.prompt,
-            event.options.map((option) => option.label),
+            this.tc(event.key, event.prompt),
+            event.options.map((option) => this.tc(option.key, option.label)),
           );
           break;
         case 'codex':
@@ -149,6 +164,8 @@ export class StoryScene extends Phaser.Scene {
         case 'chapterEnd':
           this.endingTitle = event.title;
           this.endingSubtitle = event.subtitle ?? '';
+          this.endingKey = event.key;
+          this.endingSubtitleKey = event.subtitleKey;
           break;
         case 'stage':
           this.setStage(event.actors, event.backdrop);
@@ -160,7 +177,12 @@ export class StoryScene extends Phaser.Scene {
     }
   }
 
-  private showLine(speaker: CharacterId, text: string, expression: ExpressionId): void {
+  private showLine(
+    speaker: CharacterId,
+    text: string,
+    key: string | undefined,
+    expression: ExpressionId,
+  ): void {
     const box = this.textBox;
 
     if (!box) {
@@ -168,11 +190,12 @@ export class StoryScene extends Phaser.Scene {
     }
 
     this.speaker = speaker;
-    this.currentLine = text;
     this.currentExpression = expression;
     const character = CHARACTERS[speaker];
-    box.setSpeaker(character.name, character.color);
-    box.showText(text);
+    const line = this.tc(key, text);
+    this.currentLine = line;
+    box.setSpeaker(this.tc(`ui.character.${speaker}`, character.name), character.color);
+    box.showText(line);
     this.mode = 'line';
     this.highlightSpeaker();
     this.applyExpression(speaker, expression);
@@ -208,6 +231,7 @@ export class StoryScene extends Phaser.Scene {
     }
 
     this.mode = 'choice';
+    this.choicePrompt = prompt;
     box.openChoices(prompt, labels);
     this.publishHook();
   }
@@ -418,6 +442,25 @@ export class StoryScene extends Phaser.Scene {
     });
   }
 
+  /** Translates a key from the interface catalogue. */
+  private t(key: string, params?: Record<string, string | number>): string {
+    return this.locale?.t(key, params) ?? key;
+  }
+
+  /** Translates a key that comes with a count. */
+  private tn(key: string, count: number): string {
+    return this.locale?.tn(key, count) ?? key;
+  }
+
+  /** Translates a key from the story catalogue. */
+  private tc(
+    key: string | undefined,
+    fallback: string,
+    params?: Record<string, string | number>,
+  ): string {
+    return this.locale?.tc(key, fallback, params) ?? fallback;
+  }
+
   /**
    * The card a chapter ends on: what the act was called, which ending the
    * player reached, what the stats are, and how much of the Dream Journal
@@ -436,7 +479,7 @@ export class StoryScene extends Phaser.Scene {
 
     const [act = 'Act', name = ''] = (this.script?.title ?? 'Act').split(' — ');
 
-    const actLabel = this.add.bitmapText(GAME_WIDTH / 2, 48, FONT_KEY, act.toUpperCase());
+    const actLabel = this.add.bitmapText(GAME_WIDTH / 2, 48, FONT_KEY, this.t('ui.story.actTitle'));
     actLabel.setOrigin(0.5, 0);
     actLabel.setTint(0xf2c14e);
     card.add(actLabel);
@@ -444,13 +487,14 @@ export class StoryScene extends Phaser.Scene {
     const actName = this.add
       .bitmapText(GAME_WIDTH / 2, 64, FONT_KEY, name.toUpperCase())
       .setOrigin(0.5, 0);
+    void act;
     actName.setScale(2);
     actName.setTint(0xf6f2e8);
     card.add(actName);
 
     if (this.endingTitle.length > 0) {
       const ending = this.add
-        .bitmapText(GAME_WIDTH / 2, 104, FONT_KEY, this.endingTitle)
+        .bitmapText(GAME_WIDTH / 2, 104, FONT_KEY, this.tc(this.endingKey, this.endingTitle))
         .setOrigin(0.5, 0);
       ending.setTint(0xffe6a0);
       card.add(ending);
@@ -458,7 +502,12 @@ export class StoryScene extends Phaser.Scene {
       if (this.endingSubtitle.length > 0) {
         card.add(
           this.add
-            .bitmapText(GAME_WIDTH / 2, 120, FONT_KEY, this.endingSubtitle)
+            .bitmapText(
+              GAME_WIDTH / 2,
+              120,
+              FONT_KEY,
+              this.tc(this.endingSubtitleKey, this.endingSubtitle),
+            )
             .setOrigin(0.5, 0)
             .setAlpha(0.65),
         );
@@ -471,7 +520,7 @@ export class StoryScene extends Phaser.Scene {
           GAME_WIDTH / 2,
           168,
           FONT_KEY,
-          `REASON ${stats.reason}    WISDOM ${stats.wisdom}    EMPATHY ${stats.empathy}`,
+          `${this.t('ui.story.reason')} ${stats.reason}    ${this.t('ui.story.wisdom')} ${stats.wisdom}    ${this.t('ui.story.empathy')} ${stats.empathy}`,
         )
         .setOrigin(0.5, 0)
         .setTint(0xbfb6a2),
@@ -479,26 +528,21 @@ export class StoryScene extends Phaser.Scene {
 
     card.add(
       this.add
-        .bitmapText(
-          GAME_WIDTH / 2,
-          188,
-          FONT_KEY,
-          `DREAM JOURNAL: ${codexCount} ${codexCount === 1 ? 'ENTRY' : 'ENTRIES'}`,
-        )
+        .bitmapText(GAME_WIDTH / 2, 188, FONT_KEY, this.tn('ui.story.journal', codexCount))
         .setOrigin(0.5, 0)
         .setAlpha(0.7),
     );
 
     card.add(
       this.add
-        .bitmapText(GAME_WIDTH / 2, 252, FONT_KEY, 'Z TO RETURN TO THE TITLE')
+        .bitmapText(GAME_WIDTH / 2, 252, FONT_KEY, this.t('ui.story.backToTitle'))
         .setOrigin(0.5, 0)
         .setTint(0xf6f2e8),
     );
 
     card.add(
       this.add
-        .bitmapText(GAME_WIDTH / 2, 270, FONT_KEY, 'C TO READ THE DREAM JOURNAL')
+        .bitmapText(GAME_WIDTH / 2, 270, FONT_KEY, this.t('ui.story.readJournal'))
         .setOrigin(0.5, 0)
         .setAlpha(0.6),
     );
@@ -611,6 +655,7 @@ export class StoryScene extends Phaser.Scene {
       choiceCount: box?.choiceCount ?? 0,
       choiceIndex: box?.selectedChoice ?? 0,
       choiceLabels: box?.choiceLabels ?? [],
+      choicePrompt: this.choicePrompt,
       choiceVisible: box?.optionsRendered ?? false,
       ending: this.endingTitle,
       endCardVisible: this.endCard !== undefined,

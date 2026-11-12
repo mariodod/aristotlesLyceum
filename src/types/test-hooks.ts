@@ -34,6 +34,8 @@ export interface LyceumTestHook {
   choiceIndex: number;
   /** Labels of the open choice menu. */
   choiceLabels: string[];
+  /** The prompt above the open choice menu. */
+  choicePrompt: string;
   /** True when the choice labels are actually drawn on top of the panel. */
   choiceVisible: boolean;
   /** Title of the ending the player reached, once the chapter is over. */

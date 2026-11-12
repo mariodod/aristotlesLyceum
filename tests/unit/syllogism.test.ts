@@ -26,6 +26,7 @@ describe('analyseSyllogism', () => {
     expect(result.figure).toBe(1);
     expect(result.mood).toBe('AAA');
     expect(result.name).toBe('Barbara');
+    expect(result.key).toBe('ui.logic.holds');
   });
 
   it('accepts Celarent', () => {
@@ -72,7 +73,8 @@ describe('analyseSyllogism', () => {
     expect(result.valid).toBe(false);
     expect(result.problem).toBe('invalid-mood');
     expect(result.figure).toBe(1);
-    expect(result.explanation).toContain('EEA');
+    expect(result.mood).toBe('EEA');
+    expect(result.key).toBe('ui.logic.invalidMood');
   });
 
   it('rejects a major premise that does not carry the predicate', () => {

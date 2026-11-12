@@ -21,18 +21,21 @@ export const ACT_ONE: StoryScript = {
     {
       at: 'room-1',
       kind: 'say',
+      key: 'act-one.room-1',
       speaker: 'narrator',
       text: 'Tuesday. 11:47 PM. The exam is in nine hours, and the only book open on the desk is Aristotle.',
     },
     {
       at: 'room-2',
       kind: 'say',
+      key: 'act-one.room-2',
       speaker: 'narrator',
       text: 'The lamp is the only light left in the room. The window is doing its blue thing. Everything else is asleep.',
     },
     {
       at: 'room-3',
       kind: 'say',
+      key: 'act-one.room-3',
       speaker: 'narrator',
       text: 'On the desk: a mug of tea he stopped drinking an hour ago, a phone face down, a highlighter that has never once highlighted anything, and page one hundred and twelve.',
     },
@@ -40,6 +43,7 @@ export const ACT_ONE: StoryScript = {
     {
       at: 'isaac-1',
       kind: 'say',
+      key: 'act-one.isaac-1',
       speaker: 'isaac',
       text: 'Nine hours to become a person who understands metaphysics. That is not a thing a person can do in nine hours.',
       expression: 'tired',
@@ -47,6 +51,7 @@ export const ACT_ONE: StoryScript = {
     {
       at: 'isaac-2',
       kind: 'say',
+      key: 'act-one.isaac-2',
       speaker: 'isaac',
       text: 'Philosophy is the one subject where you can read every page, understand every word, and still fail the exam. That is the entire subject.',
       expression: 'angry',
@@ -54,6 +59,7 @@ export const ACT_ONE: StoryScript = {
     {
       at: 'isaac-3',
       kind: 'say',
+      key: 'act-one.isaac-3',
       speaker: 'isaac',
       text: 'It is not even the reading. The reading goes somewhere. You close the book and you are still you, and the exam is still in the morning.',
       expression: 'tired',
@@ -61,6 +67,7 @@ export const ACT_ONE: StoryScript = {
     {
       at: 'isaac-4',
       kind: 'say',
+      key: 'act-one.isaac-4',
       speaker: 'isaac',
       text: 'Page one hundred and twelve. "All men by nature desire to know." Page one hundred and thirteen. "Such is the object of education..."',
       expression: 'tired',
@@ -68,6 +75,7 @@ export const ACT_ONE: StoryScript = {
     {
       at: 'isaac-5',
       kind: 'say',
+      key: 'act-one.isaac-5',
       speaker: 'isaac',
       text: 'Sure. Blah blah. Knowledge. Very useful. Tell me, Aristotle: am I going to be able to name my own feelings by Thursday?',
       expression: 'angry',
@@ -76,24 +84,28 @@ export const ACT_ONE: StoryScript = {
     {
       at: 'turn-1',
       kind: 'say',
+      key: 'act-one.turn-1',
       speaker: 'narrator',
       text: 'He turns the page anyway. He has turned it about nine hundred times tonight.',
     },
     {
       at: 'turn-2',
       kind: 'say',
+      key: 'act-one.turn-2',
       speaker: 'isaac',
       text: 'The trouble with reading out loud is that you hear yourself. And then you hear whether you sound like you believe it.',
     },
     {
       at: 'turn-3',
       kind: 'say',
+      key: 'act-one.turn-3',
       speaker: 'narrator',
       text: 'He reads the line again. And again. On the third time, the words on the page have moved.',
     },
     {
       at: 'turn-4',
       kind: 'say',
+      key: 'act-one.turn-4',
       speaker: 'isaac',
       text: 'Wait. That is not. The letters are not doing that.',
       expression: 'surprised',
@@ -102,23 +114,27 @@ export const ACT_ONE: StoryScript = {
     {
       at: 'choice-1',
       kind: 'choice',
+      key: 'act-one.choice-1.prompt',
       speaker: 'isaac',
       prompt: 'What do you do?',
       options: [
         {
           label: 'Read the next line out loud.',
+          key: 'act-one.option.0',
           goto: 'read-on-1',
           stat: { stat: 'reason', delta: 1 },
           setFlag: 'act-one-read',
         },
         {
           label: 'Read it again until it makes sense.',
+          key: 'act-one.option.1',
           goto: 'read-again-1',
           stat: { stat: 'wisdom', delta: 1 },
           setFlag: 'act-one-repeat',
         },
         {
           label: 'Text your best friend that you are going to fail.',
+          key: 'act-one.option.2',
           goto: 'text-friend-1',
           stat: { stat: 'empathy', delta: 1 },
           setFlag: 'act-one-message',
@@ -129,6 +145,7 @@ export const ACT_ONE: StoryScript = {
     {
       at: 'read-on-1',
       kind: 'say',
+      key: 'act-one.read-on-1',
       speaker: 'isaac',
       text: '"For the sake of knowing, and to know what is good." He says it out loud, and his own voice comes back half a second late, in a slightly better voice.',
       expression: 'surprised',
@@ -136,6 +153,7 @@ export const ACT_ONE: StoryScript = {
     {
       at: 'read-on-2',
       kind: 'say',
+      key: 'act-one.read-on-2',
       speaker: 'isaac',
       text: 'He says it again. Same thing. The voice is not repeating him. The voice is answering.',
       expression: 'surprised',
@@ -143,6 +161,7 @@ export const ACT_ONE: StoryScript = {
     {
       at: 'read-on-3',
       kind: 'say',
+      key: 'act-one.read-on-3',
       speaker: 'narrator',
       text: 'On the fourth reading, the voice stops waiting for him to finish.',
     },
@@ -151,6 +170,7 @@ export const ACT_ONE: StoryScript = {
     {
       at: 'read-again-1',
       kind: 'say',
+      key: 'act-one.read-again-1',
       speaker: 'isaac',
       text: 'He reads it again. Then again. The words get softer and softer, the way they do at four in the morning, until they stop meaning anything at all.',
       expression: 'tired',
@@ -158,6 +178,7 @@ export const ACT_ONE: StoryScript = {
     {
       at: 'read-again-2',
       kind: 'say',
+      key: 'act-one.read-again-2',
       speaker: 'isaac',
       text: 'Meaningless words are easier. He has noticed that before.',
       expression: 'tired',
@@ -165,6 +186,7 @@ export const ACT_ONE: StoryScript = {
     {
       at: 'read-again-3',
       kind: 'say',
+      key: 'act-one.read-again-3',
       speaker: 'narrator',
       text: 'He is still reading when the page changes. He does not notice that the page has changed.',
     },
@@ -173,6 +195,7 @@ export const ACT_ONE: StoryScript = {
     {
       at: 'text-friend-1',
       kind: 'say',
+      key: 'act-one.text-friend-1',
       speaker: 'isaac',
       text: 'He picks up his phone. The group chat is called AP CALCS (DO NOT OPEN). He opens it. He types: "hey if i fail philosophy tmrw can i just not have a major"',
       expression: 'thinking',
@@ -180,12 +203,14 @@ export const ACT_ONE: StoryScript = {
     {
       at: 'text-friend-2',
       kind: 'say',
+      key: 'act-one.text-friend-2',
       speaker: 'narrator',
       text: 'Three dots. Then a long time of nothing.',
     },
     {
       at: 'text-friend-3',
       kind: 'say',
+      key: 'act-one.text-friend-3',
       speaker: 'isaac',
       text: '"ok but like what would you even do" - and that is somehow worse than the exam.',
       expression: 'sad',
@@ -193,6 +218,7 @@ export const ACT_ONE: StoryScript = {
     {
       at: 'text-friend-4',
       kind: 'say',
+      key: 'act-one.text-friend-4',
       speaker: 'narrator',
       text: 'He puts the phone down. He puts his hand on the book. The page has changed. He does not notice that the page has changed.',
     },
@@ -202,6 +228,7 @@ export const ACT_ONE: StoryScript = {
     {
       at: 'room-goes-1',
       kind: 'say',
+      key: 'act-one.room-goes-1',
       speaker: 'narrator',
       text: 'The room does not go dark. It goes somewhere else.',
     },
@@ -214,12 +241,14 @@ export const ACT_ONE: StoryScript = {
     {
       at: 'room-goes-2',
       kind: 'say',
+      key: 'act-one.room-goes-2',
       speaker: 'narrator',
       text: 'The floor under his feet is stone. The air smells of olive oil and dust and a little rain. The window is not a window any more.',
     },
     {
       at: 'room-goes-3',
       kind: 'say',
+      key: 'act-one.room-goes-3',
       speaker: 'narrator',
       text: 'And there is a voice, patient, the way a teacher waits for a slow student:',
     },
@@ -234,6 +263,7 @@ export const ACT_ONE: StoryScript = {
     {
       at: 'aristotle-1',
       kind: 'say',
+      key: 'act-one.aristotle-1',
       speaker: 'aristotle',
       text: 'You have been reading me for six hours, Isaac. Shall we stop reading and start arguing?',
       expression: 'happy',
@@ -241,6 +271,7 @@ export const ACT_ONE: StoryScript = {
     {
       at: 'isaac-react-1',
       kind: 'say',
+      key: 'act-one.isaac-react-1',
       speaker: 'isaac',
       text: 'Who -',
       expression: 'surprised',
@@ -248,6 +279,7 @@ export const ACT_ONE: StoryScript = {
     {
       at: 'aristotle-2',
       kind: 'say',
+      key: 'act-one.aristotle-2',
       speaker: 'aristotle',
       text: 'That is a question that needs a description, not a name. We shall get to that too. First: Athens, spring, and I have been waiting six hours for you to finish the sentence.',
       expression: 'thinking',
@@ -255,6 +287,7 @@ export const ACT_ONE: StoryScript = {
     {
       at: 'aristotle-3',
       kind: 'say',
+      key: 'act-one.aristotle-3',
       speaker: 'aristotle',
       text: '"Such is the object of education, and the kind of knowledge that will make a soul good." You stopped one line early.',
       expression: 'happy',
@@ -262,6 +295,7 @@ export const ACT_ONE: StoryScript = {
     {
       at: 'isaac-react-2',
       kind: 'say',
+      key: 'act-one.isaac-react-2',
       speaker: 'isaac',
       text: 'The sentence?',
       expression: 'surprised',
@@ -269,6 +303,7 @@ export const ACT_ONE: StoryScript = {
     {
       at: 'aristotle-4',
       kind: 'say',
+      key: 'act-one.aristotle-4',
       speaker: 'aristotle',
       text: 'The sentence. You were on the verge of knowing why you were reading. That is a better reason than an exam, and you were two lines away from it.',
       expression: 'determined',
@@ -280,12 +315,14 @@ export const ACT_ONE: StoryScript = {
     {
       at: 'look-1',
       kind: 'say',
+      key: 'act-one.look-1',
       speaker: 'narrator',
       text: 'Isaac looks down. There is a path under his feet, a colonnade to the left, and a school that is just beginning to be loud.',
     },
     {
       at: 'look-2',
       kind: 'say',
+      key: 'act-one.look-2',
       speaker: 'isaac',
       text: 'Okay. Okay. This is a dream. This is obviously a dream. Dreams do not have footnotes.',
       expression: 'thinking',
@@ -309,6 +346,7 @@ export const ACT_ONE: StoryScript = {
     {
       at: 'ending-read-1',
       kind: 'say',
+      key: 'act-one.ending-read-1',
       speaker: 'isaac',
       text: 'He had wanted to know why. That was all he had ever wanted from a textbook: not the answer, just the reason to keep asking.',
       expression: 'thinking',
@@ -316,12 +354,15 @@ export const ACT_ONE: StoryScript = {
     {
       at: 'ending-read-2',
       kind: 'say',
+      key: 'act-one.ending-read-2',
       speaker: 'narrator',
       text: 'In Athens, in the spring, a man who has been dead for twenty-three centuries waits for a teenager to catch up.',
     },
     {
       at: 'end-argument',
       kind: 'chapterEnd',
+      key: 'act-one.end-argument.title',
+      subtitleKey: 'act-one.end-argument.subtitle',
       title: 'THE ARGUMENT',
       subtitle: 'He read the next line out loud.',
     },
@@ -330,6 +371,7 @@ export const ACT_ONE: StoryScript = {
     {
       at: 'ending-repeat-1',
       kind: 'say',
+      key: 'act-one.ending-repeat-1',
       speaker: 'isaac',
       text: 'He had read the same page nine hundred times tonight because he did not want to be the sort of person who fails. That was not philosophy. That was closer to love.',
       expression: 'tired',
@@ -337,12 +379,15 @@ export const ACT_ONE: StoryScript = {
     {
       at: 'ending-repeat-2',
       kind: 'say',
+      key: 'act-one.ending-repeat-2',
       speaker: 'narrator',
       text: 'In Athens, in the spring, a man who has been dead for twenty-three centuries waits for a teenager to catch up.',
     },
     {
       at: 'end-repetition',
       kind: 'chapterEnd',
+      key: 'act-one.end-repetition.title',
+      subtitleKey: 'act-one.end-repetition.subtitle',
       title: 'THE REPETITION',
       subtitle: 'He read it again until it made sense.',
     },
@@ -351,6 +396,7 @@ export const ACT_ONE: StoryScript = {
     {
       at: 'ending-message-1',
       kind: 'say',
+      key: 'act-one.ending-message-1',
       speaker: 'isaac',
       text: '"Ok but like what would you even do" - and he had no idea. He still did not. But somewhere underneath all that panic there was a question he actually wanted to answer.',
       expression: 'thinking',
@@ -358,12 +404,15 @@ export const ACT_ONE: StoryScript = {
     {
       at: 'ending-message-2',
       kind: 'say',
+      key: 'act-one.ending-message-2',
       speaker: 'narrator',
       text: 'In Athens, in the spring, a man who has been dead for twenty-three centuries waits for a teenager to catch up.',
     },
     {
       at: 'end-message',
       kind: 'chapterEnd',
+      key: 'act-one.end-message.title',
+      subtitleKey: 'act-one.end-message.subtitle',
       title: 'THE MESSAGE',
       subtitle: 'He texted his friend, and then read on.',
     },
@@ -372,12 +421,14 @@ export const ACT_ONE: StoryScript = {
     {
       at: 'final-1',
       kind: 'say',
+      key: 'act-one.final-1',
       speaker: 'aristotle',
       text: 'One more thing, Isaac, before you wake up.',
     },
     {
       at: 'final-2',
       kind: 'say',
+      key: 'act-one.final-2',
       speaker: 'isaac',
       text: 'Am I going to wake up?',
       expression: 'surprised',
@@ -385,6 +436,7 @@ export const ACT_ONE: StoryScript = {
     {
       at: 'final-3',
       kind: 'say',
+      key: 'act-one.final-3',
       speaker: 'aristotle',
       text: 'Everyone wakes up. The interesting question is what you do with the hours afterwards.',
       expression: 'happy',
@@ -392,6 +444,7 @@ export const ACT_ONE: StoryScript = {
     {
       at: 'final-4',
       kind: 'say',
+      key: 'act-one.final-4',
       speaker: 'isaac',
       text: '...Fine. Give me the exam.',
       expression: 'determined',
@@ -399,6 +452,7 @@ export const ACT_ONE: StoryScript = {
     {
       at: 'final-5',
       kind: 'say',
+      key: 'act-one.final-5',
       speaker: 'aristotle',
       text: 'You will not need it. You have been practising it for six hours.',
       expression: 'happy',
@@ -406,6 +460,7 @@ export const ACT_ONE: StoryScript = {
     {
       at: 'final-6',
       kind: 'say',
+      key: 'act-one.final-6',
       speaker: 'narrator',
       text: 'Somewhere behind Isaac, a school wakes up.',
     },

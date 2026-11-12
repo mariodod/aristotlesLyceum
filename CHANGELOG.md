@@ -7,6 +7,37 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.0] - 2026-11-12
+
+### Added
+
+- **Localisation.** The game can be played in Spanish, and the system is
+  built so the next language is a folder of catalogues.
+- **The English story stays in the scripts.** A line of dialogue carries both
+  the English text and a key, so a writer reads and edits the English where it
+  is written and a translator gets one file per language.
+- **A language switch** in the settings. It applies immediately and it is
+  remembered.
+- **A font per language.** The dialogue box works out its wrapping from the
+  font's advance, so a locale with a wider font wraps differently without
+  anything else changing.
+- **A localisation linter.** `npm run i18n:check` proves that every
+  catalogue is complete, has no stale keys, has the same placeholders as the
+  English, and uses only characters the font can actually draw. The last check
+  matters most: a bitmap font has no fallback, so one accented letter the
+  atlas does not have becomes a blank box in the middle of a sentence.
+- **A Spanish translation** of the whole of Act I, the Dream Journal, the
+  dialectic and the interface.
+
+### Fixed
+
+- **Scenes kept their state across a restart.** A Phaser scene reuses its
+  instance, so the title menu came back with the cursor still on the entry that
+  was chosen last time, and the settings screen came back with the wrong
+  language selected.
+- **The chosen language was never remembered.** The service was built without
+  the browser's storage, so the setting did not survive a reload.
+
 ## [0.4.0] - 2026-11-12
 
 ### Added

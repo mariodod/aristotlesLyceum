@@ -55,26 +55,26 @@ export class DialecticBattle {
     return [
       {
         id: 'examine',
-        label: 'EXAMINE',
-        description: 'Interrogate the claim. It is free.',
+        labelKey: 'ui.battle.examine',
+        descriptionKey: 'ui.battle.examineHint',
         enabled: !over && claim !== undefined && !this.battleState.examined,
       },
       {
         id: 'refute',
-        label: 'REFUTE',
-        description: 'Build a syllogism that answers it.',
+        labelKey: 'ui.battle.refute',
+        descriptionKey: 'ui.battle.refuteHint',
         enabled: !over && claim !== undefined,
       },
       {
         id: 'claim',
-        label: 'CLAIM',
-        description: 'Assert a conclusion on its own.',
+        labelKey: 'ui.battle.claim',
+        descriptionKey: 'ui.battle.claimHint',
         enabled: !over && claim !== undefined,
       },
       {
         id: 'embrace',
-        label: 'EMBRACE',
-        description: 'Let it stand. They will take that.',
+        labelKey: 'ui.battle.embrace',
+        descriptionKey: 'ui.battle.embraceHint',
         enabled: !over && claim !== undefined,
       },
     ];
@@ -98,6 +98,7 @@ export class DialecticBattle {
         type: 'dialogue',
         speaker: this.opponent.name,
         text: claim.text,
+        key: this.claimKey('claim'),
         expression: 'determined',
       },
     ];
@@ -122,6 +123,7 @@ export class DialecticBattle {
         type: 'dialogue',
         speaker: this.opponent.name,
         text: claim.examination,
+        key: this.claimKey('examination'),
         expression: 'thinking',
       },
       { type: 'examine', options: claim.propositions },
@@ -154,6 +156,7 @@ export class DialecticBattle {
           type: 'dialogue',
           speaker: this.opponent.name,
           text: 'That is one of the premises you would need. It is not yet an answer.',
+          key: this.claimKey('premise'),
           expression: 'neutral',
         },
       ];
@@ -166,6 +169,7 @@ export class DialecticBattle {
         type: 'dialogue',
         speaker: this.opponent.name,
         text: 'Yes. Yes, that is what I say, and you are right to say it. But you have asserted it, not shown it. I want the demonstration.',
+        key: this.claimKey('asserted'),
         expression: 'surprised',
       },
       { type: 'conviction', value: this.battleState.conviction },
@@ -193,6 +197,7 @@ export class DialecticBattle {
         type: 'dialogue',
         speaker: this.opponent.name,
         text: claim.shrug,
+        key: this.claimKey('shrug'),
         expression: 'happy',
       },
       { type: 'conviction', value: this.battleState.conviction },
@@ -232,9 +237,10 @@ export class DialecticBattle {
         type: 'dialogue',
         speaker: this.opponent.name,
         text: claim.objection,
+        key: this.claimKey('objection'),
         expression: 'happy',
       });
-      events.push({ type: 'analysis', text: result.explanation, valid: false });
+      events.push({ type: 'analysis', key: result.key, params: result.params, valid: false });
       return events;
     }
 
@@ -243,9 +249,15 @@ export class DialecticBattle {
         type: 'dialogue',
         speaker: this.opponent.name,
         text: claim.relevance,
+        key: this.claimKey('relevance'),
         expression: 'thinking',
       });
-      events.push({ type: 'analysis', text: result.explanation, valid: true });
+      events.push({
+        type: 'analysis',
+        key: result.key,
+        params: result.params,
+        valid: true,
+      });
       return events;
     }
 
@@ -256,13 +268,26 @@ export class DialecticBattle {
       type: 'dialogue',
       speaker: this.opponent.name,
       text: claim.concession,
+      key: this.claimKey('concession'),
       expression: 'sad',
     });
-    events.push({ type: 'analysis', text: result.explanation, valid: true });
+    events.push({
+      type: 'analysis',
+      key: result.key,
+      params: result.params,
+      valid: true,
+    });
     events.push({ type: 'conviction', value: 0 });
     events.push({ type: 'won' });
 
     return events;
+  }
+
+  /**
+   * The catalogue key of one of the opponent's lines.
+   */
+  private claimKey(field: string): string {
+    return `dialectic.${this.opponent.id}.${field}`;
   }
 
   /**

@@ -15,8 +15,13 @@ export interface TextBoxGeometry {
   paddingX: number;
   paddingY: number;
   borderWidth: number;
-  /** How many characters fit on a line. */
-  columns: number;
+  /**
+   * The width of one character in the font the player chose.
+   *
+   * The box works out how many characters fit from this, so a locale with a
+   * wider font wraps differently without anything else changing.
+   */
+  advance: number;
 }
 
 /**
@@ -25,8 +30,17 @@ export interface TextBoxGeometry {
  */
 export const DEFAULT_TEXTBOX: TextBoxGeometry = {
   ...TEXTBOX,
-  columns: 82,
+  advance: 7,
 };
+
+/**
+ * How many characters fit on a line of the box.
+ */
+export function columnsFor(geometry: TextBoxGeometry): number {
+  const usable = geometry.width - geometry.paddingX * 2;
+
+  return Math.max(8, Math.floor(usable / Math.max(1, geometry.advance)));
+}
 
 /**
  * The dialogue box: a black panel with a pale border, a name plate that
@@ -138,7 +152,7 @@ export class TextBox extends Phaser.GameObjects.Container {
 
   /** Starts a typewriter reveal of the given line. */
   showText(text: string, charactersPerSecond = DIALOGUE_TUNING.charactersPerSecond): void {
-    const wrapped = wrapText(text, this.geometry.columns);
+    const wrapped = wrapText(text, columnsFor(this.geometry));
     this.typewriter = new Typewriter(wrapped, charactersPerSecond);
     this.bodyText.setText('');
     this.bodyText.setVisible(true);

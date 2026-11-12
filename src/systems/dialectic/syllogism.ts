@@ -3,10 +3,10 @@ import type { Figure, Proposition, PropositionForm, TermId } from '../../types/d
 /**
  * The valid moods of the four figures.
  *
- * This is the classical table from the first century of the common era, and
- * it is the complete criterion: a categorical syllogism is valid if and only
- * if its mood is in the list for its figure. Every other rule about the
- * middle term is already folded into the table.
+ * This is the classical table, and it is the complete criterion: a
+ * categorical syllogism is valid if and only if its mood is in the list for
+ * its figure. Every other rule about the middle term is already folded into
+ * the table.
  */
 export const VALID_MOODS: Record<Figure, readonly string[]> = {
   1: ['AAA', 'EAE', 'AII', 'EIO'],
@@ -56,8 +56,15 @@ export interface SyllogismResult {
   name: string | undefined;
   /** Why it failed, when it did. */
   problem: SyllogismProblem | undefined;
-  /** A sentence the game can show the player. */
-  explanation: string;
+  /**
+   * The message key that describes the result.
+   *
+   * The engine speaks in keys and parameters rather than in English, so the
+   * presentation layer can say it in whatever language the player chose.
+   */
+  key: string;
+  /** The parameters that go with the key. */
+  params: Record<string, string | number>;
 }
 
 function termsOf(proposition: Proposition): TermId[] {
@@ -123,8 +130,8 @@ export function analyseSyllogism(
       mood: undefined,
       name: undefined,
       problem: 'not-a-syllogism',
-      explanation:
-        'That is not a syllogism. The middle term has to turn up in both premises and nowhere in the conclusion.',
+      key: 'ui.logic.notSyllogism',
+      params: {},
     };
   }
 
@@ -135,8 +142,8 @@ export function analyseSyllogism(
       mood: undefined,
       name: undefined,
       problem: 'conclusion-not-s-p',
-      explanation:
-        'The conclusion has to be about the subject and the predicate of the whole argument, and nothing else.',
+      key: 'ui.logic.conclusionNotSP',
+      params: {},
     };
   }
 
@@ -150,8 +157,8 @@ export function analyseSyllogism(
       mood: undefined,
       name: undefined,
       problem: 'terms-swapped',
-      explanation:
-        'The premises do not line up. The major premise is about the middle term and the predicate, and the minor premise is about the subject and the middle term.',
+      key: 'ui.logic.termsSwapped',
+      params: {},
     };
   }
 
@@ -164,7 +171,8 @@ export function analyseSyllogism(
       mood: undefined,
       name: undefined,
       problem: 'terms-swapped',
-      explanation: 'The middle term is in the wrong place for a figure.',
+      key: 'ui.logic.termsSwapped',
+      params: {},
     };
   }
 
@@ -178,17 +186,21 @@ export function analyseSyllogism(
       mood,
       name: undefined,
       problem: 'invalid-mood',
-      explanation: `That is ${mood} in figure ${figure}, and that mood does not hold.`,
+      key: 'ui.logic.invalidMood',
+      params: { mood, figure },
     };
   }
+
+  const name = MOOD_NAMES[`${mood}-${figure}`] ?? '';
 
   return {
     valid: true,
     figure,
     mood,
-    name: MOOD_NAMES[`${mood}-${figure}`],
+    name,
     problem: undefined,
-    explanation: `That is ${mood} in figure ${figure}: ${MOOD_NAMES[`${mood}-${figure}`]}. It holds.`,
+    key: 'ui.logic.holds',
+    params: { mood, figure, name },
   };
 }
 

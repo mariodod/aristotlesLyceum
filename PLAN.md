@@ -216,18 +216,19 @@ editing a scene.
 
 ## 5. Milestones
 
-| ID     | Outcome                                                                 | State                                             |
-| ------ | ----------------------------------------------------------------------- | ------------------------------------------------- |
-| **M0** | Repository, toolchain, art pipeline, CI/CD, AGENTS.md, this plan        | **Done**                                          |
-| **M1** | Dialogue runtime, textbox, title screen, save service, content linter   | **Done** (in M0)                                  |
-| **M2** | Act I complete and playtested, with a proper ending                     | In progress — written and verified; playtest open |
-| **M3** | Character art pass: 12 characters, expressions, portraits               | **Done**                                          |
-| **M4** | Dialectic system and the syllogism builder                              | **Done**                                          |
-| **M5** | Codex screen, codex entries for Act II, codex-driven hints              | Partly — screen exists, 2 entries                 |
-| **M6** | Act II written: seven chapters, ~40 minutes                             | Not started                                       |
-| **M7** | Act III written: eight stations; Act IV exam playable                   | Not started                                       |
-| **M8** | Audio: generated music and effects, settings, accessibility, text speed | Not started                                       |
-| **M9** | v1.0: polish, credits, licence audit, Pages release                     | Not started                                       |
+| ID      | Outcome                                                                 | State                                             |
+| ------- | ----------------------------------------------------------------------- | ------------------------------------------------- |
+| **M0**  | Repository, toolchain, art pipeline, CI/CD, AGENTS.md, this plan        | **Done**                                          |
+| **M1**  | Dialogue runtime, textbox, title screen, save service, content linter   | **Done** (in M0)                                  |
+| **M2**  | Act I complete and playtested, with a proper ending                     | In progress — written and verified; playtest open |
+| **M3**  | Character art pass: 12 characters, expressions, portraits               | **Done**                                          |
+| **M4**  | Dialectic system and the syllogism builder                              | **Done**                                          |
+| **M4b** | Localisation: catalogues, a language switch, a Spanish translation      | **Done**                                          |
+| **M5**  | Codex screen, codex entries for Act II, codex-driven hints              | Partly — screen exists, 2 entries                 |
+| **M6**  | Act II written: seven chapters, ~40 minutes                             | Not started                                       |
+| **M7**  | Act III written: eight stations; Act IV exam playable                   | Not started                                       |
+| **M8**  | Audio: generated music and effects, settings, accessibility, text speed | Not started                                       |
+| **M9**  | v1.0: polish, credits, licence audit, Pages release                     | Not started                                       |
 
 ### The critical path
 
@@ -269,12 +270,14 @@ Act II chapters.
 
 ## 8. Decision log
 
-| Date       | Decision                                  | Alternatives                | Why                                                                                            |
-| ---------- | ----------------------------------------- | --------------------------- | ---------------------------------------------------------------------------------------------- |
-| 2026-11-12 | TypeScript + Phaser 4 + Vite              | Godot 4, custom Canvas      | Type system for story data; proven toolchain; terminal-verifiable.                             |
-| 2026-11-12 | 640×360 base resolution with integer zoom | 480×270, 1280×720           | 640×360 is exactly 2× of 320×180 and scales cleanly to 1080p and 720p.                         |
-| 2026-11-12 | Custom typed script format                | Ink, Twine                  | Unit-testable and lintable; the branch model still reads like Ink.                             |
-| 2026-11-12 | Art and audio generated from code         | Hand-drawn assets, Aseprite | The only pipeline that works without a human illustrator; output is reproducible and diffable. |
-| 2026-11-12 | `.ts` extensions in relative imports      | Extensionless               | Lets Node execute the game's modules, which the content linter depends on.                     |
-| 2026-11-12 | Three stats: reason, wisdom, empathy      | AT/DEF, HP                  | A story game should not have a health bar.                                                     |
-| 2026-11-12 | A chapter owns the flags it sets          | Flags persist globally      | Replaying a chapter must not inherit the previous run's choices.                               |
+| Date       | Decision                                  | Alternatives                | Why                                                                                               |
+| ---------- | ----------------------------------------- | --------------------------- | ------------------------------------------------------------------------------------------------- |
+| 2026-11-12 | TypeScript + Phaser 4 + Vite              | Godot 4, custom Canvas      | Type system for story data; proven toolchain; terminal-verifiable.                                |
+| 2026-11-12 | 640×360 base resolution with integer zoom | 480×270, 1280×720           | 640×360 is exactly 2× of 320×180 and scales cleanly to 1080p and 720p.                            |
+| 2026-11-12 | Custom typed script format                | Ink, Twine                  | Unit-testable and lintable; the branch model still reads like Ink.                                |
+| 2026-11-12 | Art and audio generated from code         | Hand-drawn assets, Aseprite | The only pipeline that works without a human illustrator; output is reproducible and diffable.    |
+| 2026-11-12 | `.ts` extensions in relative imports      | Extensionless               | Lets Node execute the game's modules, which the content linter depends on.                        |
+| 2026-11-12 | Three stats: reason, wisdom, empathy      | AT/DEF, HP                  | A story game should not have a health bar.                                                        |
+| 2026-11-12 | A chapter owns the flags it sets          | Flags persist globally      | Replaying a chapter must not inherit the previous run's choices.                                  |
+| 2026-11-12 | Localisation from the start               | Translate at the end        | A story game is mostly text. Retrofitting keys into a finished script is the expensive way round. |
+| 2026-11-12 | The English story stays in the scripts    | A catalogue for everything  | A writer should read the English where it is written, and a translator should get one file.       |

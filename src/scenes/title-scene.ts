@@ -2,6 +2,7 @@ import Phaser from 'phaser';
 import { FONT_KEY, GAME_HEIGHT, GAME_WIDTH } from '../config/constants.ts';
 import { TITLE_TUNING } from '../config/tuning.ts';
 import { opponentById } from '../data/dialectic/opponents.ts';
+import type { LocaleService } from '../services/locale-service.ts';
 import { setTestHook } from '../utils/test-hooks.ts';
 
 /**
@@ -10,7 +11,8 @@ import { setTestHook } from '../utils/test-hooks.ts';
 export class TitleScene extends Phaser.Scene {
   private readonly labels: Phaser.GameObjects.BitmapText[] = [];
   private heart!: Phaser.GameObjects.Image;
-  private entries: { label: string; action: () => void }[] = [];
+  private entries: { labelKey: string; action: () => void }[] = [];
+  private locale: LocaleService | undefined;
   private selected = 0;
   private bobTimer = 0;
 
@@ -21,20 +23,23 @@ export class TitleScene extends Phaser.Scene {
   create(): void {
     setTestHook({ ready: true, scene: 'Title' });
 
+    this.locale = this.registry.get('localeService') as LocaleService;
+
     // A scene keeps its instance when it is restarted, so the lists from the
     // previous run have to be cleared before anything is added to them.
     this.labels.length = 0;
+    this.selected = 0;
 
     this.entries = [
       {
-        label: 'BEGIN THE DREAM',
+        labelKey: 'ui.title.begin',
         action: () => this.scene.start('Story', { chapterId: 'act-one' }),
       },
-      { label: 'CODEX', action: () => this.scene.start('Codex') },
+      { labelKey: 'ui.title.codex', action: () => this.scene.start('Codex') },
       ...(import.meta.env.DEV
         ? [
             {
-              label: 'TRY A DIALECTIC',
+              labelKey: 'ui.title.dialectic',
               action: () =>
                 this.scene.start('Dialectic', {
                   opponentId: this.requestedOpponent(),
@@ -43,29 +48,29 @@ export class TitleScene extends Phaser.Scene {
             },
           ]
         : []),
-      { label: 'SETTINGS', action: () => this.scene.start('Settings') },
-      { label: 'CREDITS', action: () => this.scene.start('Credits') },
+      { labelKey: 'ui.title.settings', action: () => this.scene.start('Settings') },
+      { labelKey: 'ui.title.credits', action: () => this.scene.start('Credits') },
     ];
 
     this.add.image(0, 0, 'backdrop-lyceum').setOrigin(0).setDepth(0);
     this.add.rectangle(0, 0, GAME_WIDTH, GAME_HEIGHT, 0x0b0c10, 0.45).setOrigin(0).setDepth(1);
 
     const title = this.add
-      .bitmapText(GAME_WIDTH / 2, 96, FONT_KEY, "ARISTOTLE'S LYCEUM")
+      .bitmapText(GAME_WIDTH / 2, 96, FONT_KEY, this.t('ui.title.gameName'))
       .setOrigin(0.5, 0)
       .setDepth(2);
     title.setScale(2);
     title.setTint(0xf2c14e);
 
     this.add
-      .bitmapText(GAME_WIDTH / 2, 124, FONT_KEY, 'a dream about why philosophy is still running')
+      .bitmapText(GAME_WIDTH / 2, 124, FONT_KEY, this.t('ui.title.tagline'))
       .setOrigin(0.5, 0)
       .setDepth(2)
       .setAlpha(0.75);
 
     this.entries.forEach((entry, index) => {
       const label = this.add
-        .bitmapText(GAME_WIDTH / 2, 190 + index * 22, FONT_KEY, entry.label)
+        .bitmapText(GAME_WIDTH / 2, 190 + index * 22, FONT_KEY, this.t(entry.labelKey))
         .setOrigin(0.5, 0)
         .setDepth(2);
       this.labels.push(label);
@@ -75,12 +80,7 @@ export class TitleScene extends Phaser.Scene {
     this.refreshCursor();
 
     this.add
-      .bitmapText(
-        GAME_WIDTH / 2,
-        GAME_HEIGHT - 24,
-        FONT_KEY,
-        'Z / ENTER to confirm   UP + DOWN to move',
-      )
+      .bitmapText(GAME_WIDTH / 2, GAME_HEIGHT - 24, FONT_KEY, this.t('ui.title.hint'))
       .setOrigin(0.5, 0)
       .setDepth(2)
       .setAlpha(0.6);
@@ -111,6 +111,11 @@ export class TitleScene extends Phaser.Scene {
 
   private confirm(): void {
     this.entries[this.selected]?.action();
+  }
+
+  /** Translates a key from the interface catalogue. */
+  private t(key: string): string {
+    return this.locale?.t(key) ?? key;
   }
 
   /**

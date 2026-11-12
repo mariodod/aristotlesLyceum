@@ -96,15 +96,30 @@ export type BattleAction = 'examine' | 'refute' | 'claim' | 'embrace';
 
 export interface BattleOption {
   id: BattleAction;
-  label: string;
-  /** The one-line explanation shown under the label. */
-  description: string;
+  /** The catalogue key for the label. */
+  labelKey: string;
+  /** The catalogue key for the one-line explanation. */
+  descriptionKey: string;
   enabled: boolean;
 }
 
 export type BattleEvent =
-  | { type: 'dialogue'; speaker: string; text: string; expression: string }
-  | { type: 'analysis'; text: string; valid: boolean }
+  | {
+      type: 'dialogue';
+      speaker: string;
+      text: string;
+      /** The catalogue key for the line, when it has been translated. */
+      key?: string | undefined;
+      expression: string;
+    }
+  | {
+      type: 'analysis';
+      /** The catalogue key that describes the result. */
+      key: string;
+      /** The parameters that go with the key. */
+      params: Record<string, string | number>;
+      valid: boolean;
+    }
   | { type: 'conviction'; value: number }
   | { type: 'opened'; claim: OpponentClaim }
   | { type: 'examine'; options: Proposition[] }

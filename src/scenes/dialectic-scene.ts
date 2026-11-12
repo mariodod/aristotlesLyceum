@@ -4,19 +4,21 @@ import { opponentById } from '../data/dialectic/opponents.ts';
 import { TextBox } from '../entities/textbox.ts';
 import type { TextBoxGeometry } from '../entities/textbox.ts';
 import { SyllogismBuilder } from '../entities/syllogism-builder.ts';
+import { metricsFor } from '../i18n/types.ts';
+import type { LocaleService } from '../services/locale-service.ts';
 import type { SaveService } from '../services/save-service.ts';
 import { DialecticBattle } from '../systems/dialectic/battle.ts';
-import type { BattleEvent, BattleOption } from '../types/dialectic.ts';
+import type { BattleEvent, BattleOption, Proposition } from '../types/dialectic.ts';
 import { setTestHook } from '../utils/test-hooks.ts';
 
 export interface DialecticSceneData {
   opponentId?: string;
-  /** Where the player goes when the argument is over. */
-  returnToScene?: 'Story' | 'Title';
   /** The chapter to go back to when the argument is won. */
   chapterId?: string;
   /** The label in that chapter to continue at. */
   resumeAt?: string;
+  /** Where the player goes when the argument is over. */
+  returnToScene?: 'Story' | 'Title';
 }
 
 const BATTLE_BOX: TextBoxGeometry = {
@@ -27,7 +29,7 @@ const BATTLE_BOX: TextBoxGeometry = {
   paddingX: 10,
   paddingY: 14,
   borderWidth: 2,
-  columns: 39,
+  advance: 7,
 };
 
 const MENU_X = 348;
@@ -41,9 +43,9 @@ const MENU_Y = 214;
  */
 export class DialecticScene extends Phaser.Scene {
   private battle: DialecticBattle | undefined;
-  private opponentId = 'certainty';
   private textBox: TextBox | undefined;
   private builder: SyllogismBuilder | undefined;
+  private locale: LocaleService | undefined;
   private readonly menuItems: Phaser.GameObjects.BitmapText[] = [];
   private readonly listItems: Phaser.GameObjects.BitmapText[] = [];
   private heart!: Phaser.GameObjects.Image;
@@ -53,6 +55,7 @@ export class DialecticScene extends Phaser.Scene {
   private listPurpose: 'examine' | 'claim' = 'examine';
   private menuCursor = 0;
   private listCursor = 0;
+  private opponentId = 'certainty';
   private chapterId = 'act-one';
   private resumeAt = '';
   private returnToScene: 'Story' | 'Title' = 'Story';
@@ -64,13 +67,15 @@ export class DialecticScene extends Phaser.Scene {
 
   init(data: DialecticSceneData): void {
     this.opponentId = data.opponentId ?? 'certainty';
-    this.returnToScene = data.returnToScene ?? 'Story';
     this.chapterId = data.chapterId ?? 'act-one';
     this.resumeAt = data.resumeAt ?? '';
+    this.returnToScene = data.returnToScene ?? 'Story';
   }
 
   create(): void {
     setTestHook({ ready: true, scene: 'Dialectic' });
+
+    this.locale = this.registry.get('localeService') as LocaleService;
 
     const opponent = opponentById(this.opponentId);
 
@@ -80,16 +85,27 @@ export class DialecticScene extends Phaser.Scene {
     }
 
     this.battle = new DialecticBattle(opponent);
-    this.buildPresence(opponent.color, opponent.name);
+    this.menuCursor = 0;
+    this.listCursor = 0;
+    this.mode = 'menu';
+    this.buildPresence(opponent.color, this.tc(`ui.battle.opponent.${opponent.id}`, opponent.name));
 
     this.convictionBar = this.add.graphics();
     this.convictionBar.setDepth(120);
 
-    this.convictionLabel = this.add.bitmapText(16, 34, FONT_KEY, 'CONVICTION 3');
+    this.convictionLabel = this.add.bitmapText(
+      16,
+      34,
+      FONT_KEY,
+      this.t('ui.battle.conviction', { n: 3 }),
+    );
     this.convictionLabel.setDepth(120);
     this.convictionLabel.setAlpha(0.7);
 
-    this.textBox = new TextBox(this, BATTLE_BOX);
+    this.textBox = new TextBox(this, {
+      ...BATTLE_BOX,
+      advance: metricsFor(this.locale?.definition.fontKey ?? 'pixel-5x7').advance,
+    });
     this.textBox.setVisible(false);
 
     this.heart = this.add.image(0, 0, 'ui-heart');
@@ -120,6 +136,25 @@ export class DialecticScene extends Phaser.Scene {
   }
 
   /**
+   * Translates a key from the interface catalogue.
+   */
+  private t(key: string, params?: Record<string, string | number>): string {
+    return this.locale?.t(key, params) ?? key;
+  }
+
+  /**
+   * Translates a key from the story catalogue, falling back to the English
+   * the game already has.
+   */
+  private tc(
+    key: string | undefined,
+    fallback: string,
+    params?: Record<string, string | number>,
+  ): string {
+    return this.locale?.tc(key, fallback, params) ?? fallback;
+  }
+
+  /**
    * The opponent: a shadow with two eyes, and its name above it.
    */
   private buildPresence(color: number, name: string): void {
@@ -138,7 +173,7 @@ export class DialecticScene extends Phaser.Scene {
     this.add.ellipse(286, 92, 15, 15, 0x14121a).setDepth(5);
     this.add.ellipse(354, 92, 15, 15, 0x14121a).setDepth(5);
 
-    const label = this.add.bitmapText(320, 24, FONT_KEY, name.toUpperCase());
+    const label = this.add.bitmapText(320, 24, FONT_KEY, name);
     label.setOrigin(0.5, 0);
     label.setDepth(6);
     label.setTint(color);
@@ -151,12 +186,17 @@ export class DialecticScene extends Phaser.Scene {
     options.forEach((option, index) => {
       const top = MENU_Y + index * 28;
 
-      const label = this.add.bitmapText(MENU_X + 14, top, FONT_KEY, option.label);
+      const label = this.add.bitmapText(MENU_X + 14, top, FONT_KEY, this.t(option.labelKey));
       label.setDepth(120);
       label.setTint(option.enabled ? 0xf6f2e8 : 0x6a6478);
       this.menuItems.push(label);
 
-      const description = this.add.bitmapText(MENU_X + 14, top + 11, FONT_KEY, option.description);
+      const description = this.add.bitmapText(
+        MENU_X + 14,
+        top + 11,
+        FONT_KEY,
+        this.t(option.descriptionKey),
+      );
       description.setDepth(120);
       description.setTint(option.enabled ? 0x9a94a8 : 0x4a4658);
       this.menuItems.push(description);
@@ -182,7 +222,6 @@ export class DialecticScene extends Phaser.Scene {
   }
 
   private refreshMenuCursor(): void {
-    const options = this.battle?.options() ?? [];
     const label = this.menuItems[this.menuCursor * 2];
 
     if (!label) {
@@ -192,7 +231,6 @@ export class DialecticScene extends Phaser.Scene {
 
     this.heart.setVisible(true);
     this.heart.setPosition(MENU_X + 4, label.y + 4);
-    void options;
   }
 
   private moveMenu(delta: number): void {
@@ -226,7 +264,7 @@ export class DialecticScene extends Phaser.Scene {
       MENU_X,
       MENU_Y - 16,
       FONT_KEY,
-      purpose === 'claim' ? 'ASSERT ONE' : 'THEIR TERMS',
+      this.t(purpose === 'claim' ? 'ui.battle.assertOne' : 'ui.battle.theirTerms'),
     );
     header.setDepth(120);
     header.setTint(0xffe6a0);
@@ -239,13 +277,18 @@ export class DialecticScene extends Phaser.Scene {
         MENU_X + 12,
         MENU_Y + 4 + this.listItems.length * 14,
         FONT_KEY,
-        `${proposition.form}  ${proposition.text}`,
+        `${proposition.form}  ${this.propositionText(proposition)}`,
       );
       item.setDepth(120);
       this.listItems.push(item);
     }
 
     this.refreshListCursor();
+  }
+
+  /** The text of a proposition, in the language the player chose. */
+  private propositionText(proposition: Proposition): string {
+    return this.tc(`dialectic.${proposition.id}`, proposition.text);
   }
 
   private refreshListCursor(): void {
@@ -277,6 +320,7 @@ export class DialecticScene extends Phaser.Scene {
     this.builder = new SyllogismBuilder(
       this,
       this.battle?.propositions() ?? [],
+      (key, fallback, params) => this.tc(key, fallback ?? key, params),
       (major, minor, conclusion) => this.testArgument(major, minor, conclusion),
       () => this.closeBuilder(),
     );
@@ -301,7 +345,7 @@ export class DialecticScene extends Phaser.Scene {
     const analysis = events.find((event) => event.type === 'analysis');
 
     if (analysis?.type === 'analysis') {
-      this.builder?.showAnalysis(analysis.text, analysis.valid);
+      this.builder?.showAnalysis(analysis.key, analysis.params, analysis.valid);
     }
 
     this.applyEvents(events);
@@ -312,11 +356,11 @@ export class DialecticScene extends Phaser.Scene {
       switch (event.type) {
         case 'dialogue':
           this.textBox?.setVisible(true);
-          this.textBox?.showText(event.text);
+          this.textBox?.showText(this.tc(event.key, event.text));
           break;
 
         case 'analysis':
-          this.builder?.showAnalysis(event.text, event.valid);
+          this.builder?.showAnalysis(event.key, event.params, event.valid);
           break;
 
         case 'conviction':
@@ -346,7 +390,7 @@ export class DialecticScene extends Phaser.Scene {
     this.convictionBar.lineStyle(1, 0x6a6478, 1);
     this.convictionBar.strokeRect(16, 20, 120, 10);
 
-    this.convictionLabel.setText(`CONVICTION ${value}`);
+    this.convictionLabel.setText(this.t('ui.battle.conviction', { n: value }));
   }
 
   private win(): void {

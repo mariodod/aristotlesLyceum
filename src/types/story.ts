@@ -60,6 +60,8 @@ export function isStatId(value: string): value is StatId {
 export interface ChoiceOption {
   /** Text shown in the choice menu. */
   label: string;
+  /** The catalogue key for the label, when it has been translated. */
+  key?: string | undefined;
   /** Label of the step to continue from when this option is taken. */
   goto: string;
   /** Optional stat adjustment applied when the option is chosen. */
@@ -77,6 +79,8 @@ export interface SayStep extends BaseStep {
   kind: 'say';
   speaker: CharacterId;
   text: string;
+  /** The catalogue key for the line, when it has been translated. */
+  key?: string | undefined;
   expression?: ExpressionId;
 }
 
@@ -84,6 +88,8 @@ export interface ChoiceStep extends BaseStep {
   kind: 'choice';
   speaker: CharacterId;
   prompt: string;
+  /** The catalogue key for the prompt, when it has been translated. */
+  key?: string | undefined;
   options: ChoiceOption[];
 }
 
@@ -131,6 +137,9 @@ export interface ChapterEndStep extends BaseStep {
   kind: 'chapterEnd';
   title: string;
   subtitle?: string;
+  /** The catalogue keys for the ending, when it has been translated. */
+  key?: string | undefined;
+  subtitleKey?: string | undefined;
 }
 
 /**
@@ -192,13 +201,31 @@ export interface StoryScript {
  * the rest as side effects.
  */
 export type DialogueEvent =
-  | { type: 'say'; speaker: CharacterId; text: string; expression: ExpressionId }
-  | { type: 'choice'; speaker: CharacterId; prompt: string; options: ChoiceOption[] }
+  | {
+      type: 'say';
+      speaker: CharacterId;
+      text: string;
+      key?: string | undefined;
+      expression: ExpressionId;
+    }
+  | {
+      type: 'choice';
+      speaker: CharacterId;
+      prompt: string;
+      key?: string | undefined;
+      options: ChoiceOption[];
+    }
   | { type: 'codex'; entry: string }
   | { type: 'stat'; stat: StatId; delta: number; total: number }
   | { type: 'flag'; flag: string; value: boolean }
   | { type: 'chapter'; title: string; subtitle?: string }
-  | { type: 'chapterEnd'; title: string; subtitle?: string }
+  | {
+      type: 'chapterEnd';
+      title: string;
+      subtitle?: string | undefined;
+      key?: string | undefined;
+      subtitleKey?: string | undefined;
+    }
   | { type: 'dialectic'; opponent: string; returnTo: string }
   | { type: 'stage'; actors: { character: CharacterId; x: number }[]; backdrop?: string }
   | { type: 'end' };

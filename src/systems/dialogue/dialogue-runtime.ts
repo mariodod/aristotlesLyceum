@@ -163,6 +163,7 @@ export class DialogueRuntime {
       type: 'choice',
       speaker: step.speaker,
       prompt: step.prompt,
+      key: step.key,
       options: step.options,
     };
   }
@@ -188,6 +189,7 @@ export class DialogueRuntime {
             type: 'say',
             speaker: step.speaker,
             text: step.text,
+            key: step.key,
             expression: step.expression ?? 'neutral',
           });
           return events;
@@ -256,11 +258,13 @@ export class DialogueRuntime {
         }
 
         case 'chapterEnd': {
-          events.push(
-            step.subtitle === undefined
-              ? { type: 'chapterEnd', title: step.title }
-              : { type: 'chapterEnd', title: step.title, subtitle: step.subtitle },
-          );
+          events.push({
+            type: 'chapterEnd',
+            title: step.title,
+            subtitle: step.subtitle,
+            key: step.key,
+            subtitleKey: step.subtitleKey,
+          });
           this.cursor += 1;
           break;
         }

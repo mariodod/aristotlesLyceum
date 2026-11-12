@@ -8,14 +8,17 @@ const PANEL = { x: 8, y: 132, width: 624, height: 220 };
 /** The builder is drawn over everything else on the screen. */
 export const BUILDER_DEPTH = 900;
 
-const SLOT_LABELS = ['MAJOR PREMISE', 'MINOR PREMISE', 'CONCLUSION'];
-
-const FIGURE_NAMES: Record<number, string> = {
-  1: 'the middle term is the subject of the major and the predicate of the minor',
-  2: 'the middle term is the predicate in both premises',
-  3: 'the middle term is the subject in both premises',
-  4: 'the middle term is the predicate of the major and the subject of the minor',
-};
+/**
+ * Translates a catalogue key into the language the player chose.
+ *
+ * The fallback is the English the game already has, which is how the story
+ * lines work: the script carries the English, and a translation replaces it.
+ */
+export type Translate = (
+  key: string,
+  fallback?: string,
+  params?: Record<string, string | number>,
+) => string;
 
 /**
  * The syllogism builder.
@@ -29,18 +32,22 @@ const FIGURE_NAMES: Record<number, string> = {
 export class SyllogismBuilder extends Phaser.GameObjects.Container {
   private readonly propositions: Proposition[];
   private readonly slots: (Proposition | undefined)[] = [undefined, undefined, undefined];
+  /** The ids of the propositions already in the argument. */
+  private readonly picked = new Set<string>();
   private readonly slotTexts: Phaser.GameObjects.BitmapText[] = [];
   private readonly readout: Phaser.GameObjects.BitmapText;
   private readonly listTexts: Phaser.GameObjects.BitmapText[] = [];
   private readonly heart: Phaser.GameObjects.Image;
   private cursor = 0;
   private ready = false;
-  private analysisText = '';
+  private analysisKey = '';
+  private analysisParams: Record<string, string | number> = {};
   private analysisValid = false;
 
   constructor(
     scene: Phaser.Scene,
     propositions: Proposition[],
+    private readonly translate: Translate,
     private readonly onTest: (major: string, minor: string, conclusion: string) => void,
     private readonly onCancel: () => void,
   ) {
@@ -49,9 +56,9 @@ export class SyllogismBuilder extends Phaser.GameObjects.Container {
 
     this.propositions = propositions;
 
-    // The builder covers the whole lower half of the screen, so it is
-    // drawn above everything and it is opaque. Anything showing through
-    // would be the battle menu behind it.
+    // The builder covers the whole lower half of the screen, so it is drawn
+    // above everything and it is opaque. Anything showing through would be
+    // the battle menu behind it.
     scene.add
       .rectangle(PANEL.x, PANEL.y, PANEL.width, PANEL.height, 0x07070c, 1)
       .setOrigin(0, 0)
@@ -62,11 +69,11 @@ export class SyllogismBuilder extends Phaser.GameObjects.Container {
     frame.strokeRect(PANEL.x, PANEL.y, PANEL.width, PANEL.height);
     frame.setDepth(BUILDER_DEPTH + 1);
 
-    const header = scene.add.bitmapText(20, 140, FONT_KEY, 'BUILD THE ARGUMENT');
+    const header = scene.add.bitmapText(20, 140, FONT_KEY, this.translate('ui.battle.buildTitle'));
     header.setDepth(BUILDER_DEPTH + 1);
     header.setTint(0xf2c14e);
 
-    for (let index = 0; index < SLOT_LABELS.length; index += 1) {
+    for (let index = 0; index < 3; index += 1) {
       const text = scene.add.bitmapText(20, 160 + index * 14, FONT_KEY, '');
       text.setDepth(BUILDER_DEPTH + 1);
       this.slotTexts.push(text);
@@ -119,8 +126,9 @@ export class SyllogismBuilder extends Phaser.GameObjects.Container {
       return;
     }
 
-    if (this.slots.some((item) => item?.id === proposition.id)) {
-      this.analysisText = 'You already have that one in the argument.';
+    if (this.picked.has(proposition.id)) {
+      this.analysisKey = 'ui.battle.duplicate';
+      this.analysisParams = {};
       this.analysisValid = false;
       this.refresh();
       return;
@@ -130,6 +138,7 @@ export class SyllogismBuilder extends Phaser.GameObjects.Container {
 
     if (slot >= 0) {
       this.slots[slot] = proposition;
+      this.picked.add(proposition.id);
     }
 
     this.ready = this.slots.every((item) => item !== undefined);
@@ -142,9 +151,10 @@ export class SyllogismBuilder extends Phaser.GameObjects.Container {
     this.slots[0] = undefined;
     this.slots[1] = undefined;
     this.slots[2] = undefined;
+    this.picked.clear();
     this.ready = false;
     this.cursor = 0;
-    this.analysisText = '';
+    this.analysisKey = '';
     this.refresh();
   }
 
@@ -154,8 +164,9 @@ export class SyllogismBuilder extends Phaser.GameObjects.Container {
   }
 
   /** Shows what the last test found. */
-  showAnalysis(text: string, valid: boolean): void {
-    this.analysisText = text;
+  showAnalysis(key: string, params: Record<string, string | number>, valid: boolean): void {
+    this.analysisKey = key;
+    this.analysisParams = params;
     this.analysisValid = valid;
     this.refresh();
   }
@@ -166,31 +177,43 @@ export class SyllogismBuilder extends Phaser.GameObjects.Container {
     }
     this.listTexts.length = 0;
 
+    const slotKeys = ['ui.battle.major', 'ui.battle.minor', 'ui.battle.conclusion'];
+
     for (let index = 0; index < this.slotTexts.length; index += 1) {
       const slot = this.slotTexts[index];
       const proposition = this.slots[index];
+      const label = this.translate(slotKeys[index] ?? '');
 
       if (!slot) {
         continue;
       }
 
-      slot.setText(`${SLOT_LABELS[index]}  ${proposition ? proposition.text : '-'}`);
+      slot.setText(`${label}  ${proposition ? this.propositionText(proposition) : '-'}`);
       slot.setTint(proposition ? 0xe8e2d0 : 0x6a6478);
     }
 
     this.readout.setText(this.readoutText());
     this.readout.setTint(
-      this.analysisText.length > 0 ? (this.analysisValid ? 0x9fe0b0 : 0xe89a8a) : 0xbfb6a2,
+      this.analysisKey.length > 0 ? (this.analysisValid ? 0x9fe0b0 : 0xe89a8a) : 0xbfb6a2,
     );
 
-    const entries = this.ready
-      ? ['TEST THE ARGUMENT', 'START OVER']
-      : [...this.propositions.map((item) => item.text), 'START OVER'];
+    const entries: { label: string; id?: string }[] = this.ready
+      ? [
+          { label: this.translate('ui.battle.test') },
+          { label: this.translate('ui.battle.startOver') },
+        ]
+      : [
+          ...this.propositions.map((item) => ({
+            label: this.propositionText(item),
+            id: item.id,
+          })),
+          { label: this.translate('ui.battle.startOver') },
+        ];
 
     entries.forEach((entry, index) => {
-      const text = this.scene.add.bitmapText(36, 228 + index * 14, FONT_KEY, entry);
+      const text = this.scene.add.bitmapText(36, 228 + index * 14, FONT_KEY, entry.label);
       text.setDepth(BUILDER_DEPTH + 1);
-      text.setAlpha(this.ready || !this.isPicked(entry) ? 1 : 0.45);
+      text.setAlpha(this.ready || entry.id === undefined || !this.picked.has(entry.id) ? 1 : 0.45);
       this.listTexts.push(text);
     });
 
@@ -204,23 +227,24 @@ export class SyllogismBuilder extends Phaser.GameObjects.Container {
     }
   }
 
-  private isPicked(text: string): boolean {
-    return this.slots.some((proposition) => proposition?.text === text);
+  /** The text of a proposition, in the language the player chose. */
+  private propositionText(proposition: Proposition): string {
+    return this.translate(`dialectic.${proposition.id}`, proposition.text);
   }
 
   private readoutText(): string {
-    if (this.analysisText.length > 0) {
-      return this.analysisText;
+    if (this.analysisKey.length > 0) {
+      return this.translate(this.analysisKey, undefined, this.analysisParams);
     }
 
     const filled = this.slots.filter((slot) => slot !== undefined).length;
 
     if (filled === 0) {
-      return 'A syllogism has three parts: a major premise, a minor premise, a conclusion.';
+      return this.translate('ui.battle.readout.parts');
     }
 
     if (filled === 1) {
-      return 'Now the minor premise. It must carry the middle term and the subject of the conclusion.';
+      return this.translate('ui.battle.readout.minor');
     }
 
     if (filled === 2) {
@@ -234,10 +258,13 @@ export class SyllogismBuilder extends Phaser.GameObjects.Container {
       const figure = figureOf(major, minor);
 
       if (figure === undefined) {
-        return 'The middle term has to turn up in both premises and nowhere in the conclusion.';
+        return this.translate('ui.battle.readout.middleTerm');
       }
 
-      return `Figure ${figure}: ${FIGURE_NAMES[figure]}.`;
+      return this.translate('ui.battle.readout.figure', undefined, {
+        n: figure,
+        description: this.translate(`ui.battle.readout.figure${figure}`),
+      });
     }
 
     const major = this.slots[0];
@@ -248,6 +275,9 @@ export class SyllogismBuilder extends Phaser.GameObjects.Container {
       return '';
     }
 
-    return analyseSyllogism(major, minor, conclusion).explanation;
+    const result = analyseSyllogism(major, minor, conclusion);
+    const name = this.translate(`ui.mood.${result.name ?? ''}`) || (result.name ?? '');
+
+    return this.translate(result.key, undefined, { ...result.params, name });
   }
 }

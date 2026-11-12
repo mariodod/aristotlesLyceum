@@ -15,6 +15,7 @@
 | M2  | Act I          | The opening chapter, finished and playtested                        | In progress |
 | M3  | Art pass       | Twelve characters with expressions, portraits, three more backdrops | Done        |
 | M4  | Dialectic      | The battle system and the syllogism builder                         | Done        |
+| M4b | Localisation   | The game speaks more than one language                              | Done        |
 | M5  | Codex          | Journal screen complete, Act II entries authored                    | Partial     |
 | M6  | Act II         | Seven chapters, forty minutes of writing                            | Not started |
 | M7  | Act III & IV   | Eight stations and a playable exam                                  | Not started |
@@ -131,6 +132,28 @@ argument in under three minutes and can explain why it worked.
 
 **Done when:** a player who has never heard of a syllogism can win one
 argument in under three minutes and can explain why it worked.
+
+### M4b — Localisation
+
+- The game can be played in another language.
+
+**Done when:** a player can switch the language in the settings and play the
+whole of Act I in it, and no catalogue is allowed to drift.
+
+**Progress:**
+
+- [x] The English story stays in the scripts, where a writer can read it. Every
+      line carries a key, and every other language is a catalogue with the same
+      keys.
+- [x] The interface has its own catalogue per language.
+- [x] A language switch in the settings, applied immediately and remembered.
+- [x] The font is chosen per language, and the dialogue box works out its
+      wrapping from the font's advance, so a wider font wraps differently.
+- [x] A Spanish translation of the whole of Act I, the Codex, the dialectic and
+      the interface.
+- [x] `npm run i18n:check`, which proves that every catalogue is complete, has
+      no stale keys, has the right placeholders, and uses only characters the font
+      can actually draw.
 
 ### M5 — Codex
 
