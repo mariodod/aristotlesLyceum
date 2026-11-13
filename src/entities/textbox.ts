@@ -7,6 +7,18 @@ import { wrapText } from '../systems/dialogue/text-wrap.ts';
 const BORDER_COLOR = 0xf6f2e8;
 const PANEL_COLOR = 0x07070c;
 
+/**
+ * Where the choice text starts, measured from the left edge of the box.
+ *
+ * The margin has to hold the heart the player moves and the book that marks
+ * an option the Codex has opened, so the text sits further right than the
+ * prompt above it.
+ */
+const OPTION_INDENT = 26;
+
+/** How far the book sits to the left of the option text. */
+const BOOK_OFFSET = 22;
+
 export interface TextBoxGeometry {
   x: number;
   y: number;
@@ -43,6 +55,19 @@ export function columnsFor(geometry: TextBoxGeometry): number {
 }
 
 /**
+ * One line of the choice menu.
+ */
+export interface ChoiceLabel {
+  /** The text of the option. */
+  text: string;
+  /**
+   * True when the option is on offer because the player read the Codex entry
+   * it refers to. The menu marks those with a small book.
+   */
+  fromCodex?: boolean | undefined;
+}
+
+/**
  * The dialogue box: a black panel with a pale border, a name plate that
  * overlaps the top-left corner, and a typewriter reveal.
  *
@@ -59,11 +84,12 @@ export class TextBox extends Phaser.GameObjects.Container {
   private readonly bodyText: Phaser.GameObjects.BitmapText;
   private readonly indicator: Phaser.GameObjects.Graphics;
   private readonly heart: Phaser.GameObjects.Image;
-  private readonly optionTexts: Phaser.GameObjects.BitmapText[] = [];
+  private readonly optionTexts: Phaser.GameObjects.GameObject[] = [];
+  private readonly choiceLabelTexts: Phaser.GameObjects.BitmapText[] = [];
 
   private typewriter: Typewriter | undefined;
   private blinkTimer = 0;
-  private choiceOptions: string[] = [];
+  private choiceOptions: ChoiceLabel[] = [];
   private choiceIndex = 0;
 
   constructor(scene: Phaser.Scene, geometry: TextBoxGeometry = DEFAULT_TEXTBOX) {
@@ -205,8 +231,8 @@ export class TextBox extends Phaser.GameObjects.Container {
    * Opens the choice menu inside the box. The prompt sits above the options so
    * a question can be asked and answered in the same panel.
    */
-  openChoices(prompt: string, labels: string[]): void {
-    this.choiceOptions = labels;
+  openChoices(prompt: string, options: ChoiceLabel[]): void {
+    this.choiceOptions = options;
     this.choiceIndex = 0;
     this.bodyText.setVisible(false);
     this.typewriter = undefined;
@@ -216,6 +242,7 @@ export class TextBox extends Phaser.GameObjects.Container {
     }
 
     this.optionTexts.length = 0;
+    this.choiceLabelTexts.length = 0;
 
     const promptText = this.scene.add.bitmapText(
       this.geometry.x + this.geometry.paddingX,
@@ -230,18 +257,33 @@ export class TextBox extends Phaser.GameObjects.Container {
     this.add(promptText);
     this.optionTexts.push(promptText);
 
-    labels.forEach((label, index) => {
-      const option = this.scene.add.bitmapText(
-        this.geometry.x + this.geometry.paddingX + 16,
-        this.geometry.y + this.geometry.paddingY + 16 + index * 12,
+    options.forEach((option, index) => {
+      const y = this.geometry.y + this.geometry.paddingY + 16 + index * 12;
+
+      const label = this.scene.add.bitmapText(
+        this.geometry.x + this.geometry.paddingX + OPTION_INDENT,
+        y,
         FONT_KEY,
-        label,
+        option.text,
       );
-      this.add(option);
-      this.optionTexts.push(option);
+      this.add(label);
+      this.optionTexts.push(label);
+      this.choiceLabelTexts.push(label);
+
+      // An option the player can take because they read the Codex carries a
+      // book in the margin, so the menu says where the option came from.
+      if (option.fromCodex === true) {
+        const book = this.scene.add.image(
+          this.geometry.x + this.geometry.paddingX + OPTION_INDENT - BOOK_OFFSET,
+          y + 4,
+          'ui-book',
+        );
+        this.add(book);
+        this.optionTexts.push(book);
+      }
     });
 
-    this.heart.setVisible(labels.length > 0);
+    this.heart.setVisible(options.length > 0);
     this.refreshChoiceCursor();
   }
 
@@ -254,6 +296,7 @@ export class TextBox extends Phaser.GameObjects.Container {
     }
 
     this.optionTexts.length = 0;
+    this.choiceLabelTexts.length = 0;
     this.heart.setVisible(false);
   }
 
@@ -276,7 +319,7 @@ export class TextBox extends Phaser.GameObjects.Container {
   }
 
   get choiceLabels(): string[] {
-    return this.choiceOptions;
+    return this.choiceOptions.map((option) => option.text);
   }
 
   /**
@@ -288,9 +331,10 @@ export class TextBox extends Phaser.GameObjects.Container {
   }
 
   private refreshChoiceCursor(): void {
-    // Index zero of the option list is the prompt; the selectable options
-    // start at one.
-    const option = this.optionTexts[this.choiceIndex + 1];
+    // The label of the option the cursor is on. The options are tracked apart
+    // from the rest of the menu, because a Codex-backed option also puts a
+    // book in the margin.
+    const option = this.choiceLabelTexts[this.choiceIndex];
 
     if (!option) {
       this.heart.setVisible(false);
@@ -298,6 +342,6 @@ export class TextBox extends Phaser.GameObjects.Container {
     }
 
     this.heart.setVisible(true);
-    this.heart.setPosition(option.x - 9, option.y + 4);
+    this.heart.setPosition(option.x - 12, option.y + 4);
   }
 }

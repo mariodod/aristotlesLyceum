@@ -190,6 +190,24 @@ for (const locale of LOCALES) {
 /* The font has to be able to draw every character in every catalogue. */
 const glyphs = new Set(Object.keys(GLYPHS));
 
+/**
+ * Reports a character the font cannot draw.
+ *
+ * A bitmap font has no fallback, so one character the atlas does not have is
+ * a blank box in the middle of a sentence.
+ */
+function checkFont(fontKey, where, text) {
+  for (const character of text) {
+    if (character === '\n' || character === '\t') {
+      continue;
+    }
+
+    if (!glyphs.has(character)) {
+      report(where, `uses "${character}", which the font "${fontKey}" cannot draw`);
+    }
+  }
+}
+
 for (const locale of LOCALES) {
   const catalogue = { ...locale.ui, ...locale.content };
   const metrics = FONT_METRICS[locale.fontKey];
@@ -200,18 +218,20 @@ for (const locale of LOCALES) {
   }
 
   for (const [key, text] of Object.entries(catalogue)) {
-    for (const character of text) {
-      if (character === '\n' || character === '\t') {
-        continue;
-      }
+    checkFont(locale.fontKey, `locale "${locale.id}", key "${key}"`, text);
+  }
+}
 
-      if (!glyphs.has(character)) {
-        report(
-          `locale "${locale.id}"`,
-          `the translation of "${key}" uses "${character}", which the font "${locale.fontKey}" cannot draw`,
-        );
-      }
-    }
+/*
+ * The English story lives inline in the scripts and in the codex entries, so
+ * it never passes through a catalogue and the check above cannot see it. It
+ * is still drawn on screen, so it still has to be drawable.
+ */
+if (english) {
+  const fontKey = english.fontKey;
+
+  for (const [key, text] of contentKeys) {
+    checkFont(fontKey, `the English story, key "${key}"`, text);
   }
 }
 

@@ -23,6 +23,7 @@ export class DialogueRuntime {
   private pending: StoryStep | undefined;
   private readonly flags = new Map<string, boolean>();
   private readonly stats: DialogueState['stats'];
+  private readonly unlockedCodex = new Set<string>();
 
   constructor(
     script: StoryScript,
@@ -56,6 +57,10 @@ export class DialogueRuntime {
     for (const [flag, value] of Object.entries(state?.flags ?? {})) {
       this.flags.set(flag, value);
     }
+
+    for (const id of state?.unlockedCodex ?? []) {
+      this.unlockedCodex.add(id);
+    }
   }
 
   /** The step currently waiting for the player, if any. */
@@ -80,6 +85,7 @@ export class DialogueRuntime {
     return {
       flags: Object.fromEntries(this.flags),
       stats: { ...this.stats },
+      unlockedCodex: [...this.unlockedCodex],
     };
   }
 
@@ -123,7 +129,7 @@ export class DialogueRuntime {
     }
 
     const step = this.pending;
-    const option: ChoiceOption | undefined = step.options[optionIndex];
+    const option = this.offeredOptions(step)[optionIndex];
 
     if (!option) {
       throw new Error(`No choice option at index ${optionIndex}.`);
@@ -164,8 +170,22 @@ export class DialogueRuntime {
       speaker: step.speaker,
       prompt: step.prompt,
       key: step.key,
-      options: step.options,
+      options: this.offeredOptions(step),
     };
+  }
+
+  /**
+   * The options the player is actually offered.
+   *
+   * An option that refers to a Codex entry is only on offer once the player
+   * has read that entry, which is what makes the Codex a replay hook: what
+   * you have learned opens new ways to argue. Every other option is always
+   * on offer, so a choice can never be empty and the player is never stuck.
+   */
+  private offeredOptions(step: StoryStep & { kind: 'choice' }): ChoiceOption[] {
+    return step.options.filter(
+      (option) => option.codex === undefined || this.unlockedCodex.has(option.codex),
+    );
   }
 
   /**
@@ -208,6 +228,9 @@ export class DialogueRuntime {
         }
 
         case 'codex': {
+          // The entry is filed before the event goes out, so a later choice in
+          // the same chapter can refer to something the player has just read.
+          this.unlockedCodex.add(step.entry);
           events.push({ type: 'codex', entry: step.entry });
           this.cursor += 1;
           break;

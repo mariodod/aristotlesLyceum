@@ -14,6 +14,7 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { CHAPTERS } from '../../src/data/script/registry.ts';
 import { CODEX_ENTRIES } from '../../src/data/codex/index.ts';
+import { PLANNED_CHAPTERS } from '../../src/data/codex/plan.ts';
 import { CHARACTERS } from '../../src/data/characters.ts';
 import { DIALECTIC_OPPONENTS } from '../../src/data/dialectic/opponents.ts';
 import { EXPRESSION_ORDER } from '../../src/data/sprite-expressions.ts';
@@ -27,6 +28,14 @@ const problems = [];
 const MAX_LINE_LENGTH = 420;
 
 const opponentIds = new Set(DIALECTIC_OPPONENTS.map((opponent) => opponent.id));
+
+/**
+ * The id of every codex entry, so a script can be checked against it.
+ *
+ * This comes before the chapters are read, because a choice may refer to a
+ * codex entry and the reference has to be resolved.
+ */
+const codexIds = new Set(CODEX_ENTRIES.map((entry) => entry.id));
 
 function report(where, message) {
   problems.push(`${where}: ${message}`);
@@ -98,6 +107,13 @@ for (const script of CHAPTERS) {
 
       const optionLabels = new Set();
 
+      /**
+       * Options that are always on offer, because they do not refer to a
+       * Codex entry. A choice needs at least two of them, or the player can
+       * be left with nothing to pick.
+       */
+      let alwaysOffered = 0;
+
       for (const option of step.options) {
         if (option.label.trim().length === 0) {
           report(where, `choice "${step.at}" has an empty option label`);
@@ -111,6 +127,25 @@ for (const script of CHAPTERS) {
         if (!labels.has(option.goto)) {
           report(where, `choice "${step.at}" jumps to unknown label "${option.goto}"`);
         }
+
+        if (option.codex === undefined) {
+          alwaysOffered += 1;
+          continue;
+        }
+
+        if (!codexIds.has(option.codex)) {
+          report(
+            where,
+            `choice "${step.at}" refers to the codex entry "${option.codex}", which does not exist`,
+          );
+        }
+      }
+
+      if (alwaysOffered < 2) {
+        report(
+          where,
+          `choice "${step.at}" leaves only ${alwaysOffered} option that is always on offer, so the player can be stranded`,
+        );
       }
     }
 
@@ -165,13 +200,65 @@ for (const script of CHAPTERS) {
   }
 }
 
-const codexIds = new Set();
+/*
+ * The chapters that are planned but not written yet.
+ *
+ * An entry is spoken for if a shipped chapter unlocks it, or if a planned
+ * chapter has claimed it. When a planned chapter ships, it has to unlock
+ * everything it claimed, and the claim then comes out of the plan.
+ */
+const claimed = new Map();
+const plannedIds = new Set();
+
+for (const planned of PLANNED_CHAPTERS) {
+  if (plannedIds.has(planned.id)) {
+    report(`plan "${planned.id}"`, 'duplicate planned chapter id');
+  }
+  plannedIds.add(planned.id);
+
+  for (const id of planned.codex) {
+    const owner = claimed.get(id);
+
+    if (owner !== undefined) {
+      report(
+        `plan "${planned.id}"`,
+        `claims the codex entry "${id}", which the planned chapter "${owner}" already claims`,
+      );
+    }
+
+    claimed.set(id, planned.id);
+  }
+}
+
+for (const script of CHAPTERS) {
+  const planned = PLANNED_CHAPTERS.find((chapter) => chapter.id === script.id);
+
+  if (!planned) {
+    continue;
+  }
+
+  const missing = planned.codex.filter((id) => !unlocked.has(id));
+
+  if (missing.length > 0) {
+    report(
+      `chapter "${script.id}"`,
+      `has shipped but does not unlock the entries it promised (${missing.join(', ')})`,
+    );
+  } else {
+    report(
+      `plan "${script.id}"`,
+      'names a chapter that has shipped, so the claim should come out of the plan',
+    );
+  }
+}
+
+const seenCodexIds = new Set();
 
 for (const entry of CODEX_ENTRIES) {
-  if (codexIds.has(entry.id)) {
+  if (seenCodexIds.has(entry.id)) {
     report(`codex "${entry.id}"`, 'duplicate id');
   }
-  codexIds.add(entry.id);
+  seenCodexIds.add(entry.id);
 
   if (entry.origin.trim().length === 0) {
     report(`codex "${entry.id}"`, 'missing origin text');
@@ -185,14 +272,27 @@ for (const entry of CODEX_ENTRIES) {
     report(`codex "${entry.id}"`, 'has no sources');
   }
 
-  if (!unlocked.has(entry.id)) {
-    report(`codex "${entry.id}"`, 'is never unlocked by any chapter');
+  if (entry.author !== undefined && !(entry.author in CHARACTERS)) {
+    report(`codex "${entry.id}"`, `names an author who is not in the cast ("${entry.author}")`);
+  }
+
+  if (!unlocked.has(entry.id) && !claimed.has(entry.id)) {
+    report(
+      `codex "${entry.id}"`,
+      'is never unlocked by any chapter and no planned chapter has claimed it',
+    );
   }
 }
 
 for (const id of unlocked) {
   if (!codexIds.has(id)) {
     report(`codex "${id}"`, 'is unlocked by a script but does not exist');
+  }
+}
+
+for (const [id, chapter] of claimed) {
+  if (!codexIds.has(id)) {
+    report(`plan "${chapter}"`, `claims the codex entry "${id}", which does not exist`);
   }
 }
 

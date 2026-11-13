@@ -56,6 +56,7 @@ export class SaveService {
     return {
       flags: { ...this.data.flags },
       stats: { ...this.data.stats },
+      unlockedCodex: [...this.data.unlockedCodex],
     };
   }
 

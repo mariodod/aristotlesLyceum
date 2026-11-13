@@ -7,6 +7,7 @@ import { codexEntry } from '../data/codex/index.ts';
 import { chapterById } from '../data/script/registry.ts';
 import { isNeutral } from '../data/sprite-expressions.ts';
 import { DEFAULT_TEXTBOX, TextBox } from '../entities/textbox.ts';
+import type { ChoiceLabel } from '../entities/textbox.ts';
 import { metricsFor } from '../i18n/types.ts';
 import type { LocaleService } from '../services/locale-service.ts';
 import type { SaveService } from '../services/save-service.ts';
@@ -142,7 +143,10 @@ export class StoryScene extends Phaser.Scene {
         case 'choice':
           this.showChoices(
             this.tc(event.key, event.prompt),
-            event.options.map((option) => this.tc(option.key, option.label)),
+            event.options.map((option) => ({
+              text: this.tc(option.key, option.label),
+              fromCodex: option.codex !== undefined,
+            })),
           );
           break;
         case 'codex':
@@ -223,7 +227,7 @@ export class StoryScene extends Phaser.Scene {
     }
   }
 
-  private showChoices(prompt: string, labels: string[]): void {
+  private showChoices(prompt: string, options: ChoiceLabel[]): void {
     const box = this.textBox;
 
     if (!box) {
@@ -232,7 +236,7 @@ export class StoryScene extends Phaser.Scene {
 
     this.mode = 'choice';
     this.choicePrompt = prompt;
-    box.openChoices(prompt, labels);
+    box.openChoices(prompt, options);
     this.publishHook();
   }
 
@@ -374,7 +378,7 @@ export class StoryScene extends Phaser.Scene {
       return;
     }
 
-    this.showToast(`CODEX: ${entry.title}`);
+    this.showToast(this.t('ui.codex.unlocked', { title: this.tc(entry.titleKey, entry.title) }));
   }
 
   private showToast(message: string): void {

@@ -26,7 +26,6 @@ systems exist to serve it.
 | Every philosophical claim carries a **source** | The Codex is the educational spine of the game. `src/data/codex/` entries must name the Aristotelian work they come from, and `npm run content:check` enforces it.                  |
 | **Content is data, not code**                  | A chapter is a typed object in `src/data/script/`. If you need a new kind of story beat, add a step kind to the runtime and the type - do not branch on chapter ids inside a scene. |
 | Every user-facing string is a **key**          | A string in the code is a bug waiting to happen. The interface lives in `src/i18n/ui/`, the story in the scripts, and `npm run i18n:check` proves every catalogue is complete.      |
-| Every user-facing string is a **key**          | A string in the code is a bug waiting to happen. The interface lives in `src/i18n/ui/`, the story in the scripts, and `npm run i18n:check` proves every catalogue is complete.      |
 
 ---
 
@@ -240,8 +239,9 @@ export const ACT_ONE: StoryScript = {
    animation on the speaker's sprite. A character without that animation
    would not react, and the content linter reports it.
 6. **Codex entries live in a file named after the chapter that unlocks
-   them** (`src/data/codex/act-two.ts`). Every entry must be unlocked by that
-   chapter or the linter reports it as an orphan.
+   them** (`src/data/codex/act-two-logic.ts`). Every entry must be unlocked by
+   that chapter or claimed for it in `src/data/codex/plan.ts`, or the linter
+   reports it as an orphan.
 7. **Lines are short enough to read.** The linter rejects a line over 420
    characters. Aim for two or three sentences.
 8. **A chapter ends with `end`.**
@@ -250,6 +250,54 @@ export const ACT_ONE: StoryScript = {
    chapter cannot inherit the previous run's choices. Flags a chapter only
    _reads_ are not owned by it, so an act can branch on what an earlier act
    decided. `systems/dialogue/script-flags.ts` computes the owned set.
+10. **A choice option may refer to a Codex entry.** An option with a `codex`
+    field is only offered when the player has read that entry, which is what
+    makes the journal a replay hook: what you have learned opens new ways to
+    argue. Every choice keeps **at least two options with no reference**, so
+    the player is never stranded with an empty menu. The content linter
+    enforces both, and the menu marks those options with a small book.
+
+### Writing a Codex entry
+
+An entry is a `CodexEntry` in the file named after its chapter.
+
+```ts
+{
+  id: 'four-causes',
+  title: 'The Four Causes',
+  titleKey: 'codex.four-causes.title',
+  originKey: 'codex.four-causes.origin',
+  modernKey: 'codex.four-causes.modern',
+  sourcesKey: 'codex.four-causes.sources',
+  author: 'aristotle',
+  origin: 'What Aristotle wrote, and where.',
+  modern: 'The specific place the idea still does work today.',
+  sources: ['Aristotle, Physics I.6-8'],
+}
+```
+
+1. **All four catalogue keys are mandatory.** They are derived from the id, and
+   every other language carries them.
+2. **`origin` names the work.** The entry says what Aristotle said and where he
+   said it; the `sources` list says where to check.
+3. **`modern` names a field, not a resemblance.** "Still used in science" is
+   not a modern echo. "The best supported account of catharsis is regulation
+   rather than release" is.
+4. **`author` is a character in the cast.** The journal shows their portrait.
+
+### The Codex plan
+
+`src/data/codex/plan.ts` names the chapters that are coming and the entries
+each of them will unlock. It exists because an entry has to be unlocked by a
+chapter, but a chapter is a lot of writing to do before the entries it will
+unlock can be written down.
+
+- An entry is spoken for when a shipped chapter unlocks it **or** a planned
+  chapter claims it.
+- When a planned chapter ships, it must unlock every entry claimed for it, and
+  the claim comes out of the plan. The linter says so until you do.
+- The plan is not a promise to keep forever. It is a note between the
+  linter and the writer.
 
 ---
 
@@ -348,7 +396,8 @@ A counted string uses `locale.tn(key, count)`, which looks for `key.one` and
 The last one is the one that matters. A bitmap font has no fallback, so a
 single accented letter the atlas does not have becomes a blank box in the
 middle of a sentence. The check reads the glyph table from the font generator
-and compares it against every catalogue.
+and compares it against every catalogue, and against the English story, which
+lives inline in the scripts and never passes through a catalogue at all.
 
 ### Adding a language
 
@@ -474,21 +523,31 @@ A change is done when:
 - new content has sources;
 - the documentation under `docs/` is updated if a decision changed.
 
+### Finishing a unit of work
+
+**A unit of work is finished when it is committed and pushed.** The order is
+always the same:
+
+1. Every gate passes: `npm run typecheck`, `npm run lint`,
+   `npm run format:check`, `npm run test`, `npm run content:check`,
+   `npm run i18n:check`, `npm run build`, and `npm run test:e2e` when the
+   change touches what the browser suite covers.
+2. `git commit`, with a message that says what changed and why.
+3. `git push` to `main`.
+
+Do not leave a finished unit of work uncommitted. The remote is the record of
+what the game looked like at each step, and a unit that only exists in one
+working tree is a unit that can be lost.
+
 ---
 
 ## 12. Current state
 
 See [`PLAN.md`](PLAN.md) for the milestone plan and [`docs/roadmap.md`](docs/roadmap.md)
 for the schedule. The short version: the engine, the art pipeline, the dialogue
-runtime, the content linter, Act I and the dialectic exist and are verified end
-to end. Act I has three endings and a chapter-complete card; the human
-playtest is the one open item, and its protocol is in
-[`docs/m2-playtest.md`](docs/m2-playtest.md). Act II onward is still to be
-written.
-
-See [`PLAN.md`](PLAN.md) for the milestone plan and [`docs/roadmap.md`](docs/roadmap.md)
-for the schedule. The short version: the engine, the art pipeline, the dialogue
-runtime, the content linter and Act I exist and are verified end to end. Act I
-has three endings and a chapter-complete card; the human playtest is the one
-open item, and its protocol is in [`docs/m2-playtest.md`](docs/m2-playtest.md).
-Act II onward is still to be written.
+runtime, the content linter, Act I, the dialectic and the Codex exist and are
+verified end to end. Act I has three endings and a chapter-complete card; the
+human playtest is the one open item, and its protocol is in
+[`docs/m2-playtest.md`](docs/m2-playtest.md). The Codex holds the twenty-one
+entries that Act II will unlock, in English and in Spanish, and the journal
+lists them. Act II's scripts are still to be written.

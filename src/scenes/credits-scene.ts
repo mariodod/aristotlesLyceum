@@ -31,7 +31,7 @@ export class CreditsScene extends Phaser.Scene {
     }
 
     this.add
-      .bitmapText(GAME_WIDTH / 2, GAME_HEIGHT - 20, FONT_KEY, this.t('ui.codex.back'))
+      .bitmapText(GAME_WIDTH / 2, GAME_HEIGHT - 20, FONT_KEY, this.t('ui.credits.back'))
       .setOrigin(0.5, 0)
       .setDepth(2)
       .setAlpha(0.6);

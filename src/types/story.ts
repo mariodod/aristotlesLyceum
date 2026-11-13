@@ -68,6 +68,14 @@ export interface ChoiceOption {
   stat?: { stat: StatId; delta: number };
   /** Optional flag set when the option is chosen. */
   setFlag?: string;
+  /**
+   * A Codex entry this option refers to.
+   *
+   * The option is only offered when the player has read the entry, which is
+   * what makes the Codex a replay hook: what you have learned opens new ways
+   * to argue. An option without a reference is always on offer.
+   */
+  codex?: string | undefined;
 }
 
 interface BaseStep {
@@ -233,11 +241,14 @@ export type DialogueEvent =
 export interface DialogueState {
   flags: Record<string, boolean>;
   stats: StatRecord;
+  /** The Codex entries the player has read. */
+  unlockedCodex: string[];
 }
 
 export function createDialogueState(): DialogueState {
   return {
     flags: {},
     stats: { reason: 0, wisdom: 0, empathy: 0 },
+    unlockedCodex: [],
   };
 }

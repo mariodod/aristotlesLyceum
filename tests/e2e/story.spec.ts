@@ -80,6 +80,10 @@ test('reaches the chapter-complete card', async ({ page }) => {
 });
 
 test('each choice reaches a different ending', async ({ page }) => {
+  // The test plays the whole chapter three times, so it needs more than the
+  // default timeout allows on a software renderer.
+  test.setTimeout(90_000);
+
   const endings: { option: number; ending: string; stat: string }[] = [
     { option: 0, ending: 'THE ARGUMENT', stat: 'reason' },
     { option: 1, ending: 'THE REPETITION', stat: 'wisdom' },

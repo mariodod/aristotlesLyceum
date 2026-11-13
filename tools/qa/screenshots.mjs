@@ -88,6 +88,18 @@ for (let index = 0; index < 160; index += 1) {
 await settle(30);
 await shot('05-chapter-complete');
 
+// The Dream Journal, which the card opens with C.
+await page.keyboard.press('c');
+await page.waitForFunction(() => window.__LYCEUM_TEST__?.scene === 'Codex');
+await settle();
+await shot('06-journal-list');
+
+await page.keyboard.press('ArrowDown');
+await settle();
+await page.keyboard.press('z');
+await settle();
+await shot('07-journal-entry');
+
 await browser.close();
 
 if (problems.length > 0) {

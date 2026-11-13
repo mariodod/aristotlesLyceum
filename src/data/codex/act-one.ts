@@ -9,29 +9,7 @@
  * `author` names the character whose portrait appears beside the entry.
  */
 
-import type { CharacterId } from '../../types/story.ts';
-
-export interface CodexEntry {
-  id: string;
-  /** Short label used in menus. */
-  title: string;
-  /** The idea as Aristotle stated it. */
-  origin: string;
-  /** Where the same structure of thinking shows up in today's science. */
-  modern: string;
-  /** Works of Aristotle this entry draws on. */
-  sources: string[];
-  /** The catalogue key for the title. */
-  titleKey?: string;
-  /** The catalogue key for the origin text. */
-  originKey?: string;
-  /** The catalogue key for the modern text. */
-  modernKey?: string;
-  /** The catalogue key for the sources. */
-  sourcesKey?: string;
-  /** Whose portrait is shown beside the entry. */
-  author?: CharacterId;
-}
+import type { CodexEntry } from './types.ts';
 
 export const ACT_ONE_CODEX: CodexEntry[] = [
   {

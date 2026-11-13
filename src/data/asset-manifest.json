@@ -108,6 +108,12 @@
       "url": "assets/ui/heart.png",
       "width": 7,
       "height": 6
+    },
+    {
+      "key": "ui-book",
+      "url": "assets/ui/book.png",
+      "width": 7,
+      "height": 6
     }
   ],
   "spritesheets": [

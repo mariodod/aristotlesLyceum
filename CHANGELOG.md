@@ -7,6 +7,39 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **The Dream Journal has a list.** It opened on a single entry and could
+  never show the second, so a journal with more than one thing in it was
+  unreadable. It now lists everything that has been filed, the arrows move
+  through the list, `Z` opens an entry, and the arrows turn the page inside
+  it.
+- **Twenty-one Codex entries for Act II**, three per chapter, each naming the
+  Aristotelian work it comes from and a modern field where the idea still does
+  work. All of them are translated into Spanish.
+- **Codex-driven choices.** An option can name the Codex entry it refers to,
+  and the game only offers it once the player has read that entry, which is
+  what makes the journal a replay hook. The menu marks those options with a
+  small book, drawn from the same generator as the heart.
+- **A plan for the chapters that are coming.** `src/data/codex/plan.ts` names
+  the chapters that are still to be written and the entries each of them will
+  unlock, so an entry can be written down before the chapter that files it.
+
+### Fixed
+
+- **A story line could hold a character the font cannot draw.** The
+  localisation check compared the catalogues against the font, but the English
+  story lives inline in the scripts and never passes through a catalogue, so
+  it was never checked. It is now, and it caught eleven typographic
+  apostrophes that would have been blank boxes in the middle of a sentence.
+- **The credits screen borrowed the journal's "go back" string**, so changing
+  one changed the other. It has its own key now.
+- **The "new entry" toast was hardcoded English**, and it showed the English
+  title of the entry in every language. Both are keys now.
+- **A browser test could not finish the chapter it was replaying three
+  times**, because it had the default timeout. It was failing before this
+  release.
+
 ## [0.5.0] - 2026-11-12
 
 ### Added

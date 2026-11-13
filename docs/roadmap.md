@@ -2,7 +2,7 @@
 
 **Version:** 0.1
 **Date:** 2026-11-12
-**Status:** M0 complete.
+**Status:** M5 complete.
 
 ---
 
@@ -16,7 +16,7 @@
 | M3  | Art pass       | Twelve characters with expressions, portraits, three more backdrops | Done        |
 | M4  | Dialectic      | The battle system and the syllogism builder                         | Done        |
 | M4b | Localisation   | The game speaks more than one language                              | Done        |
-| M5  | Codex          | Journal screen complete, Act II entries authored                    | Partial     |
+| M5  | Codex          | Journal screen complete, Act II entries authored                    | Done        |
 | M6  | Act II         | Seven chapters, forty minutes of writing                            | Not started |
 | M7  | Act III & IV   | Eight stations and a playable exam                                  | Not started |
 | M8  | Audio & access | Generated music, settings, text speed, accessibility                | Not started |
@@ -90,16 +90,6 @@ without the name plate.
       sprite has a frame for every expression.
 - [ ] Portraits for the remaining Act III stations come with M6 and M7.
 
-- Twelve characters with a silhouette that survives at 32×48, plus a larger
-  portrait per character for the Codex.
-- Expression sets: neutral, happy, sad, surprised, thinking, angry, tired,
-  determined.
-- Backdrops: the Lyceum walkway, the Library, Baghdad, Padua, London,
-  Königsberg, Down House, the exam room.
-
-**Done when:** every character in the cast has a sprite that reads at 1×
-without the name plate.
-
 ### M4 — Dialectic
 
 - A standalone prototype scene with the four options.
@@ -125,13 +115,6 @@ argument in under three minutes and can explain why it worked.
       reached before Act II exists.
 - [ ] The playtest with somebody who has never heard of a syllogism. That
       is the acceptance criterion and it needs a human.
-- A standalone prototype scene with the four options.
-- The syllogism builder: pick a major premise, a minor premise and a
-  conclusion; the game checks the mood and the figure.
-- Three opponents for Act II, one for the exam.
-
-**Done when:** a player who has never heard of a syllogism can win one
-argument in under three minutes and can explain why it worked.
 
 ### M4b — Localisation
 
@@ -163,6 +146,25 @@ whole of Act I in it, and no catalogue is allowed to drift.
 
 **Done when:** every entry names the Aristotelian work it comes from and one
 specific modern field.
+
+**Progress:**
+
+- [x] The journal opens on a **list** of what has been filed. Before this it
+      showed one entry and could never show the second.
+- [x] Choosing an entry opens it; the arrows turn the page; `Z` goes back to
+      the list and `ESC` leaves the journal.
+- [x] **Twenty-one Act II entries**, three per chapter, each with the work it
+      comes from and a modern field that names a specific place the idea still
+      does work.
+- [x] Every entry is translated into Spanish, with its own catalogue keys.
+- [x] **Codex-driven choices.** An option can name the entry it refers to, and
+      the runtime only offers it once the player has read that entry. The menu
+      marks those options with a small book.
+- [x] The linter proves an entry is spoken for: unlocked by a chapter, or
+      claimed by a chapter that is still to be written (`src/data/codex/plan.ts`).
+- [x] The linter proves a choice can never be stranded: at least two of its
+      options are always on offer.
+- [ ] The first choice in the game that refers to an entry lands with Act II.
 
 ### M6 — Act II
 

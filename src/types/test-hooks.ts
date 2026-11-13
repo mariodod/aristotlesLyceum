@@ -44,6 +44,12 @@ export interface LyceumTestHook {
   endCardVisible: boolean;
   /** Codex entry ids unlocked so far. */
   unlockedCodex: string[];
+  /** Which journal view is showing: the list of entries, or one of them. */
+  codexView: string;
+  /** The id of the Codex entry the journal is on. */
+  codexEntry: string;
+  /** How many Codex entries have been unlocked. */
+  codexEntryCount: number;
   /** Current value of each story stat. */
   stats: { reason: number; wisdom: number; empathy: number };
 }
