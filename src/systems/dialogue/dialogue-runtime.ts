@@ -293,11 +293,13 @@ export class DialogueRuntime {
         }
 
         case 'chapter': {
-          events.push(
-            step.subtitle === undefined
-              ? { type: 'chapter', title: step.title }
-              : { type: 'chapter', title: step.title, subtitle: step.subtitle },
-          );
+          events.push({
+            type: 'chapter',
+            title: step.title,
+            subtitle: step.subtitle,
+            titleKey: step.titleKey,
+            subtitleKey: step.subtitleKey,
+          });
           this.cursor += 1;
           break;
         }

@@ -158,6 +158,14 @@ describe('story data', () => {
     }
   });
 
+  it('gives every character a name for the plate', () => {
+    // The narrator included. A line with no name on the plate leaves the
+    // player unable to tell a narrated line from the person on the screen.
+    for (const id of CHARACTER_IDS) {
+      expect(CHARACTERS[id].name.length).toBeGreaterThan(0);
+    }
+  });
+
   it('keeps the expression list free of duplicates', () => {
     expect(new Set(EXPRESSION_IDS).size).toBe(EXPRESSION_IDS.length);
   });

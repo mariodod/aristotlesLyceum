@@ -61,6 +61,16 @@ for (const script of CHAPTERS) {
         contentKeys.set(step.subtitleKey, step.subtitle);
       }
     }
+
+    if (step.kind === 'chapter') {
+      if (step.titleKey) {
+        contentKeys.set(step.titleKey, step.title);
+      }
+
+      if (step.subtitleKey && step.subtitle) {
+        contentKeys.set(step.subtitleKey, step.subtitle);
+      }
+    }
   }
 }
 

@@ -39,7 +39,6 @@ type StoryMode = 'line' | 'choice' | 'done';
  */
 export class StoryScene extends Phaser.Scene {
   private runtime: DialogueRuntime | undefined;
-  private script: StoryScript | undefined;
   private textBox: TextBox | undefined;
   private backdrop: Phaser.GameObjects.Image | undefined;
   private card: Phaser.GameObjects.Container | undefined;
@@ -58,6 +57,9 @@ export class StoryScene extends Phaser.Scene {
   private endingSubtitle = '';
   private endingKey: string | undefined = undefined;
   private endingSubtitleKey: string | undefined = undefined;
+  /** What the act card said, so the chapter-complete card can say it again. */
+  private actTitle = '';
+  private actName = '';
   private locale: LocaleService | undefined;
 
   constructor() {
@@ -92,7 +94,6 @@ export class StoryScene extends Phaser.Scene {
       return;
     }
 
-    this.script = script;
     this.backdrop = this.add.image(0, 0, script.backdrop).setOrigin(0).setDepth(0);
     this.add.rectangle(0, 0, GAME_WIDTH, GAME_HEIGHT, 0x07070c, 0.18).setOrigin(0).setDepth(1);
 
@@ -159,7 +160,7 @@ export class StoryScene extends Phaser.Scene {
           this.persistFlag(event.flag, event.value);
           break;
         case 'chapter':
-          this.showChapterCard(event.title, event.subtitle);
+          this.showChapterCard(event.title, event.subtitle, event.titleKey, event.subtitleKey);
           break;
         case 'dialectic':
           this.startDialectic(event.opponent, event.returnTo);
@@ -240,38 +241,59 @@ export class StoryScene extends Phaser.Scene {
     this.publishHook();
   }
 
-  private showChapterCard(title: string, subtitle?: string): void {
+  /**
+   * The act card.
+   *
+   * The card is black from the first frame and only the words fade. Fading
+   * the whole card used to fade the black with them, so the scene appeared
+   * first, then blacked out with the title over it, then came back. The
+   * words also used to spend most of their life half-transparent, which read
+   * as a rendering fault rather than as a title.
+   */
+  private showChapterCard(
+    title: string,
+    subtitle?: string,
+    titleKey?: string,
+    subtitleKey?: string,
+  ): void {
     this.cardActive = true;
 
     const overlay = this.add.container(0, 0).setDepth(200);
     overlay.add(this.add.rectangle(0, 0, GAME_WIDTH, GAME_HEIGHT, 0x07070c, 1).setOrigin(0));
 
     const titleText = this.add
-      .bitmapText(GAME_WIDTH / 2, GAME_HEIGHT / 2 - 16, FONT_KEY, title)
+      .bitmapText(GAME_WIDTH / 2, GAME_HEIGHT / 2 - 16, FONT_KEY, this.tc(titleKey, title))
       .setOrigin(0.5, 0.5);
     titleText.setScale(2);
     titleText.setTint(0xf2c14e);
+    titleText.setAlpha(0);
     overlay.add(titleText);
 
+    const words: Phaser.GameObjects.BitmapText[] = [titleText];
+
     if (subtitle) {
-      overlay.add(
-        this.add
-          .bitmapText(GAME_WIDTH / 2, GAME_HEIGHT / 2 + 12, FONT_KEY, subtitle)
-          .setOrigin(0.5, 0.5)
-          .setAlpha(0.8),
-      );
+      const subtitleText = this.add
+        .bitmapText(GAME_WIDTH / 2, GAME_HEIGHT / 2 + 12, FONT_KEY, this.tc(subtitleKey, subtitle))
+        .setOrigin(0.5, 0.5);
+      subtitleText.setAlpha(0);
+      overlay.add(subtitleText);
+      words.push(subtitleText);
     }
 
-    overlay.setAlpha(0);
+    // The card remembers what it said, so the chapter-complete card can
+    // name the same act in the same language.
+    this.actTitle = this.tc(titleKey, title);
+    this.actName = subtitle ? this.tc(subtitleKey, subtitle) : '';
+
     this.card = overlay;
 
     this.tweens.add({
-      targets: overlay,
+      targets: words,
       alpha: 1,
       duration: 420,
       onComplete: () => {
         this.tweens.add({
-          targets: overlay,
+          targets: words,
           alpha: 0,
           delay: 620,
           duration: 420,
@@ -279,10 +301,25 @@ export class StoryScene extends Phaser.Scene {
             overlay.destroy();
             this.card = undefined;
             this.cardActive = false;
+            this.restartLine();
           },
         });
       },
     });
+  }
+
+  /**
+   * Starts the current line again from the top.
+   *
+   * The act card is up while the first line is already typing behind it, so
+   * without this the player arrives at a half-written sentence.
+   */
+  private restartLine(): void {
+    if (this.mode !== 'line' || this.currentLine.length === 0) {
+      return;
+    }
+
+    this.textBox?.showText(this.currentLine);
   }
 
   private setStage(actors: { character: CharacterId; x: number }[], backdrop?: string): void {
@@ -478,20 +515,25 @@ export class StoryScene extends Phaser.Scene {
 
     this.textBox?.setVisible(false);
 
+    // A toast that is still fading would sit over the card and read as a
+    // rendering fault.
+    this.toast?.destroy();
+    this.toast = undefined;
+
     const card = this.add.container(0, 0).setDepth(200);
     card.add(this.add.rectangle(0, 0, GAME_WIDTH, GAME_HEIGHT, 0x07070c, 0.97).setOrigin(0));
 
-    const [act = 'Act', name = ''] = (this.script?.title ?? 'Act').split(' — ');
-
-    const actLabel = this.add.bitmapText(GAME_WIDTH / 2, 48, FONT_KEY, this.t('ui.story.actTitle'));
+    // The act card already said what this act is called, in the player's
+    // language. Reading it from the script instead used to throw the act
+    // number away and leave a bare "ACT" on the screen.
+    const actLabel = this.add.bitmapText(GAME_WIDTH / 2, 48, FONT_KEY, this.actTitle);
     actLabel.setOrigin(0.5, 0);
     actLabel.setTint(0xf2c14e);
     card.add(actLabel);
 
     const actName = this.add
-      .bitmapText(GAME_WIDTH / 2, 64, FONT_KEY, name.toUpperCase())
+      .bitmapText(GAME_WIDTH / 2, 64, FONT_KEY, this.actName.toUpperCase())
       .setOrigin(0.5, 0);
-    void act;
     actName.setScale(2);
     actName.setTint(0xf6f2e8);
     card.add(actName);
@@ -600,9 +642,13 @@ export class StoryScene extends Phaser.Scene {
       return;
     }
 
-    this.tweens.killTweensOf(this.card);
+    // The fade runs on the words rather than on the card, so it has to be
+    // stopped explicitly or the words would keep fading over the scene.
+    this.tweens.killTweensOf(this.card.list);
     this.card.destroy();
     this.card = undefined;
+
+    this.restartLine();
   }
 
   private moveChoice(delta: number): void {
@@ -662,6 +708,7 @@ export class StoryScene extends Phaser.Scene {
       choicePrompt: this.choicePrompt,
       choiceVisible: box?.optionsRendered ?? false,
       ending: this.endingTitle,
+      actTitle: this.actTitle,
       endCardVisible: this.endCard !== undefined,
       unlockedCodex: saveService.snapshot.unlockedCodex,
       stats: runtime

@@ -40,6 +40,8 @@ export interface LyceumTestHook {
   choiceVisible: boolean;
   /** Title of the ending the player reached, once the chapter is over. */
   ending: string;
+  /** The act label the chapter card showed, e.g. "ACT I". */
+  actTitle: string;
   /** True when the chapter-complete card is showing. */
   endCardVisible: boolean;
   /** Codex entry ids unlocked so far. */

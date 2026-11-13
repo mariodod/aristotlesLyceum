@@ -24,6 +24,7 @@ export function setTestHook(patch: Partial<LyceumTestHook>): void {
     choicePrompt: '',
     choiceVisible: false,
     ending: '',
+    actTitle: '',
     endCardVisible: false,
     unlockedCodex: [],
     codexView: 'list',

@@ -7,6 +7,44 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- **The act card was a rendering fault.** The card faded in from nothing, so
+  the scene appeared first, then blacked out with the title over it, then came
+  back. The words also spent most of their life half-transparent, and the
+  first line was already half-typed behind the card, so the player arrived at
+  a sentence they had missed the start of. The card is now black from the
+  first frame, only the words fade, and the line starts from the top.
+- **It was not clear who was talking.** The narrator had no name plate, so a
+  narrated line and a line spoken by the only person on the screen looked
+  the same. The narrator has a name plate now, in the quiet grey it already
+  had.
+- **The chapter-complete card threw the act number away.** It showed a bare
+  "ACT" because it read the act label from the interface catalogue instead of
+  from the card. It reads the same words the act card said, in the player's
+  language.
+- **The act title was not translated.** The act card and the chapter-complete
+  card both showed the act's name in English, because the name came from the
+  script. It is a catalogue key now.
+- **A fading toast sat over the chapter-complete card**, which read as a
+  rendering fault.
+- **"You have been practising it for six hours."** Aristotle said Isaac had
+  spent six hours practising, and the dream before it had been a
+  conversation rather than an argument. He now counts the argument they had
+  with him as the practice.
+- **A story line could hold a character the font cannot draw.** The
+  localisation check compared the catalogues against the font, but the English
+  story lives inline in the scripts and never passes through a catalogue, so
+  it was never checked. It is now, and it caught eleven typographic
+  apostrophes that would have been blank boxes in the middle of a sentence.
+- **The credits screen borrowed the journal's "go back" string**, so changing
+  one changed the other. It has its own key now.
+- **The "new entry" toast was hardcoded English**, and it showed the English
+  title of the entry in every language. Both are keys now.
+- **A browser test could not finish the chapter it was replaying three
+  times**, because it had the default timeout. It was failing before this
+  release.
+
 ### Added
 
 - **The Dream Journal has a list.** It opened on a single entry and could
@@ -24,21 +62,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **A plan for the chapters that are coming.** `src/data/codex/plan.ts` names
   the chapters that are still to be written and the entries each of them will
   unlock, so an entry can be written down before the chapter that files it.
-
-### Fixed
-
-- **A story line could hold a character the font cannot draw.** The
-  localisation check compared the catalogues against the font, but the English
-  story lives inline in the scripts and never passes through a catalogue, so
-  it was never checked. It is now, and it caught eleven typographic
-  apostrophes that would have been blank boxes in the middle of a sentence.
-- **The credits screen borrowed the journal's "go back" string**, so changing
-  one changed the other. It has its own key now.
-- **The "new entry" toast was hardcoded English**, and it showed the English
-  title of the entry in every language. Both are keys now.
-- **A browser test could not finish the chapter it was replaying three
-  times**, because it had the default timeout. It was failing before this
-  release.
 
 ## [0.5.0] - 2026-11-12
 

@@ -2,6 +2,7 @@ import { expect, test } from '@playwright/test';
 import {
   advanceUntilChoice,
   advanceUntilEndCard,
+  bootToTitle,
   chooseOption,
   collectPageErrors,
   nextLine,
@@ -139,5 +140,37 @@ test('opens the Dream Journal from the chapter-complete card', async ({ page }) 
 
   await pressKey(page, 'c');
   await expect.poll(() => readHook<string>(page, 'scene')).toBe('Codex');
+  expect(errors).toEqual([]);
+});
+
+test('the act card leaves the first line unread', async ({ page }) => {
+  const errors = collectPageErrors(page);
+
+  await bootToTitle(page);
+  await pressKey(page, 'z');
+  await page.waitForFunction(() => window.__LYCEUM_TEST__?.scene === 'Story');
+
+  // The act card is up while the first line is already typing behind it.
+  // The player must arrive at the line, not at the middle of it.
+  await page.waitForTimeout(900);
+  await pressKey(page, 'z');
+
+  const visible = await readHook<string>(page, 'lineText');
+
+  expect(visible.length).toBeLessThan(20);
+  expect(await readHook<string>(page, 'lastLine')).toContain('Tuesday');
+
+  expect(errors).toEqual([]);
+});
+
+test('the chapter-complete card names the act it belongs to', async ({ page }) => {
+  const errors = collectPageErrors(page);
+
+  await startActOne(page);
+  await advanceUntilEndCard(page);
+
+  await expect.poll(() => readHook<boolean>(page, 'endCardVisible')).toBe(true);
+  await expect.poll(() => readHook<string>(page, 'actTitle')).toBe('ACT I');
+
   expect(errors).toEqual([]);
 });

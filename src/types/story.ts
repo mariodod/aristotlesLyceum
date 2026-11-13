@@ -166,6 +166,9 @@ export interface ChapterStep extends BaseStep {
   kind: 'chapter';
   title: string;
   subtitle?: string;
+  /** The catalogue keys for the title and subtitle, when they are translated. */
+  titleKey?: string;
+  subtitleKey?: string;
 }
 
 export interface StageStep extends BaseStep {
@@ -226,7 +229,13 @@ export type DialogueEvent =
   | { type: 'codex'; entry: string }
   | { type: 'stat'; stat: StatId; delta: number; total: number }
   | { type: 'flag'; flag: string; value: boolean }
-  | { type: 'chapter'; title: string; subtitle?: string }
+  | {
+      type: 'chapter';
+      title: string;
+      subtitle?: string | undefined;
+      titleKey?: string | undefined;
+      subtitleKey?: string | undefined;
+    }
   | {
       type: 'chapterEnd';
       title: string;

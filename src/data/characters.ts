@@ -19,7 +19,10 @@ export interface CharacterDefinition {
 export const CHARACTERS: Record<CharacterId, CharacterDefinition> = {
   narrator: {
     id: 'narrator',
-    name: '',
+    // The narrator has a name plate. Without one, the player could not tell
+    // a narrated line from a line spoken by the only person on the screen,
+    // and the opening of the game read as Isaac talking to himself.
+    name: 'Narrator',
     color: 0xbfb6a2,
     spriteKey: 'char-narrator',
     expressions: {},

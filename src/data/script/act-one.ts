@@ -15,7 +15,14 @@ export const ACT_ONE: StoryScript = {
   title: 'Act I — The Desk',
   backdrop: 'backdrop-bedroom',
   steps: [
-    { at: 'open', kind: 'chapter', title: 'ACT I', subtitle: 'The Desk' },
+    {
+      at: 'open',
+      kind: 'chapter',
+      title: 'ACT I',
+      subtitle: 'The Desk',
+      titleKey: 'act-one.chapter.title',
+      subtitleKey: 'act-one.chapter.subtitle',
+    },
     { at: 'stage-isaac', kind: 'stage', actors: [{ character: 'isaac', x: 190 }] },
 
     {
@@ -454,7 +461,7 @@ export const ACT_ONE: StoryScript = {
       kind: 'say',
       key: 'act-one.final-5',
       speaker: 'aristotle',
-      text: 'You will not need it. You have been practising it for six hours.',
+      text: 'You will not need it. Six hours of reading, and then you argued with me about it. That was the practice.',
       expression: 'happy',
     },
     {

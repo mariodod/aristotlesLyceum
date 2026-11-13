@@ -1,4 +1,6 @@
 {
+  "act-one.chapter.title": "ACTO I",
+  "act-one.chapter.subtitle": "El escritorio",
   "act-one.room-1": "Martes. 23:47. El examen es dentro de nueve horas, y el único libro abierto sobre el escritorio es Aristóteles.",
   "act-one.room-2": "La lámpara es la única luz que queda en la habitación. La ventana está haciendo lo suyo de azul. Todo lo demás está dormido.",
   "act-one.room-3": "Sobre el escritorio: una taza de té que dejó de beber hace una hora, un móvil boca abajo, un rotulador que no ha subrayado nada en su vida y la página ciento doce.",
@@ -52,7 +54,7 @@
   "act-one.final-2": "¿Voy a despertarme?",
   "act-one.final-3": "Todo el mundo se despierta. La pregunta interesante es qué haces con las horas que vienen después.",
   "act-one.final-4": "...Está bien. Dadme el examen.",
-  "act-one.final-5": "No lo vas a necesitar. Llevas seis horas practicándolo.",
+  "act-one.final-5": "No lo vas a necesitar. Seis horas de lectura, y después discutiste conmigo. Eso fue la práctica.",
   "act-one.final-6": "En algún sitio detrás de Isaac, una escuela se despierta.",
   "codex.syllogism.title": "El silogismo",
   "codex.syllogism.origin": "Una conclusión se sigue necesariamente cuando se extrae de premisas que son verdaderas, primeras y más evidentes que la conclusión. Aristóteles escribió el primer sistema desarrollado de inferencia formal en los Analytics Primeros.",
