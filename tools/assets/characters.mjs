@@ -94,22 +94,163 @@ function frockBody(widths, { shade = 0.24 } = {}) {
   ];
 }
 
+/**
+ * One row of a body, placed at a column of the character grid.
+ *
+ * A body is described by what is in it rather than by counting the dots
+ * around it, so a row cannot come out one pixel too long.
+ */
+function row(content, left = 0) {
+  if (left + content.length > CHARACTER_WIDTH) {
+    throw new Error(`Row of ${content.length} at ${left} does not fit in ${CHARACTER_WIDTH}.`);
+  }
+
+  return '.'.repeat(left) + content + '.'.repeat(CHARACTER_WIDTH - left - content.length);
+}
+
+/**
+ * Paints a run of one character down a column.
+ */
+function paintColumn(rows, column, top, bottom, character) {
+  for (let y = top; y <= bottom; y += 1) {
+    const row = rows[y];
+
+    if (row === undefined || column < 0 || column >= row.length) {
+      continue;
+    }
+
+    rows[y] = row.slice(0, column) + character + row.slice(column + 1);
+  }
+}
+
+/**
+ * Paints a small shape into the rows, the way the face block is painted
+ * into the head.
+ */
+function paintShape(rows, shape, left, top) {
+  shape.forEach((line, y) => {
+    [...line].forEach((token, x) => {
+      if (token === '.') {
+        return;
+      }
+
+      const row = rows[top + y];
+
+      if (row === undefined) {
+        return;
+      }
+
+      rows[top + y] = row.slice(0, left + x) + token + row.slice(left + x + 1);
+    });
+  });
+}
+
+/**
+ * An open hand, palm up, with the fingers spread.
+ */
+const OPEN_HAND = ['s.ss', 'ssss', 's..s', '.oo.'];
+
+/**
+ * A scroll held low in a hand, the way a scroll is held: horizontally.
+ */
+const SCROLL = ['oyyyoss', 'oyyyoss', 'oooooos'];
+
+/**
+ * The arms of a character who holds a scroll in one hand and makes a point
+ * with the other.
+ *
+ * The arms are painted over the garment rather than woven into it, so a
+ * garment can still be described by its widths. The raised arm is bent: the
+ * sleeve runs down from the shoulder to the elbow, the forearm comes back
+ * up, and the hand is open above it. The arm stands clear of the body,
+ * because an arm against a body of the same colour is not an arm.
+ */
+function withArms(rows, { cloth, cuff, skin, sleeveColumn }) {
+  const out = [...rows];
+
+  // The raised arm: the sleeve from the shoulder to the elbow.
+  paintColumn(out, sleeveColumn, 2, 9, cloth);
+  paintColumn(out, sleeveColumn + 1, 2, 9, cloth);
+
+  // The cuff at the elbow, in the colour of the trim.
+  paintColumn(out, sleeveColumn, 9, 9, cuff);
+  paintColumn(out, sleeveColumn + 1, 9, 9, cuff);
+
+  // The forearm comes back up, bare, and the hand is open above it.
+  paintColumn(out, sleeveColumn + 2, 6, 8, skin);
+  paintColumn(out, sleeveColumn + 3, 3, 8, skin);
+  paintShape(out, OPEN_HAND, sleeveColumn + 2, 0);
+
+  // The scroll arm: the sleeve down the side, the hand at the end of it.
+  paintColumn(out, 5, 2, 12, cloth);
+  paintColumn(out, 6, 2, 12, cloth);
+  paintShape(out, SCROLL, 2, 11);
+
+  return out;
+}
+
+/**
+ * A band of one colour down the right of a garment.
+ *
+ * The himation hangs from one shoulder to the hem, and it follows the edge
+ * of the cloth as the cloth widens.
+ */
+function withBand(rows, colour, width) {
+  return rows.map((row) => {
+    const edge = row.replace(/\.+$/, '').length - 1;
+
+    if (edge < width + 1) {
+      return row;
+    }
+
+    const right = edge - 1;
+    const left = right - width + 1;
+
+    return row.slice(0, left) + colour.repeat(width) + row.slice(right + 1);
+  });
+}
+
+/**
+ * The gold at the hem of a tunic.
+ */
+function withHem(rows, colour) {
+  const out = [...rows];
+  const row = out[out.length - 1];
+
+  if (row === undefined) {
+    return out;
+  }
+
+  const start = row.search(/[^.]/);
+  const end = row.replace(/\.+$/, '').length - 1;
+
+  if (start < 0 || end - start < 3) {
+    return out;
+  }
+
+  // The interior of the last row, between the two outlines.
+  out[out.length - 1] = row.slice(0, start + 1) + colour.repeat(end - start - 1) + row.slice(end);
+
+  return out;
+}
+
 /*
- * Isaac: a teenager in a hoodie, hair he has not looked at in a week, and
- * the flat black eyes the genre uses instead of pupils.
+ * Isaac: a teenager with hair he has not looked at in a week, a backpack he
+ * has not taken off since September, and a copy of Aristotle he has been
+ * reading all night. The scroll is still in his other hand.
  */
 
 const ISAAC = {
   head: [
     '................................',
-    '.............oooo...............',
-    '............oHHHHo..............',
-    '...........oHHHHHHo.............',
-    '..........oHHHHHHHHo............',
-    '.........oHHhhhhhhhhHo..........',
-    '........oHHhhhhhhhhhhHo.........',
-    '.......oHHhhhhhhhhhhhhho........',
-    '......oHHhhhhhhhhhhhhhhho.......',
+    '..........oooooo................',
+    '.........oHHHHHHo...............',
+    '........oHHhhhhHHo..............',
+    '.......oHHhhhhhhhhHo............',
+    '......oHHhhHHhhHHhhHo...........',
+    '.....oHHhhHHhhHHhhhhho..........',
+    '.....oHhhhhhhhhhhhhhhho.........',
+    '.....oHHsssssssssssssho.........',
     '.......oHHsssssssssssho.........',
     '.......oHssssssssssssho.........',
   ],
@@ -121,39 +262,50 @@ const ISAAC = {
     '..........oSSSSSSSo.............',
     '..........oSSSSSSSo.............',
   ],
-  body: [
-    '.........oooooooooooooooo.......',
-    '........otttttttttttttttto......',
-    '.......ottttttttttttttttto......',
-    '.......oTttttttttttttttTto......',
-    '......oTTTTttttttttttTTTTo......',
-    '......oTTTTttttttttttTTTTo......',
-    '......oTTTTttttttttttTTTTo......',
-    '......oTTttttttttttttttTTo......',
-    '......oTttttttttttttttttto......',
-    '.....oTTtttttttttttttttttTo.....',
-    '.....oTttttttttttttttttttto.....',
-    '.....oTttttttttttttttttttto.....',
-    '.....oTttttttttttttttttttdo.....',
-    '.....oTttttttttttttttttttdo.....',
-    '.....oTttttttttttttttttttdo.....',
-    '......oTdddddddddddddddddddo....',
-    '......oddddddddddddddddddddo....',
-    '......oooooooooooooooooooooo....',
-    '........onnnnnnno.nnnnnnno......',
-    '........onnnnnnno.nnnnnnno......',
-    '........onnnnnnno.nnnnnnno......',
-    '........onnnnnnno.nnnnnnno......',
-    '........onnnnnnno.nnnnnnno......',
-    '.......oNNNNNNNo.oNNNNNNNo......',
-    '.......oWWWWWWWo.oWWWWWWWo......',
-    '.......ooooooooo.ooooooooo......',
-  ],
+  body: withArms(
+    [
+      // The collar of the shirt, and the V of the sweater under it.
+      row('owwwweeeeewwwwo', 7),
+      row('owwwweeeeeewwwwo', 7),
+      row('owwweeeeeeeewwwo', 7),
+      // The sweater.
+      row('ottttttttttttto', 7),
+      row('ottttttttttttto', 7),
+      row('oTtttttttttttto', 7),
+      row('oTtttttttttttto', 7),
+      row('oTtttttttttttto', 7),
+      row('oTtttttttttttto', 7),
+      row('oTtttttttttttto', 7),
+      row('oTtttttttttttto', 7),
+      // The strap of the backpack, over his shoulder.
+      row('otttttttttttkko', 7),
+      row('otttttttttttkko', 7),
+      row('otttttttttttkko', 7),
+      row('otttttttttttkko', 7),
+      // The belt.
+      row('odddddddddddddo', 7),
+      // The jeans, and then the shins.
+      row('onnnnnnno.nnnnnno', 8),
+      row('onnnnnnno.nnnnnno', 8),
+      row('onnnnnnno.nnnnnno', 8),
+      row('onnnnnnno.nnnnnno', 8),
+      row('oNnnnnnno.Nnnnnnno', 8),
+      row('oNnnnnnno.Nnnnnnno', 8),
+      row('onnnnnnno.nnnnnno', 8),
+      row('onnnnnnno.nnnnnno', 8),
+      // The sneakers.
+      row('oWwwwwwwWo.oWwwwwwwWo', 8),
+      row('ooooooooo.ooooooooo', 8),
+    ],
+    { cloth: 't', cuff: 'd', skin: 's', sleeveColumn: 21 },
+  ),
 };
 
 /*
- * Aristotle: the himation, the beard his students would recognise, and the
- * steady forward gaze.
+ * Aristotle: the silver hair his students would recognise, the beard he
+ * never bothered to trim, and the himation he wears over a tunic of the
+ * purple he liked. He is holding the scroll he is quoting, and his other
+ * hand is making the point.
  */
 
 const ARISTOTLE = {
@@ -162,11 +314,11 @@ const ARISTOTLE = {
     '.........oooooooooo.............',
     '........oHHhhhhhhHHo............',
     '.......oHHhhhhhhhhhhHHo.........',
-    '......oHHhhhhhhhhhhhhhhHHo......',
-    '.....oHHhhhhhhhhhhhhhhhhHHo.....',
-    '.....oHHhhhhhhhhhhhhhhhhhhHo....',
-    '....oHHhhhhhhhhhhhhhhhhhhhhHo...',
-    '....oHHhhhhhhhhhhhhhhhhhhhhhho..',
+    '......oHHhhhHHHHhhhhhHo.........',
+    '.....oHHhhhhhHHHHhhhhhhHo.......',
+    '.....oHHhhhhHHHHhhhhhhhhHo......',
+    '....oHHhhhhhhHHHHhhhhhhhHo......',
+    '....oHHhhhhhhhhhhhhhhhhhhho.....',
     '.......oHHsssssssssssho.........',
     '.......oHssssssssssssho.........',
   ],
@@ -178,10 +330,20 @@ const ARISTOTLE = {
     '..........obbbbbbbo.............',
     '..........obbbbbbbo.............',
   ],
-  body: robeBody([
-    18, 18, 20, 20, 20, 20, 20, 20, 22, 22, 22, 22, 22, 22, 22, 22, 24, 24, 24, 24, 24, 24, 24, 24,
-    26,
-  ]),
+  body: withHem(
+    withArms(
+      withBand(
+        robeBody([
+          18, 18, 20, 20, 20, 20, 20, 20, 22, 22, 22, 22, 22, 22, 22, 22, 24, 24, 24, 24, 24, 24,
+          24, 24, 26,
+        ]),
+        'n',
+        5,
+      ),
+      { cloth: 'r', cuff: 'd', skin: 's', sleeveColumn: 24 },
+    ),
+    'd',
+  ),
 };
 
 /*
@@ -462,12 +624,20 @@ export const CHARACTERS_DEFS = [
       ...faceColors(ISAAC_PALETTE.skin, ISAAC_PALETTE.skinShade),
       H: ISAAC_PALETTE.hairLight,
       h: ISAAC_PALETTE.hair,
-      t: ISAAC_PALETTE.hoodie,
-      T: ISAAC_PALETTE.hoodieLight,
-      d: ISAAC_PALETTE.hoodieDark,
+      // The grey sweater, and the white shirt under it.
+      t: 0x9aa0a8,
+      T: 0xb4bac2,
+      d: 0x6f767e,
+      e: 0xe8e4dc,
       n: ISAAC_PALETTE.pants,
       N: ISAAC_PALETTE.pantsLight,
-      W: ISAAC_PALETTE.shoes,
+      W: 0xe8e4dc,
+      w: 0x8a8a92,
+      // The strap of the backpack.
+      k: 0x4a4438,
+      // The scroll he has been reading all night.
+      y: 0xe0d4b4,
+      Y: 0xb3a785,
     },
   },
   {
@@ -476,12 +646,21 @@ export const CHARACTERS_DEFS = [
     parts: ARISTOTLE,
     colors: {
       ...faceColors(ARISTOTLE_PALETTE.skin, ARISTOTLE_PALETTE.skinShade),
-      H: ARISTOTLE_PALETTE.hairLight,
-      h: ARISTOTLE_PALETTE.hair,
-      b: ARISTOTLE_PALETTE.beard,
-      B: ARISTOTLE_PALETTE.beardLight,
-      r: ARISTOTLE_PALETTE.robe,
-      R: ARISTOTLE_PALETTE.robeShade,
+      // The silver hair and the silver beard.
+      H: 0xd4d0c8,
+      h: 0xa8a49c,
+      b: 0x8e8a84,
+      B: 0xb4b0a8,
+      // The purple tunic, and the gold at its hem.
+      r: 0x8a63b0,
+      R: 0x6a4a8c,
+      d: 0xd9b451,
+      // The brown himation over his shoulder.
+      n: 0x7a5236,
+      N: 0x5c3d28,
+      // The scroll he is quoting.
+      y: 0xe0d4b4,
+      Y: 0xb3a785,
     },
   },
   {

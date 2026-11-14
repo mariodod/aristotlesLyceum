@@ -19,6 +19,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   narrated line and a line spoken by the only person on the screen looked
   the same. The narrator has a name plate now, in the quiet grey it already
   had.
+- **Nine lines were in the wrong voice.** They were written in the narrator's
+  register - "He says it again", "He had wanted to know why" - but tagged with
+  Isaac as the speaker, so the name plate said he said them. After the choice
+  in Act I the player watched two narrated sentences with Isaac's name on
+  them. The lines are the narrator's now, and the linter will not let it
+  happen again.
+- **The content linter now knows who is talking.** The narrator describes
+  Isaac as "he" and a character names the people they are talking about, and
+  a line that breaks that rule is reported. The rule is a heuristic and it is
+  meant to be noisy: a false positive costs a writer one sentence, a false
+  negative costs the player a name plate that lies.
+- **A narrated line can still make somebody react.** A `face` field says whose
+  sprite plays the expression, and only the narrator may name one, so the
+  narration about Isaac can still make Isaac look tired.
 - **The chapter-complete card threw the act number away.** It showed a bare
   "ACT" because it read the act label from the interface catalogue instead of
   from the card. It reads the same words the act card said, in the player's
@@ -62,6 +76,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **A plan for the chapters that are coming.** `src/data/codex/plan.ts` names
   the chapters that are still to be written and the entries each of them will
   unlock, so an entry can be written down before the chapter that files it.
+- **The generator can read a PNG.** It could only write them, which meant a
+  sprite drawn outside the repository could not be brought into the art pack.
+- **A tool to bring an outside sprite into the character grid**, which finds
+  the figure in an image, scales it down and prints the pixel map.
+- **A preview of the cast, large**, so a sprite can be judged without
+  playing the game.
 
 ## [0.5.0] - 2026-11-12
 
