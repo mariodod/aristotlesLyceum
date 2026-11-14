@@ -20,6 +20,10 @@ import { DIALECTIC_OPPONENTS } from '../../src/data/dialectic/opponents.ts';
 import { EXPRESSION_ORDER } from '../../src/data/sprite-expressions.ts';
 import { CHARACTER_IDS, EXPRESSION_IDS } from '../../src/types/story.ts';
 import { findUnreachableSteps } from '../../src/systems/dialogue/reachability.ts';
+import {
+  readsLikeNarration,
+  speaksInFirstPerson,
+} from '../../src/systems/dialogue/speaker-voice.ts';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const projectRoot = join(here, '..', '..');
@@ -166,6 +170,36 @@ for (const script of CHAPTERS) {
         report(
           where,
           `line "${step.at}" is ${step.text.length} characters, over the ${MAX_LINE_LENGTH} limit`,
+        );
+      }
+
+      /*
+       * Who is talking.
+       *
+       * The narrator describes Isaac as "he" and a character names the people
+       * they are talking about. A line that breaks that rule is in the wrong
+       * voice, and the name plate would be lying about who said it.
+       */
+      if (step.speaker === 'narrator') {
+        if (speaksInFirstPerson(step.text)) {
+          report(
+            where,
+            `the narrator cannot speak in the first person at "${step.at}" — the line reads as speech`,
+          );
+        }
+
+        if (step.face !== undefined && !CHARACTER_IDS.includes(step.face)) {
+          report(where, `unknown face "${step.face}" at "${step.at}"`);
+        }
+      } else if (readsLikeNarration(step.text)) {
+        report(
+          where,
+          `line "${step.at}" reads like narration but is tagged as "${step.speaker}" — the narrator says "he", a character names people`,
+        );
+      } else if (step.face !== undefined) {
+        report(
+          where,
+          `line "${step.at}" names a face, but only a narrated line can react on somebody else's behalf`,
         );
       }
     }

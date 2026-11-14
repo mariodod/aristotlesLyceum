@@ -139,7 +139,7 @@ export class StoryScene extends Phaser.Scene {
     for (const event of events) {
       switch (event.type) {
         case 'say':
-          this.showLine(event.speaker, event.text, event.key, event.expression);
+          this.showLine(event.speaker, event.text, event.key, event.expression, event.face);
           break;
         case 'choice':
           this.showChoices(
@@ -187,6 +187,7 @@ export class StoryScene extends Phaser.Scene {
     text: string,
     key: string | undefined,
     expression: ExpressionId,
+    face?: CharacterId,
   ): void {
     const box = this.textBox;
 
@@ -203,7 +204,9 @@ export class StoryScene extends Phaser.Scene {
     box.showText(line);
     this.mode = 'line';
     this.highlightSpeaker();
-    this.applyExpression(speaker, expression);
+    // A narrated line has nobody talking, but the person it is about can
+    // still react.
+    this.applyExpression(face ?? speaker, expression);
   }
 
   /**

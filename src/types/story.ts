@@ -90,6 +90,15 @@ export interface SayStep extends BaseStep {
   /** The catalogue key for the line, when it has been translated. */
   key?: string | undefined;
   expression?: ExpressionId;
+  /**
+   * Whose face reacts to this line.
+   *
+   * A narrated line has nobody talking on the stage, but the person the
+   * narration is about can still react: a line about Isaac can make Isaac
+   * look tired. Only the narrator may name a face, because a line somebody
+   * is speaking has exactly one speaker and the face has to be theirs.
+   */
+  face?: CharacterId | undefined;
 }
 
 export interface ChoiceStep extends BaseStep {
@@ -218,6 +227,7 @@ export type DialogueEvent =
       text: string;
       key?: string | undefined;
       expression: ExpressionId;
+      face?: CharacterId | undefined;
     }
   | {
       type: 'choice';

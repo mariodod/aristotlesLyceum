@@ -174,3 +174,19 @@ test('the chapter-complete card names the act it belongs to', async ({ page }) =
 
   expect(errors).toEqual([]);
 });
+
+test('the name plate names the narrator for the lines the narrator speaks', async ({ page }) => {
+  const errors = collectPageErrors(page);
+
+  await startActOne(page);
+  await advanceUntilChoice(page);
+
+  // "Read the next line out loud." The game narrates that branch, so the
+  // plate has to say so and not put it in Isaac's mouth.
+  await chooseOption(page, 0);
+
+  await expect.poll(() => readHook<string>(page, 'speaker')).toBe('Narrator');
+  expect(await readHook<string>(page, 'lastLine')).toContain('He says it out loud');
+
+  expect(errors).toEqual([]);
+});

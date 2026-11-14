@@ -211,6 +211,7 @@ export class DialogueRuntime {
             text: step.text,
             key: step.key,
             expression: step.expression ?? 'neutral',
+            face: step.face,
           });
           return events;
         }

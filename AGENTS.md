@@ -222,6 +222,42 @@ export const ACT_ONE: StoryScript = {
 | `chapterEnd` | Names the ending the player reached. The scene shows it on the chapter-complete card.             |
 | `end`        | Ends the chapter. The last step must be an `end`.                                                 |
 
+### Who is talking
+
+The name plate has to be right, so the script has to say who speaks.
+
+**The narrator describes Isaac as "he". A character names the people they are
+talking about.** That difference in voice is the whole convention, and
+`systems/dialogue/speaker-voice.ts` checks it:
+
+- a line that opens a sentence with a bare "he", "she" or "they", and never
+  addresses anybody with an "I" or a "you", is the narrator's voice;
+- the narrator never speaks in the first person.
+
+`npm run content:check` reports a line that breaks either rule, so a line
+tagged with the wrong speaker cannot ship. The rule is a heuristic and it is
+meant to be noisy: a false positive costs a writer one sentence, a false
+negative costs the player a name plate that lies. A line that quotes somebody
+and then comments on the quotation without a pronoun still has to be caught by
+eye.
+
+**A narrated line can still make somebody react.** The `face` field says whose
+sprite plays the expression, and only the narrator may name one:
+
+```ts
+{
+  at: 'read-on-2',
+  kind: 'say',
+  speaker: 'narrator',
+  text: 'He says it again. Same thing. The voice is not repeating him.',
+  face: 'isaac',
+  expression: 'surprised',
+},
+```
+
+A line somebody is speaking has exactly one speaker, and the face has to be
+theirs, so the linter rejects a `face` on any other line.
+
 ### Rules for scripts
 
 1. **Every label is unique** inside a chapter, and every `goto`/`jump`/`branch`
@@ -435,6 +471,10 @@ There is no image editor in this workflow. Art is code.
 - `tools/assets/font.mjs` — the bitmap font and its BMFont XML.
 - `tools/assets/build-assets.mjs` — the only entry point. It writes
   `public/assets/**` and `src/data/asset-manifest.json`.
+- `tools/assets/png-decode.mjs` — reads a PNG into RGBA bytes, so a sprite
+  drawn outside the repository can be brought into the pack.
+- `tools/assets/import-sprite.mjs` — finds the figure in an image, scales it
+  into the character grid and prints the pixel map.
 
 ### Rules for art
 
@@ -474,6 +514,10 @@ There is no image editor in this workflow. Art is code.
 | Content      | `npm run content:check`         | Script integrity, codex references, source presence, unreachable steps            |
 | Localisation | `npm run i18n:check`            | Missing and unused keys, mismatched placeholders, characters the font cannot draw |
 | Visual       | `node tools/qa/screenshots.mjs` | Capture the title and Act I for review                                            |
+
+Two more tools sit under `tools/qa/`: `preview-characters.mjs` renders the
+cast large, so a sprite can be judged without playing the game, and
+`check-png-read.mjs` proves the PNG reader agrees with the writer.
 
 ### Rules
 
