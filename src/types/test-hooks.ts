@@ -4,6 +4,8 @@
  * The shape is intentionally small and flat: a test should be able to assert
  * "the line changed" without knowing anything about the scene graph.
  */
+import type Phaser from 'phaser';
+
 export interface LyceumTestHook {
   ready: boolean;
   scene: string;
@@ -59,5 +61,12 @@ export interface LyceumTestHook {
 declare global {
   interface Window {
     __LYCEUM_TEST__?: LyceumTestHook;
+    /**
+     * The running game, in development only.
+     *
+     * The browser QA scripts use it to walk the scene graph, which is how
+     * the text is checked for landing on a whole pixel.
+     */
+    __LYCEUM_GAME__?: Phaser.Game;
   }
 }

@@ -9,6 +9,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **The letters in the main menu were split across the colour channels.** The
+  browser resamples the canvas, and a glyph that starts half a pixel off gets
+  torn into red, green and blue. The menu entries whose text is an odd number
+  of pixels wide started between two pixels, so the "I" in BEGIN THE DREAM,
+  TRY A DIALECTIC and CREDITS came out as a smear, while SETTINGS, which
+  started on a whole pixel, stayed crisp. Every piece of text in the game is
+  now placed by its left edge, on a whole pixel, and the browser suite
+  proves it.
 - **The act card was a rendering fault.** The card faded in from nothing, so
   the scene appeared first, then blacked out with the title over it, then came
   back. The words also spent most of their life half-transparent, and the
@@ -61,6 +69,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **A helper for text in the middle of the screen**, which places it by its
+  left edge on a whole pixel, and a browser test that proves every piece of
+  text in the game lands on one.
 - **The Dream Journal has a list.** It opened on a single entry and could
   never show the second, so a journal with more than one thing in it was
   unreadable. It now lists everything that has been filed, the arrows move

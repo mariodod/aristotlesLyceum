@@ -3,6 +3,7 @@ import { FONT_KEY, GAME_HEIGHT, GAME_WIDTH } from '../config/constants.ts';
 import { CHARACTERS } from '../data/characters.ts';
 import { CODEX_ENTRIES } from '../data/codex/index.ts';
 import type { CodexEntry } from '../data/codex/index.ts';
+import { centredText } from '../entities/centred-text.ts';
 import type { LocaleService } from '../services/locale-service.ts';
 import type { SaveService } from '../services/save-service.ts';
 import { wrapText } from '../systems/dialogue/text-wrap.ts';
@@ -64,12 +65,10 @@ export class CodexScene extends Phaser.Scene {
 
     if (this.unlocked.length === 0) {
       this.root.add(this.add.bitmapText(24, 64, FONT_KEY, this.t('ui.codex.empty')).setAlpha(0.7));
-      this.root.add(
-        this.add
-          .bitmapText(GAME_WIDTH / 2, GAME_HEIGHT - 20, FONT_KEY, this.t('ui.codex.hintEmpty'))
-          .setOrigin(0.5, 0)
-          .setAlpha(0.6),
-      );
+
+      const emptyHint = centredText(this, GAME_HEIGHT - 20, this.t('ui.codex.hintEmpty'));
+      emptyHint.setAlpha(0.6);
+      this.root.add(emptyHint);
     } else {
       this.showList();
     }
@@ -136,12 +135,9 @@ export class CodexScene extends Phaser.Scene {
         )
         .setAlpha(0.5),
     );
-    this.root?.add(
-      this.add
-        .bitmapText(GAME_WIDTH / 2, GAME_HEIGHT - 20, FONT_KEY, this.t('ui.codex.hintList'))
-        .setOrigin(0.5, 0)
-        .setAlpha(0.6),
-    );
+    const hint = centredText(this, GAME_HEIGHT - 20, this.t('ui.codex.hintList'));
+    hint.setAlpha(0.6);
+    this.root?.add(hint);
 
     this.publish();
   }
@@ -217,12 +213,9 @@ export class CodexScene extends Phaser.Scene {
         )
         .setAlpha(0.5),
     );
-    this.root?.add(
-      this.add
-        .bitmapText(GAME_WIDTH / 2, GAME_HEIGHT - 20, FONT_KEY, this.t('ui.codex.hintDetail'))
-        .setOrigin(0.5, 0)
-        .setAlpha(0.6),
-    );
+    const detailHint = centredText(this, GAME_HEIGHT - 20, this.t('ui.codex.hintDetail'));
+    detailHint.setAlpha(0.6);
+    this.root?.add(detailHint);
 
     this.publish();
   }

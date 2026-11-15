@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import { FONT_KEY, GAME_HEIGHT, GAME_WIDTH } from '../config/constants.ts';
+import { centredText } from '../entities/centred-text.ts';
 import type { LocaleService } from '../services/locale-service.ts';
 import { setTestHook } from '../utils/test-hooks.ts';
 
@@ -30,11 +31,9 @@ export class CreditsScene extends Phaser.Scene {
         .setAlpha(index === 0 ? 0.9 : 0.7);
     }
 
-    this.add
-      .bitmapText(GAME_WIDTH / 2, GAME_HEIGHT - 20, FONT_KEY, this.t('ui.credits.back'))
-      .setOrigin(0.5, 0)
-      .setDepth(2)
-      .setAlpha(0.6);
+    const backHint = centredText(this, GAME_HEIGHT - 20, this.t('ui.credits.back'));
+    backHint.setDepth(2);
+    backHint.setAlpha(0.6);
 
     const back = () => this.scene.start('Title');
 

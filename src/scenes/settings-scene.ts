@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import { FONT_KEY, GAME_HEIGHT, GAME_WIDTH } from '../config/constants.ts';
+import { centredText } from '../entities/centred-text.ts';
 import type { LocaleService } from '../services/locale-service.ts';
 import { setTestHook } from '../utils/test-hooks.ts';
 
@@ -51,11 +52,9 @@ export class SettingsScene extends Phaser.Scene {
       .setDepth(2)
       .setAlpha(0.6);
 
-    this.add
-      .bitmapText(GAME_WIDTH / 2, GAME_HEIGHT - 20, FONT_KEY, this.t('ui.settings.back'))
-      .setOrigin(0.5, 0)
-      .setDepth(2)
-      .setAlpha(0.6);
+    const back = centredText(this, GAME_HEIGHT - 20, this.t('ui.settings.back'));
+    back.setDepth(2);
+    back.setAlpha(0.6);
 
     this.installInput();
   }

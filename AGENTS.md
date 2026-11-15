@@ -542,6 +542,13 @@ cast large, so a sprite can be judged without playing the game, and
 - Relative imports carry the `.ts` extension. This is deliberate: it lets
   Node run the game's own modules directly, which is how
   `tools/content/check-content.mjs` reads the story data.
+- **Text is placed by its left edge, on a whole pixel.** The browser
+  resamples the canvas, and a glyph that starts half a pixel off gets split
+  across the colour channels: the "I" in BEGIN THE DREAM came out as a
+  smear while SETTINGS, which started on a whole pixel, stayed crisp. Use
+  `centredText()` from `src/entities/centred-text.ts` for anything in the
+  middle of the screen, and never `setOrigin(0.5, ...)`. The browser suite
+  checks that every piece of text lands on a whole pixel.
 - No `console.log` in `src/`. Generators under `tools/` may log.
 - Comments explain **why**, not what. Every tuning constant carries the
   reason it has the value it has.

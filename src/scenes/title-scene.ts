@@ -1,7 +1,8 @@
 import Phaser from 'phaser';
-import { FONT_KEY, GAME_HEIGHT, GAME_WIDTH } from '../config/constants.ts';
+import { GAME_HEIGHT, GAME_WIDTH } from '../config/constants.ts';
 import { TITLE_TUNING } from '../config/tuning.ts';
 import { opponentById } from '../data/dialectic/opponents.ts';
+import { centredText } from '../entities/centred-text.ts';
 import type { LocaleService } from '../services/locale-service.ts';
 import { setTestHook } from '../utils/test-hooks.ts';
 
@@ -55,35 +56,26 @@ export class TitleScene extends Phaser.Scene {
     this.add.image(0, 0, 'backdrop-lyceum').setOrigin(0).setDepth(0);
     this.add.rectangle(0, 0, GAME_WIDTH, GAME_HEIGHT, 0x0b0c10, 0.45).setOrigin(0).setDepth(1);
 
-    const title = this.add
-      .bitmapText(GAME_WIDTH / 2, 96, FONT_KEY, this.t('ui.title.gameName'))
-      .setOrigin(0.5, 0)
-      .setDepth(2);
-    title.setScale(2);
+    const title = centredText(this, 96, this.t('ui.title.gameName'), { scale: 2 });
+    title.setDepth(2);
     title.setTint(0xf2c14e);
 
-    this.add
-      .bitmapText(GAME_WIDTH / 2, 124, FONT_KEY, this.t('ui.title.tagline'))
-      .setOrigin(0.5, 0)
-      .setDepth(2)
-      .setAlpha(0.75);
+    const tagline = centredText(this, 124, this.t('ui.title.tagline'));
+    tagline.setDepth(2);
+    tagline.setAlpha(0.75);
 
     this.entries.forEach((entry, index) => {
-      const label = this.add
-        .bitmapText(GAME_WIDTH / 2, 190 + index * 22, FONT_KEY, this.t(entry.labelKey))
-        .setOrigin(0.5, 0)
-        .setDepth(2);
+      const label = centredText(this, 190 + index * 22, this.t(entry.labelKey));
+      label.setDepth(2);
       this.labels.push(label);
     });
 
     this.heart = this.add.image(0, 0, 'ui-heart').setOrigin(0.5, 0.5).setDepth(2);
     this.refreshCursor();
 
-    this.add
-      .bitmapText(GAME_WIDTH / 2, GAME_HEIGHT - 24, FONT_KEY, this.t('ui.title.hint'))
-      .setOrigin(0.5, 0)
-      .setDepth(2)
-      .setAlpha(0.6);
+    const hint = centredText(this, GAME_HEIGHT - 24, this.t('ui.title.hint'));
+    hint.setDepth(2);
+    hint.setAlpha(0.6);
 
     this.installInput();
   }

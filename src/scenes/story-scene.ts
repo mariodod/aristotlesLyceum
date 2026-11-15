@@ -6,6 +6,7 @@ import { CHARACTERS } from '../data/characters.ts';
 import { codexEntry } from '../data/codex/index.ts';
 import { chapterById } from '../data/script/registry.ts';
 import { isNeutral } from '../data/sprite-expressions.ts';
+import { centredText } from '../entities/centred-text.ts';
 import { DEFAULT_TEXTBOX, TextBox } from '../entities/textbox.ts';
 import type { ChoiceLabel } from '../entities/textbox.ts';
 import { metricsFor } from '../i18n/types.ts';
@@ -264,10 +265,11 @@ export class StoryScene extends Phaser.Scene {
     const overlay = this.add.container(0, 0).setDepth(200);
     overlay.add(this.add.rectangle(0, 0, GAME_WIDTH, GAME_HEIGHT, 0x07070c, 1).setOrigin(0));
 
-    const titleText = this.add
-      .bitmapText(GAME_WIDTH / 2, GAME_HEIGHT / 2 - 16, FONT_KEY, this.tc(titleKey, title))
-      .setOrigin(0.5, 0.5);
-    titleText.setScale(2);
+    // The card's words are placed by their left edge, on whole pixels, so the
+    // browser never splits a glyph across the colour channels.
+    const titleText = centredText(this, GAME_HEIGHT / 2 - 25, this.tc(titleKey, title), {
+      scale: 2,
+    });
     titleText.setTint(0xf2c14e);
     titleText.setAlpha(0);
     overlay.add(titleText);
@@ -275,9 +277,7 @@ export class StoryScene extends Phaser.Scene {
     const words: Phaser.GameObjects.BitmapText[] = [titleText];
 
     if (subtitle) {
-      const subtitleText = this.add
-        .bitmapText(GAME_WIDTH / 2, GAME_HEIGHT / 2 + 12, FONT_KEY, this.tc(subtitleKey, subtitle))
-        .setOrigin(0.5, 0.5);
+      const subtitleText = centredText(this, GAME_HEIGHT / 2 + 8, this.tc(subtitleKey, subtitle));
       subtitleText.setAlpha(0);
       overlay.add(subtitleText);
       words.push(subtitleText);
@@ -526,75 +526,51 @@ export class StoryScene extends Phaser.Scene {
     const card = this.add.container(0, 0).setDepth(200);
     card.add(this.add.rectangle(0, 0, GAME_WIDTH, GAME_HEIGHT, 0x07070c, 0.97).setOrigin(0));
 
-    // The act card already said what this act is called, in the player's
-    // language. Reading it from the script instead used to throw the act
-    // number away and leave a bare "ACT" on the screen.
-    const actLabel = this.add.bitmapText(GAME_WIDTH / 2, 48, FONT_KEY, this.actTitle);
-    actLabel.setOrigin(0.5, 0);
+    // Every line on the card is placed by its left edge, on a whole pixel, so
+    // the browser never splits a glyph across the colour channels.
+    const actLabel = centredText(this, 48, this.actTitle);
     actLabel.setTint(0xf2c14e);
     card.add(actLabel);
 
-    const actName = this.add
-      .bitmapText(GAME_WIDTH / 2, 64, FONT_KEY, this.actName.toUpperCase())
-      .setOrigin(0.5, 0);
-    actName.setScale(2);
+    const actName = centredText(this, 64, this.actName.toUpperCase(), { scale: 2 });
     actName.setTint(0xf6f2e8);
     card.add(actName);
 
     if (this.endingTitle.length > 0) {
-      const ending = this.add
-        .bitmapText(GAME_WIDTH / 2, 104, FONT_KEY, this.tc(this.endingKey, this.endingTitle))
-        .setOrigin(0.5, 0);
+      const ending = centredText(this, 104, this.tc(this.endingKey, this.endingTitle));
       ending.setTint(0xffe6a0);
       card.add(ending);
 
       if (this.endingSubtitle.length > 0) {
-        card.add(
-          this.add
-            .bitmapText(
-              GAME_WIDTH / 2,
-              120,
-              FONT_KEY,
-              this.tc(this.endingSubtitleKey, this.endingSubtitle),
-            )
-            .setOrigin(0.5, 0)
-            .setAlpha(0.65),
+        const subtitle = centredText(
+          this,
+          120,
+          this.tc(this.endingSubtitleKey, this.endingSubtitle),
         );
+        subtitle.setAlpha(0.65);
+        card.add(subtitle);
       }
     }
 
-    card.add(
-      this.add
-        .bitmapText(
-          GAME_WIDTH / 2,
-          168,
-          FONT_KEY,
-          `${this.t('ui.story.reason')} ${stats.reason}    ${this.t('ui.story.wisdom')} ${stats.wisdom}    ${this.t('ui.story.empathy')} ${stats.empathy}`,
-        )
-        .setOrigin(0.5, 0)
-        .setTint(0xbfb6a2),
+    const statsLine = centredText(
+      this,
+      168,
+      `${this.t('ui.story.reason')} ${stats.reason}    ${this.t('ui.story.wisdom')} ${stats.wisdom}    ${this.t('ui.story.empathy')} ${stats.empathy}`,
     );
+    statsLine.setTint(0xbfb6a2);
+    card.add(statsLine);
 
-    card.add(
-      this.add
-        .bitmapText(GAME_WIDTH / 2, 188, FONT_KEY, this.tn('ui.story.journal', codexCount))
-        .setOrigin(0.5, 0)
-        .setAlpha(0.7),
-    );
+    const journal = centredText(this, 188, this.tn('ui.story.journal', codexCount));
+    journal.setAlpha(0.7);
+    card.add(journal);
 
-    card.add(
-      this.add
-        .bitmapText(GAME_WIDTH / 2, 252, FONT_KEY, this.t('ui.story.backToTitle'))
-        .setOrigin(0.5, 0)
-        .setTint(0xf6f2e8),
-    );
+    const back = centredText(this, 252, this.t('ui.story.backToTitle'));
+    back.setTint(0xf6f2e8);
+    card.add(back);
 
-    card.add(
-      this.add
-        .bitmapText(GAME_WIDTH / 2, 270, FONT_KEY, this.t('ui.story.readJournal'))
-        .setOrigin(0.5, 0)
-        .setAlpha(0.6),
-    );
+    const readJournal = centredText(this, 270, this.t('ui.story.readJournal'));
+    readJournal.setAlpha(0.6);
+    card.add(readJournal);
 
     card.setAlpha(0);
     this.endCard = card;

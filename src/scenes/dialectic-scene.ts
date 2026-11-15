@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import { FONT_KEY } from '../config/constants.ts';
 import { opponentById } from '../data/dialectic/opponents.ts';
+import { centredText } from '../entities/centred-text.ts';
 import { TextBox } from '../entities/textbox.ts';
 import type { TextBoxGeometry } from '../entities/textbox.ts';
 import { SyllogismBuilder } from '../entities/syllogism-builder.ts';
@@ -173,11 +174,9 @@ export class DialecticScene extends Phaser.Scene {
     this.add.ellipse(286, 92, 15, 15, 0x14121a).setDepth(5);
     this.add.ellipse(354, 92, 15, 15, 0x14121a).setDepth(5);
 
-    const label = this.add.bitmapText(320, 24, FONT_KEY, name);
-    label.setOrigin(0.5, 0);
+    const label = centredText(this, 24, name, { scale: 2 });
     label.setDepth(6);
     label.setTint(color);
-    label.setScale(2);
   }
 
   private buildMenu(): void {
