@@ -127,9 +127,44 @@ describe('figureOf', () => {
 });
 
 describe('the mood table', () => {
-  it('has the traditional eighteen moods', () => {
+  it('has one entry per mood the game teaches', () => {
     const total = Object.values(VALID_MOODS).reduce((count, moods) => count + moods.length, 0);
-    expect(total).toBe(18);
+    expect(total).toBe(19);
+  });
+
+  it('accepts Ferison, which is Ferio in the third figure', () => {
+    const result = analyseSyllogism(
+      proposition('m', 'E', 'M', 'P'),
+      proposition('n', 'I', 'M', 'S'),
+      proposition('c', 'O', 'S', 'P'),
+    );
+
+    expect(result.valid).toBe(true);
+    expect(result.figure).toBe(3);
+    expect(result.name).toBe('Ferison');
+  });
+
+  it('accepts Fresison, which is Ferio in the fourth figure', () => {
+    const result = analyseSyllogism(
+      proposition('m', 'E', 'P', 'M'),
+      proposition('n', 'I', 'M', 'S'),
+      proposition('c', 'O', 'S', 'P'),
+    );
+
+    expect(result.valid).toBe(true);
+    expect(result.figure).toBe(4);
+    expect(result.name).toBe('Fresison');
+  });
+
+  it('rejects a mood with two negative premises', () => {
+    const result = analyseSyllogism(
+      proposition('m', 'E', 'P', 'M'),
+      proposition('n', 'O', 'M', 'S'),
+      proposition('c', 'O', 'S', 'P'),
+    );
+
+    expect(result.valid).toBe(false);
+    expect(result.problem).toBe('invalid-mood');
   });
 });
 

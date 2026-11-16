@@ -98,6 +98,7 @@ src/
   game.ts                  # createGame(): the Phaser config and scene list
   config/
     constants.ts           # resolution, textbox geometry, save keys
+    layout.ts              # the panel geometries, and the rules that follow from them
     tuning.ts              # feel constants, each with the reason it exists
   data/
     assets.ts              # typed access to the generated manifest
@@ -107,13 +108,23 @@ src/
     sprite-expressions.ts  # the expression order and the frame maths
     codex/
       index.ts             # aggregates every chapter's codex entries
+      types.ts             # the CodexEntry shape
       act-one.ts           # entries unlocked by Act I
+      act-two-*.ts         # entries unlocked by each Act II chapter
+      plan.ts              # the entries the unwritten chapters promise
     script/
       registry.ts          # chapter order
       act-one.ts           # Act I — The Desk
   entities/
     textbox.ts             # the dialogue box, name plate and choice menu
+    centred-text.ts        # whole-pixel text placement
     syllogism-builder.ts   # the argument builder in the dialectic
+  i18n/
+    locales.ts             # the list of languages, and which font each one uses
+    types.ts               # the locale shape and the font metrics
+    translate.ts           # the lookup and the placeholder fill
+    ui/<locale>.json       # the words the interface says
+    content/<locale>.json  # the words the story says, except in English
   scenes/
     boot-scene.ts          # loads the font, creates the save service
     preload-scene.ts       # loads everything in the manifest
@@ -559,6 +570,12 @@ cast large, so a sprite can be judged without playing the game, and
   list, not to a container. To draw something inside the dialogue box, add it
   to the container as well, or it renders at depth zero behind the panel.
   `TextBox.optionsRendered` exists to guard exactly this.
+- **A Phaser scene keeps its instance when it is restarted.** Every
+  collection that holds game objects has to be emptied in `create()` before
+  anything is added to it, and every piece of per-run state has to be reset
+  there too. The title menu, the journal and the battle menu all used to come
+  back with the previous run's objects in them, and a scene that resumes after
+  a battle used to come back to an empty stage.
 
 ---
 

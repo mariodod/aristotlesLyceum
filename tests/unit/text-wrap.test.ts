@@ -23,8 +23,26 @@ describe('wrapText', () => {
   });
 
   it('breaks a word that is longer than the line', () => {
+    expect(wrapText('supercalifragilistic', 8)).toBe('supercal\nifragili\nstic');
+  });
+
+  it('keeps every character of a word that is too long for the line', () => {
     const wrapped = wrapText('supercalifragilistic', 8);
-    expect(wrapped.length).toBeLessThanOrEqual(8);
+
+    expect(wrapped.split('\n').join('')).toBe('supercalifragilistic');
+  });
+
+  it('keeps every character of a long word inside a sentence', () => {
+    const wrapped = wrapText('say supercalifragilistic now', 8);
+
+    expect(wrapped.split('\n').join('')).toContain('supercalifragilistic');
+  });
+
+  it('loses no characters when it wraps', () => {
+    const text = 'one two three four five six seven eight nine ten';
+    const wrapped = wrapText(text, 10);
+
+    expect(wrapped.split(/\s+/).join(' ')).toBe(text);
   });
 
   it('treats an empty paragraph as an empty line', () => {

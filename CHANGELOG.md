@@ -9,6 +9,39 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **The mood and figure table had three errors in it.** Figure 3 was missing
+  Ferison (EIO), figure 4 was missing Fresison (EIO) and instead listed EOO,
+  which cannot hold because two negative premises prove nothing, and OAO was
+  spelled "Bokaro" when the tradition calls it Bocardo. No shipped opponent
+  could reach figure 3 or 4, so no battle played wrong, but the table is the
+  thing the game teaches, and a player who built Ferison would have been told
+  it was invalid. The table now has the nineteen moods the game teaches, and
+  the test counts them and proves the two that were missing.
+- **A line of dialogue could lose its tail.** The word wrapper, when it met a
+  word longer than the line, kept the first chunk of the word and dropped the
+  rest, so a long word in the middle of a sentence silently changed what the
+  sentence said. A word that does not fit is now broken across as many lines
+  as it takes, and every character of it reaches the screen.
+- **A chapter that was handed to a battle came back to an empty stage.** The
+  battle scene restarts the chapter at the label it returns to, which is after
+  the stage steps, so the actors the player had just been watching were gone.
+  The scene remembers where they were standing and which backdrop was up, and
+  puts them back. A resumed chapter also keeps the flags it set, because it is
+  the same chapter, continued, not a new run of it.
+- **The Dream Journal reopened on the entry the player last had selected.** A
+  Phaser scene keeps its instance across restarts, so the journal's selection
+  survived the trip back to the title. It now opens on the first entry, every
+  time.
+- **The battle menu kept the previous battle's labels.** The menu list was
+  never emptied when the scene was restarted, so it grew by four every time
+  the player went back to the title and came again, and the cursor read
+  entries from a battle that was already over.
+- **The layout rules were numbers nobody checked.** The dialogue box's
+  character count and line count existed as constants, but no test used them,
+  so nothing would have caught a line that overflowed the box it sat in. The
+  panel geometries now live in one place, and the content linter proves, in
+  every language, that every line of dialogue, every journal field and every
+  battle line fits the panel that carries it.
 - **The letters in the main menu were split across the colour channels.** The
   browser resamples the canvas, and a glyph that starts half a pixel off gets
   torn into red, green and blue. The menu entries whose text is an odd number

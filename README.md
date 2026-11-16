@@ -2,13 +2,7 @@
 
 **A 2D pixel-art narrative game about Aristotle, his philosophy, and where it still runs.**
 
-> **Status:** `v0.5.0`. The engine, the art pipeline, the dialogue runtime and
-> Act I exist and are verified end to end. Act I is a finished five-minute
-> chapter with three endings, and the whole cast has faces that react. Act II
-> onward is still to be written. See [`PLAN.md`](PLAN.md) for the roadmap. The engine, the art pipeline, the dialogue runtime and
-> Act I exist and are verified end to end. Act I is a finished five-minute
-> chapter with three endings. Act II onward is still to be written. See
-> [`PLAN.md`](PLAN.md) for the roadmap.
+> **Status:** `v0.5.0`. The engine, the art pipeline, the dialogue runtime, Act I, the dialectic, the localisation and the Dream Journal exist and are verified end to end. Act I is a finished five-minute chapter with three endings, and the whole cast has faces that react. Act II onward is still to be written. See [`PLAN.md`](PLAN.md) for the roadmap.
 
 Isaac has an exam in philosophy tomorrow. He hates the subject, decides that
 reading Aristotle will only make it worse, reads Aristotle anyway, and falls

@@ -1,9 +1,9 @@
 import Phaser from 'phaser';
 import { FONT_KEY } from '../config/constants.ts';
+import { BATTLE_BOX } from '../config/layout.ts';
 import { opponentById } from '../data/dialectic/opponents.ts';
 import { centredText } from '../entities/centred-text.ts';
 import { TextBox } from '../entities/textbox.ts';
-import type { TextBoxGeometry } from '../entities/textbox.ts';
 import { SyllogismBuilder } from '../entities/syllogism-builder.ts';
 import { metricsFor } from '../i18n/types.ts';
 import type { LocaleService } from '../services/locale-service.ts';
@@ -21,17 +21,6 @@ export interface DialecticSceneData {
   /** Where the player goes when the argument is over. */
   returnToScene?: 'Story' | 'Title';
 }
-
-const BATTLE_BOX: TextBoxGeometry = {
-  x: 16,
-  y: 196,
-  width: 296,
-  height: 148,
-  paddingX: 10,
-  paddingY: 14,
-  borderWidth: 2,
-  advance: 7,
-};
 
 const MENU_X = 348;
 const MENU_Y = 214;
@@ -77,6 +66,11 @@ export class DialecticScene extends Phaser.Scene {
     setTestHook({ ready: true, scene: 'Dialectic' });
 
     this.locale = this.registry.get('localeService') as LocaleService;
+
+    // The scene keeps its instance when it is restarted, so the menu of the
+    // last battle is still in the list and the cursor would point into it.
+    this.menuItems.length = 0;
+    this.listItems.length = 0;
 
     const opponent = opponentById(this.opponentId);
 

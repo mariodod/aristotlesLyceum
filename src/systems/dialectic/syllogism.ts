@@ -11,8 +11,8 @@ import type { Figure, Proposition, PropositionForm, TermId } from '../../types/d
 export const VALID_MOODS: Record<Figure, readonly string[]> = {
   1: ['AAA', 'EAE', 'AII', 'EIO'],
   2: ['AEE', 'EAE', 'EIO', 'AOO'],
-  3: ['AAI', 'IAI', 'AII', 'EAO', 'OAO'],
-  4: ['AAI', 'EAI', 'IAI', 'EAO', 'EOO'],
+  3: ['AAI', 'IAI', 'AII', 'EAO', 'OAO', 'EIO'],
+  4: ['AAI', 'EAI', 'IAI', 'EAO', 'EIO'],
 };
 
 export const MOOD_NAMES: Record<string, string> = {
@@ -28,12 +28,13 @@ export const MOOD_NAMES: Record<string, string> = {
   'IAI-3': 'Disamis',
   'AII-3': 'Datisi',
   'EAO-3': 'Felapton',
-  'OAO-3': 'Bokaro',
+  'OAO-3': 'Bocardo',
+  'EIO-3': 'Ferison',
   'AAI-4': 'Bramantip',
   'EAI-4': 'Camenes',
   'IAI-4': 'Dimaris',
   'EAO-4': 'Fesapo',
-  'EOO-4': 'Fresison',
+  'EIO-4': 'Fresison',
 };
 
 /**

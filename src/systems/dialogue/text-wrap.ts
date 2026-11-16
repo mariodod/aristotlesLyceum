@@ -27,8 +27,24 @@ function wrapParagraph(paragraph: string, columns: number): string {
   let current = '';
 
   for (const word of words) {
+    if (word.length > columns) {
+      // A word that cannot fit on a line of its own is broken across
+      // several. The whole word is kept: a line that loses its tail says
+      // something else, which is worse than a line that looks odd.
+      if (current.length > 0) {
+        lines.push(current);
+        current = '';
+      }
+
+      for (const chunk of splitLongWord(word, columns)) {
+        lines.push(chunk);
+      }
+
+      continue;
+    }
+
     if (current.length === 0) {
-      current = word.length > columns ? splitLongWord(word, columns) : word;
+      current = word;
 
       if (current.length === columns) {
         lines.push(current);
@@ -44,7 +60,7 @@ function wrapParagraph(paragraph: string, columns: number): string {
     }
 
     lines.push(current);
-    current = word.length > columns ? splitLongWord(word, columns) : word;
+    current = word;
 
     if (current.length === columns) {
       lines.push(current);
@@ -62,9 +78,17 @@ function wrapParagraph(paragraph: string, columns: number): string {
 /**
  * A single word longer than the line is broken across lines rather than
  * allowed to overflow the box.
+ *
+ * Every character of the word ends up on the screen.
  */
-function splitLongWord(word: string, columns: number): string {
-  return word.slice(0, columns);
+function splitLongWord(word: string, columns: number): string[] {
+  const chunks: string[] = [];
+
+  for (let start = 0; start < word.length; start += columns) {
+    chunks.push(word.slice(start, start + columns));
+  }
+
+  return chunks;
 }
 
 /**

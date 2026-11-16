@@ -50,6 +50,12 @@ export class CodexScene extends Phaser.Scene {
 
     this.locale = this.registry.get('localeService') as LocaleService;
 
+    // The scene keeps its instance when it is restarted, so the journal would
+    // open on whatever the last visit had selected.
+    this.index = 0;
+    this.view = 'list';
+    this.firstVisible = 0;
+
     const saveService = this.registry.get('saveService') as SaveService;
 
     this.unlocked = CODEX_ENTRIES.filter((entry) => saveService.isCodexUnlocked(entry.id));

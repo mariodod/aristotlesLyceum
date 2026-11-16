@@ -1,5 +1,7 @@
 import Phaser from 'phaser';
-import { FONT_KEY, TEXTBOX } from '../config/constants.ts';
+import { FONT_KEY } from '../config/constants.ts';
+import { columnsFor, DEFAULT_TEXTBOX } from '../config/layout.ts';
+import type { TextBoxGeometry } from '../config/layout.ts';
 import { DIALOGUE_TUNING } from '../config/tuning.ts';
 import { Typewriter } from '../systems/dialogue/typewriter.ts';
 import { wrapText } from '../systems/dialogue/text-wrap.ts';
@@ -19,40 +21,7 @@ const OPTION_INDENT = 26;
 /** How far the book sits to the left of the option text. */
 const BOOK_OFFSET = 22;
 
-export interface TextBoxGeometry {
-  x: number;
-  y: number;
-  width: number;
-  height: number;
-  paddingX: number;
-  paddingY: number;
-  borderWidth: number;
-  /**
-   * The width of one character in the font the player chose.
-   *
-   * The box works out how many characters fit from this, so a locale with a
-   * wider font wraps differently without anything else changing.
-   */
-  advance: number;
-}
-
-/**
- * The geometry of the standard dialogue box. The battle uses a narrower one,
- * so the geometry is data rather than a constant.
- */
-export const DEFAULT_TEXTBOX: TextBoxGeometry = {
-  ...TEXTBOX,
-  advance: 7,
-};
-
-/**
- * How many characters fit on a line of the box.
- */
-export function columnsFor(geometry: TextBoxGeometry): number {
-  const usable = geometry.width - geometry.paddingX * 2;
-
-  return Math.max(8, Math.floor(usable / Math.max(1, geometry.advance)));
-}
+export type { TextBoxGeometry };
 
 /**
  * One line of the choice menu.

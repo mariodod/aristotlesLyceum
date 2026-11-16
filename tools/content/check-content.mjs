@@ -24,6 +24,17 @@ import {
   readsLikeNarration,
   speaksInFirstPerson,
 } from '../../src/systems/dialogue/speaker-voice.ts';
+import { countLines, wrapText } from '../../src/systems/dialogue/text-wrap.ts';
+import {
+  BATTLE_BOX,
+  CODEX_LAYOUT,
+  columnsFor,
+  codexMaxLines,
+  DEFAULT_TEXTBOX,
+  maxLinesFor,
+} from '../../src/config/layout.ts';
+import { metricsFor } from '../../src/i18n/types.ts';
+import { LOCALES } from '../../src/i18n/locales.ts';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const projectRoot = join(here, '..', '..');
@@ -359,6 +370,141 @@ for (const sheet of manifest.spritesheets) {
 
     if (!sheet.animations.some((animation) => animation.key === key)) {
       report(`sprite "${sheet.key}"`, `has no "${expression}" animation`);
+    }
+  }
+}
+
+/*
+ * The layout. The panels that hold text are a fixed size, so a line that is
+ * too long for them is drawn outside the panel, over the backdrop, where
+ * nobody can read it. The rule is checked in every language, because a
+ * translation can be longer than the English it replaces.
+ */
+
+const dialogueColumns = columnsFor(DEFAULT_TEXTBOX);
+const dialogueLines = maxLinesFor(DEFAULT_TEXTBOX, metricsFor('pixel-5x7').lineHeight);
+
+/** The story text a step carries, in the language the game was written in. */
+const storyTexts = [];
+
+for (const script of CHAPTERS) {
+  for (const step of script.steps) {
+    if (step.kind === 'say' && step.text.trim().length > 0) {
+      storyTexts.push({
+        where: `chapter "${script.id}", line "${step.at}"`,
+        key: step.key,
+        text: step.text,
+        columns: dialogueColumns,
+        lines: dialogueLines,
+      });
+    }
+
+    if (step.kind === 'choice') {
+      // The options are drawn one row apart inside the box, so a menu with
+      // too many of them runs off the bottom of it.
+      if (step.options.length > 6) {
+        report(
+          `chapter "${script.id}"`,
+          `choice "${step.at}" has ${step.options.length} options, and the box holds 6`,
+        );
+      }
+    }
+  }
+}
+
+for (const entry of CODEX_ENTRIES) {
+  storyTexts.push({
+    where: `codex "${entry.id}", origin`,
+    key: entry.originKey,
+    text: entry.origin,
+    columns: CODEX_LAYOUT.textColumns,
+    lines: codexMaxLines(CODEX_LAYOUT, 'origin', metricsFor('pixel-5x7').lineHeight),
+  });
+
+  storyTexts.push({
+    where: `codex "${entry.id}", modern`,
+    key: entry.modernKey,
+    text: entry.modern,
+    columns: CODEX_LAYOUT.textColumns,
+    lines: codexMaxLines(CODEX_LAYOUT, 'modern', metricsFor('pixel-5x7').lineHeight),
+  });
+
+  storyTexts.push({
+    where: `codex "${entry.id}", sources`,
+    key: entry.sourcesKey,
+    text: entry.sources.join('; '),
+    columns: CODEX_LAYOUT.textColumns,
+    lines: codexMaxLines(CODEX_LAYOUT, 'sources', metricsFor('pixel-5x7').lineHeight),
+  });
+}
+
+/*
+ * The battle box is narrower than the dialogue box, and the propositions and
+ * the opponent's lines are drawn in it.
+ */
+const battleColumns = columnsFor(BATTLE_BOX);
+const battleLines = maxLinesFor(BATTLE_BOX, metricsFor('pixel-5x7').lineHeight);
+
+for (const opponent of DIALECTIC_OPPONENTS) {
+  for (const claim of opponent.claims) {
+    for (const [field, text] of [
+      ['claim', claim.text],
+      ['examination', claim.examination],
+      ['objection', claim.objection],
+      ['relevance', claim.relevance],
+      ['concession', claim.concession],
+      ['shrug', claim.shrug],
+    ]) {
+      storyTexts.push({
+        where: `opponent "${opponent.id}", ${field}`,
+        key: `dialectic.${opponent.id}.${field}`,
+        text,
+        columns: battleColumns,
+        lines: battleLines,
+      });
+    }
+
+    for (const proposition of claim.propositions) {
+      storyTexts.push({
+        where: `opponent "${opponent.id}", proposition "${proposition.id}"`,
+        key: `dialectic.${proposition.id}`,
+        text: proposition.text,
+        columns: battleColumns,
+        lines: battleLines,
+      });
+    }
+  }
+}
+
+for (const item of storyTexts) {
+  const english = countLines(wrapText(item.text, item.columns));
+
+  if (english > item.lines) {
+    report(
+      item.where,
+      `the English text wraps to ${english} lines, and the box holds ${item.lines}`,
+    );
+    continue;
+  }
+
+  for (const locale of LOCALES) {
+    if (locale.id === 'en') {
+      continue;
+    }
+
+    const translated = locale.content[item.key];
+
+    if (translated === undefined) {
+      continue;
+    }
+
+    const translatedLines = countLines(wrapText(translated, item.columns));
+
+    if (translatedLines > item.lines) {
+      report(
+        item.where,
+        `the ${locale.id} translation wraps to ${translatedLines} lines, and the box holds ${item.lines}`,
+      );
     }
   }
 }

@@ -59,7 +59,7 @@ without being told.
 
 **Progress:**
 
-- [x] The chapter is written: sixty-four steps, about five minutes.
+- [x] The chapter is written: sixty-five steps, about five minutes.
 - [x] Three choices, three branches, three named endings.
 - [x] The chapter-complete card, with the ending, the stats and the journal count.
 - [x] The dream transition cross-fades the bedroom into the Lyceum.

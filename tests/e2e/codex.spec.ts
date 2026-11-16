@@ -5,6 +5,7 @@ import {
   bootToTitle,
   chooseOption,
   collectPageErrors,
+  pressDown,
   pressKey,
   readHook,
   startActOne,
@@ -133,6 +134,34 @@ test('the list scrolls to reach an entry that is off the screen', async ({ page 
 
   // And the list turns round at the end.
   await pressKey(page, 'ArrowDown');
+  await expect.poll(() => readHook<string>(page, 'codexEntry')).toBe('syllogism');
+
+  expect(errors).toEqual([]);
+});
+
+test('reopening the journal starts on the first entry again', async ({ page }) => {
+  const errors = collectPageErrors(page);
+
+  await startActOne(page);
+  await advanceUntilChoice(page);
+  await chooseOption(page, 0);
+  await advanceUntilEndCard(page);
+
+  // File what the chapter unlocks, then read the second entry.
+  await pressKey(page, 'c');
+  await expect.poll(() => readHook<number>(page, 'codexEntryCount')).toBe(2);
+  await pressKey(page, 'ArrowDown');
+  await expect.poll(() => readHook<string>(page, 'codexEntry')).toBe('dialectic');
+
+  // Leave, and come back through the title menu.
+  await pressKey(page, 'Escape');
+  await pressKey(page, 'Escape');
+  await expect.poll(() => readHook<string>(page, 'scene')).toBe('Title');
+
+  await pressDown(page, 1);
+  await pressKey(page, 'z');
+
+  await expect.poll(() => readHook<string>(page, 'scene')).toBe('Codex');
   await expect.poll(() => readHook<string>(page, 'codexEntry')).toBe('syllogism');
 
   expect(errors).toEqual([]);
