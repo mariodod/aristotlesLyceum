@@ -25,11 +25,6 @@ export interface PlannedChapter {
 
 export const PLANNED_CHAPTERS: PlannedChapter[] = [
   {
-    id: 'act-two-physics',
-    title: 'Act II — Physics',
-    codex: ['four-causes', 'hylomorphism', 'the-four-elements'],
-  },
-  {
     id: 'act-two-metaphysics',
     title: 'Act II — Metaphysics',
     codex: ['unmoved-mover', 'potentiality', 'species'],
