@@ -310,3 +310,56 @@ test('plays Act II Chapter 5 and remembers the decision', async ({ page }) => {
 
   expect(errors).toEqual([]);
 });
+
+test('plays Act II Chapter 6 to its end card', async ({ page }) => {
+  const errors = collectPageErrors(page);
+
+  seedChapters(page, [
+    'act-one',
+    'act-two-logic',
+    'act-two-physics',
+    'act-two-metaphysics',
+    'act-two-soul',
+    'act-two-ethics',
+  ]);
+  await bootToTitle(page);
+
+  await pressDown(page, 1);
+  await pressKey(page, 'z');
+  await expect.poll(() => readHook<string>(page, 'chapter')).toBe('act-two-poetics');
+
+  await pressKey(page, 'z');
+  await advanceUntilChoice(page);
+  await chooseOption(page, 0);
+
+  for (let index = 0; index < 10; index += 1) {
+    if ((await readHook<string>(page, 'scene')) === 'Dialectic') {
+      break;
+    }
+
+    await nextLine(page);
+  }
+
+  await expect.poll(() => readHook<string>(page, 'scene')).toBe('Dialectic');
+
+  // No imitation of an action is an empty entertainment; every copy is an
+  // imitation of an action; so no copy is an empty entertainment.
+  await buildSyllogism(page, 0, 3, 6);
+
+  await expect.poll(() => readHook<string>(page, 'scene')).toBe('Story');
+  await advanceUntilEndCard(page);
+
+  await expect.poll(() => readHook<boolean>(page, 'endCardVisible')).toBe(true);
+  await expect.poll(() => readHook<string>(page, 'actTitle')).toBe('ACT II');
+  await expect.poll(() => readHook<string>(page, 'ending')).toBe('THE RECOGNITION');
+
+  const codex = await readHook<string[]>(page, 'unlockedCodex');
+  expect(codex).toContain('mimesis-and-catharsis');
+  expect(codex).toContain('plot-structure');
+  expect(codex).toContain('hamartia');
+
+  const stats = await readHook<{ reason: number }>(page, 'stats');
+  expect(stats.reason).toBe(1);
+
+  expect(errors).toEqual([]);
+});

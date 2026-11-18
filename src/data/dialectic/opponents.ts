@@ -317,6 +317,56 @@ const GHOST: OpponentClaim = {
   shrug: 'Then the passenger stays, the ship is a way of speaking, and we are both still talking.',
 };
 
+const IMITATION_TERMS: TermLabel[] = [
+  { id: 'S', label: 'copies' },
+  { id: 'M', label: 'imitations of actions' },
+  { id: 'P', label: 'empty entertainments' },
+];
+
+const IMITATION: OpponentClaim = {
+  id: 'imitation-main',
+  text: 'A copy teaches nothing. It is one remove from the thing, and the remove is all there is to it. A play is a copy of an action, so a play is an empty evening and nothing more.',
+  terms: IMITATION_TERMS,
+  propositions: [
+    proposition(
+      'imitation-teach-none',
+      'E',
+      'M',
+      'P',
+      'No imitation of an action is an empty entertainment.',
+    ),
+    proposition(
+      'imitation-teach-all',
+      'A',
+      'M',
+      'P',
+      'Every imitation of an action is an empty entertainment.',
+    ),
+    proposition(
+      'imitation-teach-some',
+      'I',
+      'M',
+      'P',
+      'Some imitation of an action is an empty entertainment.',
+    ),
+    proposition('copy-imitation', 'A', 'S', 'M', 'Every copy is an imitation of an action.'),
+    proposition('copy-imitation-some', 'I', 'S', 'M', 'Some copy is an imitation of an action.'),
+    proposition('copy-empty-some', 'I', 'S', 'P', 'Some copy is an empty entertainment.'),
+    proposition('copy-empty-none', 'E', 'S', 'P', 'No copy is an empty entertainment.'),
+  ],
+  target: 'copy-empty-none',
+  examination:
+    'You want to know what a copy leaves out? The action. A play is a string of lines, and the lines are about something that happened, and the happening is the part you never see. What is not there cannot teach you anything.',
+  objection:
+    'That does not follow. You have called the copy an imitation and then pretended the imitation is the action, and the word "imitation" is doing all the work in your argument.',
+  relevance:
+    'That is a sound argument, and it is not about my claim. I never denied that a copy can be made. I said that nothing is learned from it.',
+  concession:
+    '...No. No, that is not it. If a copy is the imitation of an action, and an imitation has a shape that can be seen, then I have been calling the shape nothing. You have not defended the copy; you have shown me what I was looking at.',
+  shrug:
+    'Then the copy is a copy, and nothing was learned, and we have both wasted an evening beautifully.',
+};
+
 export const DIALECTIC_OPPONENTS: DialecticOpponent[] = [
   {
     id: 'certainty',
@@ -353,6 +403,12 @@ export const DIALECTIC_OPPONENTS: DialecticOpponent[] = [
     name: 'The Ghost',
     color: 0x9a9ad0,
     claims: [GHOST],
+  },
+  {
+    id: 'imitation',
+    name: 'Imitation as Uselessness',
+    color: 0xc9a0d0,
+    claims: [IMITATION],
   },
 ];
 
