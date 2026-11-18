@@ -25,11 +25,6 @@ export interface PlannedChapter {
 
 export const PLANNED_CHAPTERS: PlannedChapter[] = [
   {
-    id: 'act-two-soul',
-    title: 'Act II — The Soul',
-    codex: ['soul-as-form', 'soul-capacities', 'memory'],
-  },
-  {
     id: 'act-two-ethics',
     title: 'Act II — Ethics',
     codex: ['eudaimonia', 'virtue-and-the-mean', 'practical-wisdom'],

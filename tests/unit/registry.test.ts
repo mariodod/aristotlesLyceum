@@ -14,6 +14,7 @@ describe('the chapter registry', () => {
       'act-two-logic',
       'act-two-physics',
       'act-two-metaphysics',
+      'act-two-soul',
     ]);
   });
 
@@ -48,7 +49,8 @@ describe('the chapter registry', () => {
     expect(nextChapter('act-one')?.id).toBe('act-two-logic');
     expect(nextChapter('act-two-logic')?.id).toBe('act-two-physics');
     expect(nextChapter('act-two-physics')?.id).toBe('act-two-metaphysics');
-    expect(nextChapter('act-two-metaphysics')).toBeUndefined();
+    expect(nextChapter('act-two-metaphysics')?.id).toBe('act-two-soul');
+    expect(nextChapter('act-two-soul')).toBeUndefined();
     expect(nextChapter('not-a-chapter')).toBeUndefined();
   });
 });

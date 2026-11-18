@@ -201,3 +201,49 @@ test('plays Act II Chapter 3 to its end card', async ({ page }) => {
 
   expect(errors).toEqual([]);
 });
+
+test('plays Act II Chapter 4 to its end card', async ({ page }) => {
+  const errors = collectPageErrors(page);
+
+  seedChapters(page, ['act-one', 'act-two-logic', 'act-two-physics', 'act-two-metaphysics']);
+  await bootToTitle(page);
+
+  await pressDown(page, 1);
+  await pressKey(page, 'z');
+  await expect.poll(() => readHook<string>(page, 'chapter')).toBe('act-two-soul');
+
+  await pressKey(page, 'z');
+  await advanceUntilChoice(page);
+  await chooseOption(page, 0);
+
+  for (let index = 0; index < 10; index += 1) {
+    if ((await readHook<string>(page, 'scene')) === 'Dialectic') {
+      break;
+    }
+
+    await nextLine(page);
+  }
+
+  await expect.poll(() => readHook<string>(page, 'scene')).toBe('Dialectic');
+
+  // No form of a body is a separate occupant; every soul is the form of a
+  // body; therefore no soul is a separate occupant.
+  await buildSyllogism(page, 0, 3, 6);
+
+  await expect.poll(() => readHook<string>(page, 'scene')).toBe('Story');
+  await advanceUntilEndCard(page);
+
+  await expect.poll(() => readHook<boolean>(page, 'endCardVisible')).toBe(true);
+  await expect.poll(() => readHook<string>(page, 'actTitle')).toBe('ACT II');
+  await expect.poll(() => readHook<string>(page, 'ending')).toBe('NOT A PASSENGER');
+
+  const codex = await readHook<string[]>(page, 'unlockedCodex');
+  expect(codex).toContain('soul-as-form');
+  expect(codex).toContain('soul-capacities');
+  expect(codex).toContain('memory');
+
+  const stats = await readHook<{ reason: number }>(page, 'stats');
+  expect(stats.reason).toBe(1);
+
+  expect(errors).toEqual([]);
+});

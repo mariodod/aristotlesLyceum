@@ -274,6 +274,49 @@ const REISM: OpponentClaim = {
   shrug: 'Then the word stands, the world is a way of speaking, and we are both saying something.',
 };
 
+const GHOST_TERMS: TermLabel[] = [
+  { id: 'S', label: 'souls' },
+  { id: 'M', label: 'forms of bodies' },
+  { id: 'P', label: 'separate occupants' },
+];
+
+const GHOST: OpponentClaim = {
+  id: 'ghost-main',
+  text: 'The soul is a passenger and the body is the ship. Take the passenger out and the ship will still float, and the passenger will still be himself. A body is a thing a soul happens to be in.',
+  terms: GHOST_TERMS,
+  propositions: [
+    proposition('ghost-form-separate', 'E', 'M', 'P', 'No form of a body is a separate occupant.'),
+    proposition(
+      'ghost-form-separate-all',
+      'A',
+      'M',
+      'P',
+      'Every form of a body is a separate occupant.',
+    ),
+    proposition(
+      'ghost-form-separate-some',
+      'I',
+      'M',
+      'P',
+      'Some form of a body is a separate occupant.',
+    ),
+    proposition('ghost-soul-form', 'A', 'S', 'M', 'Every soul is the form of a body.'),
+    proposition('ghost-soul-form-some', 'I', 'S', 'M', 'Some soul is the form of a body.'),
+    proposition('ghost-soul-separate-some', 'I', 'S', 'P', 'Some soul is a separate occupant.'),
+    proposition('ghost-soul-separate-none', 'E', 'S', 'P', 'No soul is a separate occupant.'),
+  ],
+  target: 'ghost-soul-separate-none',
+  examination:
+    'You want to know where the soul is? In here, behind the eyes, looking out. It was here before the body was made, and it will be here when the body is gone.',
+  objection:
+    'That does not follow. You have put the form inside the body and called the form a passenger, and the word "inside" is doing all the work in your argument.',
+  relevance:
+    'That is a sound argument, and it is not about my claim. I never denied that a soul is the form of a body. I said the form is a passenger.',
+  concession:
+    '...No. No, that is not it. If the soul is the form, then there is no body for the form to be in, and no passenger for the ship to carry. You have taken the ship away from under the passenger.',
+  shrug: 'Then the passenger stays, the ship is a way of speaking, and we are both still talking.',
+};
+
 export const DIALECTIC_OPPONENTS: DialecticOpponent[] = [
   {
     id: 'certainty',
@@ -304,6 +347,12 @@ export const DIALECTIC_OPPONENTS: DialecticOpponent[] = [
     name: 'Reism',
     color: 0xc96a6a,
     claims: [REISM],
+  },
+  {
+    id: 'ghost',
+    name: 'The Ghost',
+    color: 0x9a9ad0,
+    claims: [GHOST],
   },
 ];
 
