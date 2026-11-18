@@ -13,6 +13,7 @@ describe('the chapter registry', () => {
       'act-one',
       'act-two-logic',
       'act-two-physics',
+      'act-two-metaphysics',
     ]);
   });
 
@@ -30,6 +31,9 @@ describe('the chapter registry', () => {
   it('continues at the first chapter the player has not finished', () => {
     expect(nextUncompletedChapter(['act-one']).id).toBe('act-two-logic');
     expect(nextUncompletedChapter(['act-one', 'act-two-logic']).id).toBe('act-two-physics');
+    expect(nextUncompletedChapter(['act-one', 'act-two-logic', 'act-two-physics']).id).toBe(
+      'act-two-metaphysics',
+    );
     // Completing a later chapter first still starts at the earlier one.
     expect(nextUncompletedChapter(['act-two-logic']).id).toBe('act-one');
   });
@@ -43,7 +47,8 @@ describe('the chapter registry', () => {
   it('knows which chapter comes next, and when there is none', () => {
     expect(nextChapter('act-one')?.id).toBe('act-two-logic');
     expect(nextChapter('act-two-logic')?.id).toBe('act-two-physics');
-    expect(nextChapter('act-two-physics')).toBeUndefined();
+    expect(nextChapter('act-two-physics')?.id).toBe('act-two-metaphysics');
+    expect(nextChapter('act-two-metaphysics')).toBeUndefined();
     expect(nextChapter('not-a-chapter')).toBeUndefined();
   });
 });

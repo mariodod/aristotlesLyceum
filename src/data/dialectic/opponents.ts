@@ -243,6 +243,37 @@ const MARKING: OpponentClaim = {
   shrug: 'Then you have a problem with the paper, and the paper is not going to change.',
 };
 
+const REISM_TERMS: TermLabel[] = [
+  { id: 'S', label: 'the things there are' },
+  { id: 'M', label: 'names' },
+  { id: 'P', label: 'real' },
+];
+
+const REISM: OpponentClaim = {
+  id: 'reism-main',
+  text: 'Only names are real. The things there are are names, the names are the real, and everything else is a way of speaking. You can argue with the world all you like; you are arguing with the word.',
+  terms: REISM_TERMS,
+  propositions: [
+    proposition('reism-name-real', 'A', 'M', 'P', 'Every name is real.'),
+    proposition('reism-name-real-some', 'I', 'M', 'P', 'Some name is real.'),
+    proposition('reism-name-none-real', 'E', 'M', 'P', 'No name is real.'),
+    proposition('reism-thing-name', 'A', 'S', 'M', 'Every thing there is is a name.'),
+    proposition('reism-thing-name-some', 'I', 'S', 'M', 'Some thing there is is a name.'),
+    proposition('reism-thing-real', 'I', 'S', 'P', 'Some thing there is is real.'),
+    proposition('reism-thing-none-real', 'E', 'S', 'P', 'No thing there is is real.'),
+  ],
+  target: 'reism-thing-none-real',
+  examination:
+    'You want to know where reality went? Into the name. The thing was never the real part; the naming was. Take the name away and there is nothing left to take.',
+  objection:
+    'That does not follow. You have put the name in the middle of the argument and taken it out again, and the thing you started with is not the thing you ended with.',
+  relevance:
+    'That is a sound argument, and it is about nothing I said. I never said the things there are are not real. I said the names are.',
+  concession:
+    '...No. No, that is not it. If the name is not real, and every thing there is is a name, then there is nothing real for the name to be the name of. You have taken the world out from under the word.',
+  shrug: 'Then the word stands, the world is a way of speaking, and we are both saying something.',
+};
+
 export const DIALECTIC_OPPONENTS: DialecticOpponent[] = [
   {
     id: 'certainty',
@@ -267,6 +298,12 @@ export const DIALECTIC_OPPONENTS: DialecticOpponent[] = [
     name: 'The Marking',
     color: 0xd0d0c0,
     claims: [MARKING],
+  },
+  {
+    id: 'reism',
+    name: 'Reism',
+    color: 0xc96a6a,
+    claims: [REISM],
   },
 ];
 

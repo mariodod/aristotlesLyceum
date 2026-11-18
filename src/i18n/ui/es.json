@@ -104,5 +104,6 @@
   "ui.character.darwin": "Charles Darwin",
   "ui.character.turing": "Alan Turing",
   "ui.title.continue": "SEGUIR EL SUEÑO",
-  "ui.story.continue": "Z PARA CONTINUAR"
+  "ui.story.continue": "Z PARA CONTINUAR",
+  "ui.battle.opponent.reism": "Reísmo"
 }

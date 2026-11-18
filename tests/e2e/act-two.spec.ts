@@ -155,3 +155,49 @@ test('plays Act II Chapter 2 to its end card', async ({ page }) => {
 
   expect(errors).toEqual([]);
 });
+
+test('plays Act II Chapter 3 to its end card', async ({ page }) => {
+  const errors = collectPageErrors(page);
+
+  seedChapters(page, ['act-one', 'act-two-logic', 'act-two-physics']);
+  await bootToTitle(page);
+
+  await pressDown(page, 1);
+  await pressKey(page, 'z');
+  await expect.poll(() => readHook<string>(page, 'chapter')).toBe('act-two-metaphysics');
+
+  await pressKey(page, 'z');
+  await advanceUntilChoice(page);
+  await chooseOption(page, 0);
+
+  for (let index = 0; index < 10; index += 1) {
+    if ((await readHook<string>(page, 'scene')) === 'Dialectic') {
+      break;
+    }
+
+    await nextLine(page);
+  }
+
+  await expect.poll(() => readHook<string>(page, 'scene')).toBe('Dialectic');
+
+  // Take the reist's own premise, deny the reality of names, and the world
+  // goes with it: no name is real, every thing is a name, so no thing is.
+  await buildSyllogism(page, 2, 3, 6);
+
+  await expect.poll(() => readHook<string>(page, 'scene')).toBe('Story');
+  await advanceUntilEndCard(page);
+
+  await expect.poll(() => readHook<boolean>(page, 'endCardVisible')).toBe(true);
+  await expect.poll(() => readHook<string>(page, 'actTitle')).toBe('ACT II');
+  await expect.poll(() => readHook<string>(page, 'ending')).toBe('THE UNMOVED THING');
+
+  const codex = await readHook<string[]>(page, 'unlockedCodex');
+  expect(codex).toContain('unmoved-mover');
+  expect(codex).toContain('potentiality');
+  expect(codex).toContain('species');
+
+  const stats = await readHook<{ reason: number }>(page, 'stats');
+  expect(stats.reason).toBe(1);
+
+  expect(errors).toEqual([]);
+});
