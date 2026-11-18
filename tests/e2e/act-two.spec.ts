@@ -247,3 +247,66 @@ test('plays Act II Chapter 4 to its end card', async ({ page }) => {
 
   expect(errors).toEqual([]);
 });
+
+test('plays Act II Chapter 5 and remembers the decision', async ({ page }) => {
+  const errors = collectPageErrors(page);
+
+  seedChapters(page, [
+    'act-one',
+    'act-two-logic',
+    'act-two-physics',
+    'act-two-metaphysics',
+    'act-two-soul',
+  ]);
+  await bootToTitle(page);
+
+  await pressDown(page, 1);
+  await pressKey(page, 'z');
+  await expect.poll(() => readHook<string>(page, 'chapter')).toBe('act-two-ethics');
+
+  await pressKey(page, 'z');
+  await advanceUntilChoice(page);
+  await chooseOption(page, 0);
+
+  // The chapter asks a second, quieter question. The first option is the
+  // decision the long walk will read later.
+  await advanceUntilChoice(page);
+  await chooseOption(page, 0);
+
+  for (let index = 0; index < 10; index += 1) {
+    if ((await readHook<string>(page, 'scene')) === 'Dialectic') {
+      break;
+    }
+
+    await nextLine(page);
+  }
+
+  await expect.poll(() => readHook<string>(page, 'scene')).toBe('Dialectic');
+
+  // Cesare: every good for one person only falls short of being an end;
+  // no good is an end; therefore no good is good for one person only.
+  await buildSyllogism(page, 0, 2, 6);
+
+  await expect.poll(() => readHook<string>(page, 'scene')).toBe('Story');
+  await advanceUntilEndCard(page);
+
+  await expect.poll(() => readHook<boolean>(page, 'endCardVisible')).toBe(true);
+  await expect.poll(() => readHook<string>(page, 'actTitle')).toBe('ACT II');
+  await expect.poll(() => readHook<string>(page, 'ending')).toBe('THE MEAN');
+
+  const codex = await readHook<string[]>(page, 'unlockedCodex');
+  expect(codex).toContain('eudaimonia');
+  expect(codex).toContain('virtue-and-the-mean');
+  expect(codex).toContain('practical-wisdom');
+
+  // The load-bearing choice is written to the save, where Act III can read
+  // it, and the other option's flag was not set.
+  const flags = await page.evaluate(() => {
+    const raw = localStorage.getItem('aristotles-lyceum.save.v1');
+    return raw ? (JSON.parse(raw).flags as Record<string, boolean>) : {};
+  });
+  expect(flags['question-aristotle']).toBe(true);
+  expect(flags['accept-aristotle']).toBeUndefined();
+
+  expect(errors).toEqual([]);
+});
