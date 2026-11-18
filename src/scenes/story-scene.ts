@@ -5,7 +5,7 @@ import { STAGE_TUNING } from '../config/tuning.ts';
 import { animationKey } from '../data/assets.ts';
 import { CHARACTERS } from '../data/characters.ts';
 import { codexEntry } from '../data/codex/index.ts';
-import { chapterById } from '../data/script/registry.ts';
+import { chapterById, nextChapter } from '../data/script/registry.ts';
 import { isNeutral } from '../data/sprite-expressions.ts';
 import { centredText } from '../entities/centred-text.ts';
 import { TextBox } from '../entities/textbox.ts';
@@ -629,7 +629,14 @@ export class StoryScene extends Phaser.Scene {
     journal.setAlpha(0.7);
     card.add(journal);
 
-    const back = centredText(this, 252, this.t('ui.story.backToTitle'));
+    // The next chapter is one confirm away, so the card says continue and
+    // not "go back", which is where the player would have to walk from.
+    const hasNext = nextChapter(this.chapterId) !== undefined;
+    const back = centredText(
+      this,
+      252,
+      this.t(hasNext ? 'ui.story.continue' : 'ui.story.backToTitle'),
+    );
     back.setTint(0xf6f2e8);
     card.add(back);
 
@@ -654,6 +661,15 @@ export class StoryScene extends Phaser.Scene {
     }
 
     if (this.mode === 'done') {
+      // The dream keeps going while there is a chapter left in it. The last
+      // chapter of the act hands the player back to the title.
+      const next = nextChapter(this.chapterId);
+
+      if (next) {
+        this.scene.start('Story', { chapterId: next.id });
+        return;
+      }
+
       this.scene.start('Title');
       return;
     }

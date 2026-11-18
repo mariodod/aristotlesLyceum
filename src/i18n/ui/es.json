@@ -102,5 +102,7 @@
   "ui.character.descartes": "René Descartes",
   "ui.character.hume": "David Hume",
   "ui.character.darwin": "Charles Darwin",
-  "ui.character.turing": "Alan Turing"
+  "ui.character.turing": "Alan Turing",
+  "ui.title.continue": "SEGUIR EL SUEÑO",
+  "ui.story.continue": "Z PARA CONTINUAR"
 }

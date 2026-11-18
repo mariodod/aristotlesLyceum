@@ -153,12 +153,13 @@ test('reopening the journal starts on the first entry again', async ({ page }) =
   await pressKey(page, 'ArrowDown');
   await expect.poll(() => readHook<string>(page, 'codexEntry')).toBe('dialectic');
 
-  // Leave, and come back through the title menu.
+  // Leave, and come back through the title menu. Act I is finished by now,
+  // so the menu reads BEGIN, CONTINUE, CODEX: the journal is the third.
   await pressKey(page, 'Escape');
   await pressKey(page, 'Escape');
   await expect.poll(() => readHook<string>(page, 'scene')).toBe('Title');
 
-  await pressDown(page, 1);
+  await pressDown(page, 2);
   await pressKey(page, 'z');
 
   await expect.poll(() => readHook<string>(page, 'scene')).toBe('Codex');

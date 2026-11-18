@@ -58,6 +58,13 @@ function report(where, message) {
 
 const chapterIds = new Set();
 
+/* The art pack, so a chapter cannot name a backdrop that does not exist. */
+const manifest = JSON.parse(
+  readFileSync(join(projectRoot, 'src', 'data', 'asset-manifest.json'), 'utf8'),
+);
+
+const backdropKeys = new Set(manifest.images.map((image) => image.key));
+
 for (const script of CHAPTERS) {
   const where = `chapter "${script.id}"`;
 
@@ -68,6 +75,8 @@ for (const script of CHAPTERS) {
 
   if (!script.backdrop) {
     report(where, 'missing backdrop');
+  } else if (!backdropKeys.has(script.backdrop)) {
+    report(where, `names the backdrop "${script.backdrop}", which the art pack does not have`);
   }
 
   const labels = new Set();
@@ -346,10 +355,6 @@ for (const [id, chapter] of claimed) {
  * needs a frame for every expression, or a line of dialogue will play on a
  * face that does not react.
  */
-
-const manifest = JSON.parse(
-  readFileSync(join(projectRoot, 'src', 'data', 'asset-manifest.json'), 'utf8'),
-);
 
 const imageKeys = new Set(manifest.images.map((image) => image.key));
 const sheetKeys = new Set(manifest.spritesheets.map((sheet) => sheet.key));

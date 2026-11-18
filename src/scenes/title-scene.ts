@@ -1,9 +1,11 @@
 import Phaser from 'phaser';
 import { GAME_HEIGHT, GAME_WIDTH } from '../config/constants.ts';
+import { nextUncompletedChapter } from '../data/script/registry.ts';
 import { TITLE_TUNING } from '../config/tuning.ts';
 import { opponentById } from '../data/dialectic/opponents.ts';
 import { centredText } from '../entities/centred-text.ts';
 import type { LocaleService } from '../services/locale-service.ts';
+import type { SaveService } from '../services/save-service.ts';
 import { setTestHook } from '../utils/test-hooks.ts';
 
 /**
@@ -31,11 +33,30 @@ export class TitleScene extends Phaser.Scene {
     this.labels.length = 0;
     this.selected = 0;
 
+    // A player who has finished something continues from where the dream
+    // left off. A player who has not starts at the beginning, which is the
+    // same entry either way.
+    const saveService = this.registry.get('saveService') as SaveService;
+    const completed = saveService.snapshot.completedChapters;
+    const continueEntry =
+      completed.length > 0
+        ? [
+            {
+              labelKey: 'ui.title.continue',
+              action: () => {
+                const next = nextUncompletedChapter(completed);
+                this.scene.start('Story', { chapterId: next.id });
+              },
+            },
+          ]
+        : [];
+
     this.entries = [
       {
         labelKey: 'ui.title.begin',
         action: () => this.scene.start('Story', { chapterId: 'act-one' }),
       },
+      ...continueEntry,
       { labelKey: 'ui.title.codex', action: () => this.scene.start('Codex') },
       ...(import.meta.env.DEV
         ? [
