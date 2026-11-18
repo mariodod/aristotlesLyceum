@@ -363,3 +363,61 @@ test('plays Act II Chapter 6 to its end card', async ({ page }) => {
 
   expect(errors).toEqual([]);
 });
+
+test('plays Act II Chapter 7 to its end card', async ({ page }) => {
+  const errors = collectPageErrors(page);
+
+  seedChapters(page, [
+    'act-one',
+    'act-two-logic',
+    'act-two-physics',
+    'act-two-metaphysics',
+    'act-two-soul',
+    'act-two-ethics',
+    'act-two-poetics',
+  ]);
+  await bootToTitle(page);
+
+  await pressDown(page, 1);
+  await pressKey(page, 'z');
+  await expect.poll(() => readHook<string>(page, 'chapter')).toBe('act-two-life');
+
+  await pressKey(page, 'z');
+  await advanceUntilChoice(page);
+  await chooseOption(page, 0);
+
+  for (let index = 0; index < 10; index += 1) {
+    if ((await readHook<string>(page, 'scene')) === 'Dialectic') {
+      break;
+    }
+
+    await nextLine(page);
+  }
+
+  await expect.poll(() => readHook<string>(page, 'scene')).toBe('Dialectic');
+
+  // No claim from authority is beyond checking; every claim in a book is
+  // a claim from authority; so no claim in a book is beyond checking.
+  await buildSyllogism(page, 0, 3, 6);
+
+  await expect.poll(() => readHook<string>(page, 'scene')).toBe('Story');
+  await advanceUntilEndCard(page);
+
+  await expect.poll(() => readHook<boolean>(page, 'endCardVisible')).toBe(true);
+  await expect.poll(() => readHook<string>(page, 'actTitle')).toBe('ACT II');
+  await expect.poll(() => readHook<string>(page, 'ending')).toBe('THE METHOD');
+
+  const codex = await readHook<string[]>(page, 'unlockedCodex');
+  expect(codex).toContain('observation-and-taxonomy');
+  expect(codex).toContain('history-of-animals');
+  expect(codex).toContain('parts-and-whole');
+
+  const stats = await readHook<{ reason: number }>(page, 'stats');
+  expect(stats.reason).toBe(1);
+
+  // The last chapter of the act hands the player back to the title.
+  await pressKey(page, 'z');
+  await expect.poll(() => readHook<string>(page, 'scene')).toBe('Title');
+
+  expect(errors).toEqual([]);
+});

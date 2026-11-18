@@ -367,6 +367,68 @@ const IMITATION: OpponentClaim = {
     'Then the copy is a copy, and nothing was learned, and we have both wasted an evening beautifully.',
 };
 
+const AUTHORITY_TERMS: TermLabel[] = [
+  { id: 'S', label: 'claims in books' },
+  { id: 'M', label: 'claims from authority' },
+  { id: 'P', label: 'things beyond checking' },
+];
+
+const AUTHORITY: OpponentClaim = {
+  id: 'authority-main',
+  text: 'If it is in the book, it is so. The book was written by somebody who knew, and the knowing is in the writing. A thing may be checked until the book answers, and then the question is finished.',
+  terms: AUTHORITY_TERMS,
+  propositions: [
+    proposition(
+      'authority-none-check',
+      'E',
+      'M',
+      'P',
+      'No claim from authority is beyond checking.',
+    ),
+    proposition(
+      'authority-all-check',
+      'A',
+      'M',
+      'P',
+      'Every claim from authority is beyond checking.',
+    ),
+    proposition(
+      'authority-some-check',
+      'I',
+      'M',
+      'P',
+      'Some claim from authority is beyond checking.',
+    ),
+    proposition(
+      'book-authority',
+      'A',
+      'S',
+      'M',
+      'Every claim in a book is a claim from authority.',
+    ),
+    proposition(
+      'book-authority-some',
+      'I',
+      'S',
+      'M',
+      'Some claim in a book is a claim from authority.',
+    ),
+    proposition('book-beyond-some', 'I', 'S', 'P', 'Some claim in a book is beyond checking.'),
+    proposition('book-beyond-none', 'E', 'S', 'P', 'No claim in a book is beyond checking.'),
+  ],
+  target: 'book-beyond-none',
+  examination:
+    'You want to check the book? Then you have already chosen a side, and it is not mine. The book is the record of what was found, not one more opinion to be weighed against yours.',
+  objection:
+    'That does not follow. You have put the book in the middle of the argument and taken it out again, and the word "book" is doing all the work in your argument.',
+  relevance:
+    'That is a sound argument, and it is not about my claim. I never said the book cannot be read. I said that when it answers, the question stops.',
+  concession:
+    '...No. No, that is not it. Darwin took my own book to the Galapagos and read it on the voyage, then wrote notes criticising it when he came home. If a book can be criticised, then it was never beyond checking. You have put the book back on the table.',
+  shrug:
+    'Then the book stays on its shelf, the animal is still in front of us, and nobody has looked at it.',
+};
+
 export const DIALECTIC_OPPONENTS: DialecticOpponent[] = [
   {
     id: 'certainty',
@@ -409,6 +471,12 @@ export const DIALECTIC_OPPONENTS: DialecticOpponent[] = [
     name: 'Imitation as Uselessness',
     color: 0xc9a0d0,
     claims: [IMITATION],
+  },
+  {
+    id: 'authority',
+    name: 'Authority',
+    color: 0xc0a060,
+    claims: [AUTHORITY],
   },
 ];
 

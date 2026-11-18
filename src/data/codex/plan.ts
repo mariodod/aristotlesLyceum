@@ -23,10 +23,9 @@ export interface PlannedChapter {
   codex: string[];
 }
 
-export const PLANNED_CHAPTERS: PlannedChapter[] = [
-  {
-    id: 'act-two-life',
-    title: 'Act II — Life',
-    codex: ['observation-and-taxonomy', 'history-of-animals', 'parts-and-whole'],
-  },
-];
+/**
+ * No chapter is planned but unwritten now that Act II has shipped. The
+ * file stays because it is the contract the linter uses while a chapter
+ * is being written: add a claim here and the chapter owes its entries.
+ */
+export const PLANNED_CHAPTERS: PlannedChapter[] = [];

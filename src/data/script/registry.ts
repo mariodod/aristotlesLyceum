@@ -6,6 +6,7 @@ import { ACT_TWO_METAPHYSICS } from './act-two-metaphysics.ts';
 import { ACT_TWO_SOUL } from './act-two-soul.ts';
 import { ACT_TWO_ETHICS } from './act-two-ethics.ts';
 import { ACT_TWO_POETICS } from './act-two-poetics.ts';
+import { ACT_TWO_LIFE } from './act-two-life.ts';
 
 /**
  * Chapter registry. The order here is the order the game plays them in.
@@ -18,6 +19,7 @@ export const CHAPTERS: StoryScript[] = [
   ACT_TWO_SOUL,
   ACT_TWO_ETHICS,
   ACT_TWO_POETICS,
+  ACT_TWO_LIFE,
 ];
 
 export const CHAPTER_IDS = CHAPTERS.map((script) => script.id);

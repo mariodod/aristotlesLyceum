@@ -107,5 +107,6 @@
   "ui.story.continue": "Z PARA CONTINUAR",
   "ui.battle.opponent.reism": "Reísmo",
   "ui.battle.opponent.ghost": "El Fantasma",
-  "ui.battle.opponent.imitation": "La Imitación como Inutilidad"
+  "ui.battle.opponent.imitation": "La Imitación como Inutilidad",
+  "ui.battle.opponent.authority": "La Autoridad"
 }
