@@ -618,4 +618,8 @@ verified end to end. Act I has three endings and a chapter-complete card; the
 human playtest is the one open item, and its protocol is in
 [`docs/m2-playtest.md`](docs/m2-playtest.md). The Codex holds the twenty-one
 entries that Act II will unlock, in English and in Spanish, and the journal
-lists them. Act II's scripts are still to be written.
+lists them. Act II is written: seven chapters from Logic to Life, each
+ending in a dialectic, each filing three of the twenty-one entries, with
+the eight opponents the table needs. The title continues into whichever
+chapter comes next, and the load-bearing choice in Ethics is written to
+the save for Act III to read.

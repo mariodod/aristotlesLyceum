@@ -5,7 +5,7 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [0.6.0] - 2026-11-19
 
 ### Fixed
 
@@ -102,6 +102,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Act II is written: seven chapters, from Logic to Life.** Each chapter is
+  a conversation that ends in a dialectic and files three Codex entries. The
+  chapters are in the registry in play order, and the save carries the player
+  from one to the next: the title offers CONTINUE THE DREAM, and the
+  chapter-complete card offers the next chapter while one remains.
+- **Eight opponents for the table.** Certainty, Reductionism, Pluralism and
+  the Marking were already here. Reism, the Ghost, Imitation as Uselessness
+  and Authority join them, each with one valid refutation, one sound argument
+  that answers nothing, and decoys that are the same content in the wrong
+  form. The table test enumerates every arrangement for every opponent.
+- **The load-bearing choice.** Ethics asks Isaac whether he will question
+  what he was told or keep it. The answer is written to the save, where Act
+  III will read it, and replaying that chapter starts the decision fresh.
+- **A browser test for every chapter.** Each plays from the title screen to
+  its end card, wins the argument, and checks that the chapter's three
+  entries are on the journal shelf.
 - **A helper for text in the middle of the screen**, which places it by its
   left edge on a whole pixel, and a browser test that proves every piece of
   text in the game lands on one.

@@ -17,7 +17,7 @@
 | M4  | Dialectic      | The battle system and the syllogism builder                         | Done        |
 | M4b | Localisation   | The game speaks more than one language                              | Done        |
 | M5  | Codex          | Journal screen complete, Act II entries authored                    | Done        |
-| M6  | Act II         | Seven chapters, forty minutes of writing                            | Not started |
+| M6  | Act II         | Seven chapters, forty minutes of writing                            | Done        |
 | M7  | Act III & IV   | Eight stations and a playable exam                                  | Not started |
 | M8  | Audio & access | Generated music, settings, text speed, accessibility                | Not started |
 | M9  | v1.0           | Polish, credits, licence audit, release                             | Not started |
@@ -174,6 +174,18 @@ specific modern field.
 
 **Done when:** the whole act can be played without a single "and then
 Aristotle explained" line.
+
+**Progress:**
+
+- [x] Seven chapters, in play order from Logic to Life, each ending in a
+      dialectic and filing three Codex entries.
+- [x] Eight opponents, four of them new for this act, each with a unique
+      refutation and a sound argument that answers nothing.
+- [x] Chapter progression: the title continues the dream, and the
+      chapter-complete card walks into the next chapter.
+- [x] The load-bearing choice in Ethics, written to the save for Act III.
+- [x] Every chapter plays to its end card in the browser suite.
+- [x] The plan has no unwritten chapters left in it.
 
 ### M7 — Act III & IV
 

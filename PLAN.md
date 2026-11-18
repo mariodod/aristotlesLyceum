@@ -2,7 +2,7 @@
 
 **Version:** 0.1
 **Date:** 2026-11-12
-**Status:** Milestone M5 complete. The engine, the art pipeline, the dialogue runtime, the content linter, Act I, the dialectic and the Codex exist and are verified end to end.
+**Status:** Milestone M6 complete. The engine, the art pipeline, the dialogue runtime, the content linter, Act I, Act II, the dialectic and the Codex exist and are verified end to end.
 
 ---
 
@@ -225,7 +225,7 @@ editing a scene.
 | **M4**  | Dialectic system and the syllogism builder                              | **Done**                                                                                           |
 | **M4b** | Localisation: catalogues, a language switch, a Spanish translation      | **Done**                                                                                           |
 | **M5**  | Codex screen, codex entries for Act II, codex-driven hints              | Done — the journal lists its entries, and the twenty-one Act II entries are written and translated |
-| **M6**  | Act II written: seven chapters, ~40 minutes                             | Not started                                                                                        |
+| **M6**  | Act II written: seven chapters, ~40 minutes                             | Done — all seven chapters, eight opponents and the chapter progression are written and verified    |
 | **M7**  | Act III written: eight stations; Act IV exam playable                   | Not started                                                                                        |
 | **M8**  | Audio: generated music and effects, settings, accessibility, text speed | Not started                                                                                        |
 | **M9**  | v1.0: polish, credits, licence audit, Pages release                     | Not started                                                                                        |
