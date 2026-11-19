@@ -53,10 +53,6 @@ export function isExpressionId(value: string): value is ExpressionId {
   return (EXPRESSION_IDS as readonly string[]).includes(value);
 }
 
-export function isStatId(value: string): value is StatId {
-  return (STAT_IDS as readonly string[]).includes(value);
-}
-
 export interface ChoiceOption {
   /** Text shown in the choice menu. */
   label: string;
@@ -207,10 +203,8 @@ export type StoryStep =
   | EndStep;
 
 export interface StoryScript {
+  /** Unique chapter id. The registry plays scripts in the order they appear. */
   id: string;
-  /** Chapter this script belongs to, used by the chapter registry. */
-  chapter: string;
-  title: string;
   /** Backdrop asset key the chapter opens on. */
   backdrop: string;
   steps: StoryStep[];

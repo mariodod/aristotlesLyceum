@@ -22,7 +22,7 @@ export const CHAPTERS: StoryScript[] = [
   ACT_TWO_LIFE,
 ];
 
-export const CHAPTER_IDS = CHAPTERS.map((script) => script.id);
+const CHAPTER_IDS = CHAPTERS.map((script) => script.id);
 
 export function chapterById(id: string): StoryScript | undefined {
   return CHAPTERS.find((script) => script.id === id);

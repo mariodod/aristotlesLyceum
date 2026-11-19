@@ -27,17 +27,3 @@ export function centredText(
 
   return text;
 }
-
-/**
- * Moves a piece of text so that it starts on a whole pixel.
- *
- * The same rule as `centredText`, for text that is already placed and only
- * needs snapping.
- */
-export function snapToWholePixel(
-  text: Phaser.GameObjects.BitmapText,
-  centre: number = GAME_WIDTH / 2,
-): void {
-  text.setOrigin(0, 0);
-  text.x = Math.round(centre - text.displayWidth / 2);
-}

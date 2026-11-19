@@ -10,8 +10,6 @@ import type { StoryScript } from '../../types/story.ts';
  */
 export const ACT_TWO_METAPHYSICS: StoryScript = {
   id: 'act-two-metaphysics',
-  chapter: 'act-two-metaphysics',
-  title: 'Act II — The Lyceum',
   backdrop: 'backdrop-lyceum',
   steps: [
     {
@@ -296,7 +294,6 @@ export const ACT_TWO_METAPHYSICS: StoryScript = {
       title: 'THE UNMOVED THING',
       subtitle: 'He asked what a thing is, and what it can become.',
     },
-    { at: 'final-jump', kind: 'jump', to: 'final-1' },
     {
       at: 'final-1',
       kind: 'say',

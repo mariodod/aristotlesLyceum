@@ -9,8 +9,6 @@ import type { StoryScript } from '../../types/story.ts';
  */
 export const ACT_TWO_SOUL: StoryScript = {
   id: 'act-two-soul',
-  chapter: 'act-two-soul',
-  title: 'Act II — The Lyceum',
   backdrop: 'backdrop-lyceum',
   steps: [
     {
@@ -271,7 +269,6 @@ export const ACT_TWO_SOUL: StoryScript = {
       title: 'NOT A PASSENGER',
       subtitle: 'He found the soul in the body and nowhere else.',
     },
-    { at: 'final-jump', kind: 'jump', to: 'final-1' },
     {
       at: 'final-1',
       kind: 'say',

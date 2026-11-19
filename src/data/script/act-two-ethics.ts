@@ -10,8 +10,6 @@ import type { StoryScript } from '../../types/story.ts';
  */
 export const ACT_TWO_ETHICS: StoryScript = {
   id: 'act-two-ethics',
-  chapter: 'act-two-ethics',
-  title: 'Act II — The Lyceum',
   backdrop: 'backdrop-lyceum',
   steps: [
     {
@@ -279,7 +277,6 @@ export const ACT_TWO_ETHICS: StoryScript = {
       subtitle:
         'He could not say what he wanted to be good at. He could say what he would do with the answer.',
     },
-    { at: 'final-jump', kind: 'jump', to: 'final-1' },
     {
       at: 'final-1',
       kind: 'say',

@@ -9,8 +9,6 @@ import type { StoryScript } from '../../types/story.ts';
  */
 export const ACT_TWO_PHYSICS: StoryScript = {
   id: 'act-two-physics',
-  chapter: 'act-two-physics',
-  title: 'Act II — The Lyceum',
   backdrop: 'backdrop-lyceum',
   steps: [
     {
@@ -271,7 +269,6 @@ export const ACT_TWO_PHYSICS: StoryScript = {
       title: 'THE FOUR ANSWERS',
       subtitle: 'He asked what a thing is made of, and what it is for.',
     },
-    { at: 'final-jump', kind: 'jump', to: 'final-1' },
     {
       at: 'final-1',
       kind: 'say',

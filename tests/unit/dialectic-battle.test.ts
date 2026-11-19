@@ -106,6 +106,17 @@ describe('DialecticBattle', () => {
     expect(dialogueText(events)).toContain('you have asserted it, not shown it');
   });
 
+  it('never empties the conviction bar by asserting alone', () => {
+    const state = battle();
+
+    for (let index = 0; index < 5; index += 1) {
+      const events = state.assertProposition('certainty-none-true');
+      expect(events.some((event) => event.type === 'won')).toBe(false);
+    }
+
+    expect(state.state.conviction).toBe(1);
+  });
+
   it('gains nothing for asserting one of the premises', () => {
     const state = battle();
     const before = state.state.conviction;

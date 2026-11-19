@@ -9,8 +9,6 @@ import type { StoryScript } from '../../types/story.ts';
  */
 export const ACT_TWO_LIFE: StoryScript = {
   id: 'act-two-life',
-  chapter: 'act-two-life',
-  title: 'Act II — The Lyceum',
   backdrop: 'backdrop-lyceum',
   steps: [
     {
@@ -231,7 +229,6 @@ export const ACT_TWO_LIFE: StoryScript = {
       title: 'THE METHOD',
       subtitle: 'He guessed wrong, and the guess was a good one.',
     },
-    { at: 'final-jump', kind: 'jump', to: 'final-1' },
     {
       at: 'final-1',
       kind: 'say',

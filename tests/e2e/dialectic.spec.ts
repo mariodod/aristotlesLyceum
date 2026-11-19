@@ -17,6 +17,42 @@ test('the dialectic opens with the opponent making a claim', async ({ page }) =>
   expect(errors).toEqual([]);
 });
 
+test('the terms list stays inside the screen', async ({ page }) => {
+  const errors = collectPageErrors(page);
+
+  // The Marking has the longest propositions in the game. Before the list
+  // started wrapping them, their ends ran off the right edge, so the player
+  // could not read the argument they were asked to take apart.
+  await page.goto('/?opponent=marking');
+  await page.waitForFunction(() => window.__LYCEUM_TEST__?.scene === 'Title');
+  await pressDown(page, 2);
+  await pressKey(page, 'z');
+  await expect.poll(() => readHook<string>(page, 'scene')).toBe('Dialectic');
+
+  // EXAMINE opens the list of propositions.
+  await pressKey(page, 'z');
+
+  const offscreen = await page.evaluate(() => {
+    const scene = window.__LYCEUM_GAME__?.scene.getScene('Dialectic');
+
+    return (
+      (scene?.children.list ?? []) as {
+        type?: string;
+        visible?: boolean;
+        x?: number;
+        displayWidth?: number;
+        text?: string;
+      }[]
+    )
+      .filter((item) => item.type === 'BitmapText' && item.visible)
+      .filter((item) => (item.x ?? 0) + (item.displayWidth ?? 0) > 640)
+      .map((item) => item.text);
+  });
+
+  expect(offscreen).toEqual([]);
+  expect(errors).toEqual([]);
+});
+
 test('the four moves are offered', async ({ page }) => {
   const errors = collectPageErrors(page);
 

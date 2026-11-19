@@ -10,8 +10,6 @@ import type { StoryScript } from '../../types/story.ts';
  */
 export const ACT_TWO_LOGIC: StoryScript = {
   id: 'act-two-logic',
-  chapter: 'act-two-logic',
-  title: 'Act II — The Lyceum',
   backdrop: 'backdrop-lyceum',
   steps: [
     {
@@ -337,7 +335,6 @@ export const ACT_TWO_LOGIC: StoryScript = {
       title: 'THE DEMONSTRATION',
       subtitle: 'He stated his terms and built one himself.',
     },
-    { at: 'final-jump', kind: 'jump', to: 'final-1' },
     {
       at: 'final-1',
       kind: 'say',

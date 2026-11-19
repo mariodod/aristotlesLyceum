@@ -5,8 +5,6 @@ import type { StoryScript } from '../../src/types/story.ts';
 
 const SCRIPT: StoryScript = {
   id: 'battle',
-  chapter: 'battle',
-  title: 'Battle',
   backdrop: 'backdrop-lyceum',
   steps: [
     { at: 'open', kind: 'say', speaker: 'narrator', text: 'The argument begins.' },

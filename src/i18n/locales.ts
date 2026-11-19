@@ -32,7 +32,3 @@ export const LOCALES: LocaleDefinition[] = [
 ];
 
 export const DEFAULT_LOCALE = 'en';
-
-export function localeById(id: string): LocaleDefinition | undefined {
-  return LOCALES.find((locale) => locale.id === id);
-}

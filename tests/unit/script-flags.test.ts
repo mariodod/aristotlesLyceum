@@ -4,8 +4,6 @@ import type { StoryScript } from '../../src/types/story.ts';
 
 const SCRIPT: StoryScript = {
   id: 'flags',
-  chapter: 'flags',
-  title: 'Flags',
   backdrop: 'backdrop-bedroom',
   steps: [
     {

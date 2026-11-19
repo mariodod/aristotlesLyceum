@@ -9,8 +9,6 @@ import type { StoryScript } from '../../types/story.ts';
  */
 export const ACT_TWO_POETICS: StoryScript = {
   id: 'act-two-poetics',
-  chapter: 'act-two-poetics',
-  title: 'Act II — The Lyceum',
   backdrop: 'backdrop-lyceum',
   steps: [
     {
@@ -230,7 +228,6 @@ export const ACT_TWO_POETICS: StoryScript = {
       title: 'THE RECOGNITION',
       subtitle: 'He saw the shape of his own night, and it was not empty.',
     },
-    { at: 'final-jump', kind: 'jump', to: 'final-1' },
     {
       at: 'final-1',
       kind: 'say',

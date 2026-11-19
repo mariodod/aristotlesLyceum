@@ -480,9 +480,7 @@ export const DIALECTIC_OPPONENTS: DialecticOpponent[] = [
   },
 ];
 
-export const OPPONENTS_BY_ID = new Map(
-  DIALECTIC_OPPONENTS.map((opponent) => [opponent.id, opponent]),
-);
+const OPPONENTS_BY_ID = new Map(DIALECTIC_OPPONENTS.map((opponent) => [opponent.id, opponent]));
 
 export function opponentById(id: string): DialecticOpponent | undefined {
   return OPPONENTS_BY_ID.get(id);

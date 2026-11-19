@@ -5,6 +5,39 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Fixed
+
+- **The terms list in a dialectic ran off the right edge of the screen.**
+  Propositions are whole sentences, but they were drawn single-line in a
+  narrow column, so the ends of the longer ones - the Marking and Authority
+  had the worst of them - were simply not on the screen. The list wraps each
+  proposition into as many lines as it needs, and a browser test walks the
+  scene graph to prove no text ends past the right edge.
+- **Four new opponents said one word where their predecessors said a line.**
+  Asserting a proposition against Reism, the Ghost, Imitation or Authority
+  produced the bare word "premise" in Spanish. The localisation linter now
+  compares the length of a translation with the English it replaces, so a
+  placeholder like that is reported instead of shipped. The four lines are
+  fixed, along with the article before "hilemorfismo" in the Physics chapter.
+- **Asserting a conclusion could empty the conviction bar without winning.**
+  The opponent then stood there with a zero bar and kept the floor, because
+  only a demonstrated argument can end a dialectic. Conviction now stops at
+  one when a conclusion is merely asserted.
+
+### Changed
+
+- The seven Act II chapter scripts no longer carry a `chapter` or `title`
+  field that nothing read, and the `final-jump` step that simply stepped to
+  the next step is gone from each of them. The browser suite's seven copies
+  of the same chapter sequence are one helper now, which made a wrong
+  expected ending visible and easier to fix.
+- Unused exports were removed: `snapToWholePixel`, `isStatId`, `localeById`,
+  and two re-exports of the Codex plan. The two lines the battle says when a
+  proposition is asserted are constants now, so the linter can check their
+  translations.
+
 ## [0.6.0] - 2026-11-19
 
 ### Fixed

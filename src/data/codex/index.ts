@@ -9,8 +9,6 @@ import { ACT_TWO_POETICS_CODEX } from './act-two-poetics.ts';
 import { ACT_TWO_SOUL_CODEX } from './act-two-soul.ts';
 
 export type { CodexEntry };
-export { PLANNED_CHAPTERS } from './plan.ts';
-export type { PlannedChapter } from './plan.ts';
 
 /**
  * Every codex entry in the game. A chapter's entries live in a file named

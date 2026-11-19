@@ -11,6 +11,17 @@ import { analyseSyllogism } from './syllogism.ts';
 const STARTING_CONVICTION = 3;
 
 /**
+ * The two lines the opponent says when the player asserts a proposition.
+ *
+ * They are the same for every opponent, so they live here once rather than
+ * being written out for each one. The localisation checker reads them to
+ * prove that every translation is a whole line and not a placeholder.
+ */
+export const PREMISE_LINE = 'That is one of the premises you would need. It is not yet an answer.';
+export const ASSERTED_LINE =
+  'Yes. Yes, that is what I say, and you are right to say it. But you have asserted it, not shown it. I want the demonstration.';
+
+/**
  * A dialectic, as a state machine.
  *
  * The opponent makes a claim. The player has four moves: interrogate it,
@@ -155,20 +166,23 @@ export class DialecticBattle {
         {
           type: 'dialogue',
           speaker: this.opponent.name,
-          text: 'That is one of the premises you would need. It is not yet an answer.',
+          text: PREMISE_LINE,
           key: this.claimKey('premise'),
           expression: 'neutral',
         },
       ];
     }
 
-    this.battleState.conviction = Math.max(0, this.battleState.conviction - 1);
+    // Asserting the conclusion weakens the opponent, but it never defeats
+    // them: only a demonstrated argument can do that. Letting the bar reach
+    // zero here would show a beaten opponent who is still holding the floor.
+    this.battleState.conviction = Math.max(1, this.battleState.conviction - 1);
 
     return [
       {
         type: 'dialogue',
         speaker: this.opponent.name,
-        text: 'Yes. Yes, that is what I say, and you are right to say it. But you have asserted it, not shown it. I want the demonstration.',
+        text: ASSERTED_LINE,
         key: this.claimKey('asserted'),
         expression: 'surprised',
       },

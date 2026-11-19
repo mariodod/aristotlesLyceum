@@ -192,8 +192,6 @@ interpreter over labelled steps.
 ```ts
 export const ACT_ONE: StoryScript = {
   id: 'act-one',
-  chapter: 'act-one',
-  title: 'Act I — The Desk',
   backdrop: 'backdrop-bedroom',
   steps: [
     { at: 'open', kind: 'chapter', title: 'ACT I', subtitle: 'The Desk' },

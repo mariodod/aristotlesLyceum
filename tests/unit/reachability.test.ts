@@ -5,8 +5,6 @@ import type { StoryScript } from '../../src/types/story.ts';
 
 const LINEAR: StoryScript = {
   id: 'linear',
-  chapter: 'linear',
-  title: 'Linear',
   backdrop: 'backdrop-bedroom',
   steps: [
     { at: 'a', kind: 'say', speaker: 'isaac', text: 'One.' },

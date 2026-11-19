@@ -66,8 +66,6 @@ not know a scene exists.
 ```ts
 interface StoryScript {
   id: string;
-  chapter: string;
-  title: string;
   backdrop: string;
   steps: StoryStep[];
 }

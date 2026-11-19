@@ -210,7 +210,7 @@ export class DialogueRuntime {
             speaker: step.speaker,
             text: step.text,
             key: step.key,
-            expression: step.expression ?? 'neutral',
+            expression: step.expression ?? DEFAULT_EXPRESSION,
             face: step.face,
           });
           return events;

@@ -24,6 +24,7 @@ import { DIALECTIC_OPPONENTS } from '../../src/data/dialectic/opponents.ts';
 import { LOCALES } from '../../src/i18n/locales.ts';
 import { FONT_METRICS } from '../../src/i18n/types.ts';
 import { placeholders } from '../../src/i18n/translate.ts';
+import { ASSERTED_LINE, PREMISE_LINE } from '../../src/systems/dialectic/battle.ts';
 import { GLYPHS } from '../assets/font.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
@@ -102,8 +103,8 @@ for (const opponent of DIALECTIC_OPPONENTS) {
   contentKeys.set(`dialectic.${opponent.id}.relevance`, claim.relevance);
   contentKeys.set(`dialectic.${opponent.id}.concession`, claim.concession);
   contentKeys.set(`dialectic.${opponent.id}.shrug`, claim.shrug);
-  contentKeys.set(`dialectic.${opponent.id}.premise`, '');
-  contentKeys.set(`dialectic.${opponent.id}.asserted`, '');
+  contentKeys.set(`dialectic.${opponent.id}.premise`, PREMISE_LINE);
+  contentKeys.set(`dialectic.${opponent.id}.asserted`, ASSERTED_LINE);
 
   for (const proposition of claim.propositions) {
     contentKeys.set(`dialectic.${proposition.id}`, proposition.text);
@@ -178,6 +179,19 @@ for (const locale of LOCALES) {
         report(
           `locale "${locale.id}"`,
           `the translation of "${key}" has the placeholders [${found}] but the English has [${expected}]`,
+        );
+      }
+
+      // A one-word placeholder where the English is a whole sentence is
+      // worse than a missing key: it renders as a word with no meaning.
+      // Spanish is a little longer than English, so a quarter of the
+      // English length is a very safe floor. This caught the four new
+      // opponents being given "Premisa" where their predecessors say a
+      // whole line.
+      if (englishText.length > 40 && text.length * 4 < englishText.length) {
+        report(
+          `locale "${locale.id}"`,
+          `the translation of "${key}" is only ${text.length} characters, against ${englishText.length} in English`,
         );
       }
     }

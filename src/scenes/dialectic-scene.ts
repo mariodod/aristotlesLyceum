@@ -9,6 +9,7 @@ import { metricsFor } from '../i18n/types.ts';
 import type { LocaleService } from '../services/locale-service.ts';
 import type { SaveService } from '../services/save-service.ts';
 import { DialecticBattle } from '../systems/dialectic/battle.ts';
+import { wrapText } from '../systems/dialogue/text-wrap.ts';
 import type { BattleEvent, BattleOption, Proposition } from '../types/dialectic.ts';
 import { setTestHook } from '../utils/test-hooks.ts';
 
@@ -24,6 +25,19 @@ export interface DialecticSceneData {
 
 const MENU_X = 348;
 const MENU_Y = 214;
+
+/**
+ * The terms list sits on the right of the battle box. A proposition is a
+ * whole sentence, so it is wrapped into that column and each row takes as
+ * many lines as it needs. Without this the longer propositions ran off the
+ * right edge of the screen, where the player could not read the argument
+ * they were being asked to take apart.
+ */
+const LIST_X = MENU_X + 12;
+const LIST_TOP = 186;
+const LIST_COLUMNS = 38;
+const LIST_LINE_HEIGHT = 10;
+const LIST_GAP = 1;
 
 /**
  * The dialectic.
@@ -255,7 +269,7 @@ export class DialecticScene extends Phaser.Scene {
 
     const header = this.add.bitmapText(
       MENU_X,
-      MENU_Y - 16,
+      LIST_TOP - 16,
       FONT_KEY,
       this.t(purpose === 'claim' ? 'ui.battle.assertOne' : 'ui.battle.theirTerms'),
     );
@@ -264,16 +278,17 @@ export class DialecticScene extends Phaser.Scene {
     this.listItems.push(header);
 
     const propositions = this.battle?.propositions() ?? [];
+    let top = LIST_TOP;
 
     for (const proposition of propositions) {
-      const item = this.add.bitmapText(
-        MENU_X + 12,
-        MENU_Y + 4 + this.listItems.length * 14,
-        FONT_KEY,
+      const text = wrapText(
         `${proposition.form}  ${this.propositionText(proposition)}`,
+        LIST_COLUMNS,
       );
+      const item = this.add.bitmapText(LIST_X, top, FONT_KEY, text);
       item.setDepth(120);
       this.listItems.push(item);
+      top += text.split('\n').length * LIST_LINE_HEIGHT + LIST_GAP;
     }
 
     this.refreshListCursor();

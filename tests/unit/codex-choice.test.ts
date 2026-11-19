@@ -9,8 +9,6 @@ import type { DialogueState, StoryScript } from '../../src/types/story.ts';
  */
 const SCRIPT: StoryScript = {
   id: 'codex-choice',
-  chapter: 'codex-choice',
-  title: 'Codex Choice',
   backdrop: 'backdrop-bedroom',
   steps: [
     {
