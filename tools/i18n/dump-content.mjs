@@ -1,35 +1,20 @@
-import { CHAPTERS } from '../../src/data/script/registry.ts';
-import { CODEX_ENTRIES } from '../../src/data/codex/index.ts';
+#!/usr/bin/env node
+/**
+ * Prints every story key the game uses with its English text.
+ *
+ * A translator takes this JSON, translates the values into a new
+ * `src/i18n/content/<locale>.json`, and `npm run i18n:check` proves the
+ * catalogue is complete. The keys come from the same collector the linter
+ * uses, so a new chapter, codex entry or opponent shows up here
+ * automatically.
+ */
+import { collectContentKeys } from './collect-keys.mjs';
 
+const keys = collectContentKeys();
 const out = {};
 
-for (const script of CHAPTERS) {
-  for (const step of script.steps) {
-    if (step.kind === 'say' && step.key) {
-      out[step.key] = step.text;
-    }
-    if (step.kind === 'choice' && step.key) {
-      out[step.key] = step.prompt;
-      step.options.forEach((option) => {
-        if (option.key) {
-          out[option.key] = option.label;
-        }
-      });
-    }
-    if (step.kind === 'chapterEnd' && step.key) {
-      out[step.key] = step.title;
-      if (step.subtitleKey && step.subtitle) {
-        out[step.subtitleKey] = step.subtitle;
-      }
-    }
-  }
-}
-
-for (const entry of CODEX_ENTRIES) {
-  out[`codex.${entry.id}.title`] = entry.title;
-  out[`codex.${entry.id}.origin`] = entry.origin;
-  out[`codex.${entry.id}.modern`] = entry.modern;
-  out[`codex.${entry.id}.sources`] = entry.sources.join('; ');
+for (const [key, text] of [...keys].sort(([a], [b]) => a.localeCompare(b))) {
+  out[key] = text;
 }
 
 console.log(JSON.stringify(out, null, 2));

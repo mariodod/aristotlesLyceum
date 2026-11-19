@@ -18,14 +18,11 @@
 import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { CHAPTERS } from '../../src/data/script/registry.ts';
-import { CODEX_ENTRIES } from '../../src/data/codex/index.ts';
-import { DIALECTIC_OPPONENTS } from '../../src/data/dialectic/opponents.ts';
 import { LOCALES } from '../../src/i18n/locales.ts';
 import { FONT_METRICS } from '../../src/i18n/types.ts';
 import { placeholders } from '../../src/i18n/translate.ts';
-import { ASSERTED_LINE, PREMISE_LINE } from '../../src/systems/dialectic/battle.ts';
 import { GLYPHS } from '../assets/font.mjs';
+import { collectContentKeys } from './collect-keys.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const projectRoot = join(here, '..', '..');
@@ -36,80 +33,7 @@ function report(where, message) {
   problems.push(`${where}: ${message}`);
 }
 
-/* Every key the story uses. */
-const contentKeys = new Map();
-
-for (const script of CHAPTERS) {
-  for (const step of script.steps) {
-    if (step.kind === 'say' && step.key) {
-      contentKeys.set(step.key, step.text);
-    }
-
-    if (step.kind === 'choice' && step.key) {
-      contentKeys.set(step.key, step.prompt);
-
-      for (const option of step.options) {
-        if (option.key) {
-          contentKeys.set(option.key, option.label);
-        }
-      }
-    }
-
-    if (step.kind === 'chapterEnd' && step.key) {
-      contentKeys.set(step.key, step.title);
-
-      if (step.subtitleKey && step.subtitle) {
-        contentKeys.set(step.subtitleKey, step.subtitle);
-      }
-    }
-
-    if (step.kind === 'chapter') {
-      if (step.titleKey) {
-        contentKeys.set(step.titleKey, step.title);
-      }
-
-      if (step.subtitleKey && step.subtitle) {
-        contentKeys.set(step.subtitleKey, step.subtitle);
-      }
-    }
-  }
-}
-
-for (const entry of CODEX_ENTRIES) {
-  if (entry.titleKey && entry.title) {
-    contentKeys.set(entry.titleKey, entry.title);
-  }
-  if (entry.originKey && entry.origin) {
-    contentKeys.set(entry.originKey, entry.origin);
-  }
-  if (entry.modernKey && entry.modern) {
-    contentKeys.set(entry.modernKey, entry.modern);
-  }
-  if (entry.sourcesKey && entry.sources.length > 0) {
-    contentKeys.set(entry.sourcesKey, entry.sources.join('; '));
-  }
-}
-
-for (const opponent of DIALECTIC_OPPONENTS) {
-  const claim = opponent.claims[0];
-
-  if (!claim) {
-    continue;
-  }
-
-  contentKeys.set(`dialectic.${opponent.id}.claim`, claim.text);
-  contentKeys.set(`dialectic.${opponent.id}.examination`, claim.examination);
-  contentKeys.set(`dialectic.${opponent.id}.objection`, claim.objection);
-  contentKeys.set(`dialectic.${opponent.id}.relevance`, claim.relevance);
-  contentKeys.set(`dialectic.${opponent.id}.concession`, claim.concession);
-  contentKeys.set(`dialectic.${opponent.id}.shrug`, claim.shrug);
-  contentKeys.set(`dialectic.${opponent.id}.premise`, PREMISE_LINE);
-  contentKeys.set(`dialectic.${opponent.id}.asserted`, ASSERTED_LINE);
-
-  for (const proposition of claim.propositions) {
-    contentKeys.set(`dialectic.${proposition.id}`, proposition.text);
-  }
-}
+const contentKeys = collectContentKeys();
 
 /* Every key the interface uses, found by reading the source for the literal. */
 const uiKeys = new Set();

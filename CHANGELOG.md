@@ -9,6 +9,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **An earlier note in this project claimed that stopped scenes keep their
+  keyboard listeners.** They do not. Phaser 4 gives each scene its own
+  KeyboardPlugin and removes its listeners when the scene shuts down. Three
+  round trips between the title and the journal leave one listener per key,
+  the stopped journal has none, and it does not answer a key press. The
+  journal test that first suggested otherwise had pressed down once on a
+  title menu that had gained a CONTINUE entry; the test was wrong, not the
+  engine. No code changed for this: the note is corrected so the next act is
+  not built around a problem that does not exist.
+
 - **The terms list in a dialectic ran off the right edge of the screen.**
   Propositions are whole sentences, but they were drawn single-line in a
   narrow column, so the ends of the longer ones - the Marking and Authority
@@ -37,6 +47,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   and two re-exports of the Codex plan. The two lines the battle says when a
   proposition is asserted are constants now, so the linter can check their
   translations.
+- The battle state had a `mode` that was written four times and read once:
+  only "won" was ever checked, and "done" was never set at all. It is a
+  single `won` flag now, which is all the scene and the tests ever asked of it.
+- `tools/i18n/dump-content.mjs` printed an incomplete list of keys: the
+  opponent lines and the act cards were missing. It shares the key collector
+  with the linter now, so both see the same 518 keys and a new chapter or
+  opponent appears in both without a second edit. The two translation tools
+  are documented in the manual's "Adding a language" section.
 
 ## [0.6.0] - 2026-11-19
 

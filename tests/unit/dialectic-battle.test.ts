@@ -117,6 +117,17 @@ describe('DialecticBattle', () => {
     expect(state.state.conviction).toBe(1);
   });
 
+  it('stays unfinished until a demonstrated argument wins', () => {
+    const state = battle();
+
+    expect(state.finished).toBe(false);
+    state.examine();
+    state.assertProposition('certainty-none-true');
+
+    expect(state.state.won).toBe(false);
+    expect(state.finished).toBe(false);
+  });
+
   it('gains nothing for asserting one of the premises', () => {
     const state = battle();
     const before = state.state.conviction;

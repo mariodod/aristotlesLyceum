@@ -446,11 +446,18 @@ lives inline in the scripts and never passes through a catalogue at all.
 
 ### Adding a language
 
-1. Write `src/i18n/ui/<locale>.json` and `src/i18n/content/<locale>.json`.
-   The linter tells you every key you are missing.
-2. Add the language to `src/i18n/locales.ts`, with the font it uses.
-3. If it needs a font the game does not have, add the atlas and its metrics
+1. `node tools/i18n/dump-content.mjs` prints every story key with its
+   English text, in the same set the linter checks. Translate the values
+   into `src/i18n/content/<locale>.json`.
+2. Write `src/i18n/ui/<locale>.json`. The linter tells you every key you
+   are missing.
+3. Add the language to `src/i18n/locales.ts`, with the font it uses.
+4. If it needs a font the game does not have, add the atlas and its metrics
    to `src/i18n/types.ts` and the manifest.
+
+For long patch files, `node tools/i18n/apply-patch.mjs <file>` applies the
+`=== FILE` / `--- FROM` / `--- TO` blocks it reads from disk, so a translation
+never has to survive shell quoting.
 
 The layout works out how many characters fit on a line from the font's
 advance, so a wider font wraps differently without anything else changing.

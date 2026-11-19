@@ -75,9 +75,6 @@ export interface DialecticOpponent {
   spriteKey?: string;
 }
 
-/** What the battle is doing right now. */
-export type BattleMode = 'claiming' | 'examining' | 'refuting' | 'won' | 'done';
-
 export interface BattleState {
   opponentId: string;
   /** The index of the claim currently on the table. */
@@ -88,7 +85,8 @@ export interface BattleState {
   examined: boolean;
   /** True once the refutation has been attempted. */
   attempted: boolean;
-  mode: BattleMode;
+  /** True once a demonstrated argument has won the claim. */
+  won: boolean;
 }
 
 /** The four things the player can do in a dialectic. */

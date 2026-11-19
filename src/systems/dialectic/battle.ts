@@ -41,7 +41,7 @@ export class DialecticBattle {
       conviction: STARTING_CONVICTION,
       examined: false,
       attempted: false,
-      mode: 'claiming',
+      won: false,
     };
   }
 
@@ -50,7 +50,7 @@ export class DialecticBattle {
   }
 
   get finished(): boolean {
-    return this.battleState.mode === 'won' || this.battleState.mode === 'done';
+    return this.battleState.won;
   }
 
   /** The claim on the table right now. */
@@ -101,8 +101,6 @@ export class DialecticBattle {
       return [{ type: 'lost' }];
     }
 
-    this.battleState.mode = 'claiming';
-
     return [
       { type: 'opened', claim },
       {
@@ -127,7 +125,6 @@ export class DialecticBattle {
     }
 
     this.battleState.examined = true;
-    this.battleState.mode = 'examining';
 
     return [
       {
@@ -233,7 +230,6 @@ export class DialecticBattle {
     }
 
     this.battleState.attempted = true;
-    this.battleState.mode = 'refuting';
 
     const major = claim.propositions.find((item) => item.id === majorId);
     const minor = claim.propositions.find((item) => item.id === minorId);
@@ -276,7 +272,7 @@ export class DialecticBattle {
     }
 
     this.battleState.conviction = 0;
-    this.battleState.mode = 'won';
+    this.battleState.won = true;
 
     events.push({
       type: 'dialogue',
