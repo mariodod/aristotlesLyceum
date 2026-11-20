@@ -19,6 +19,9 @@ describe('the chapter registry', () => {
       'act-two-poetics',
       'act-two-life',
       'act-three-alexandria',
+      'act-three-baghdad',
+      'act-three-paris',
+      'act-three-padua',
     ]);
   });
 
@@ -58,7 +61,10 @@ describe('the chapter registry', () => {
     expect(nextChapter('act-two-ethics')?.id).toBe('act-two-poetics');
     expect(nextChapter('act-two-poetics')?.id).toBe('act-two-life');
     expect(nextChapter('act-two-life')?.id).toBe('act-three-alexandria');
-    expect(nextChapter('act-three-alexandria')).toBeUndefined();
+    expect(nextChapter('act-three-alexandria')?.id).toBe('act-three-baghdad');
+    expect(nextChapter('act-three-baghdad')?.id).toBe('act-three-paris');
+    expect(nextChapter('act-three-paris')?.id).toBe('act-three-padua');
+    expect(nextChapter('act-three-padua')).toBeUndefined();
     expect(nextChapter('not-a-chapter')).toBeUndefined();
   });
 });

@@ -30,21 +30,6 @@ export interface PlannedChapter {
  */
 export const PLANNED_CHAPTERS: PlannedChapter[] = [
   {
-    id: 'act-three-baghdad',
-    title: 'Act III — Baghdad',
-    codex: ['avicennan-essence'],
-  },
-  {
-    id: 'act-three-paris',
-    title: 'Act III — Paris',
-    codex: ['aquinean-synthesis'],
-  },
-  {
-    id: 'act-three-padua',
-    title: 'Act III — Padua',
-    codex: ['harveyan-correction'],
-  },
-  {
     id: 'act-three-london',
     title: 'Act III — London',
     codex: ['baconian-method'],

@@ -8,6 +8,9 @@ import { ACT_TWO_ETHICS } from './act-two-ethics.ts';
 import { ACT_TWO_POETICS } from './act-two-poetics.ts';
 import { ACT_TWO_LIFE } from './act-two-life.ts';
 import { ACT_THREE_ALEXANDRIA } from './act-three-alexandria.ts';
+import { ACT_THREE_BAGHDAD } from './act-three-baghdad.ts';
+import { ACT_THREE_PARIS } from './act-three-paris.ts';
+import { ACT_THREE_PADUA } from './act-three-padua.ts';
 
 /**
  * Chapter registry. The order here is the order the game plays them in.
@@ -22,6 +25,9 @@ export const CHAPTERS: StoryScript[] = [
   ACT_TWO_POETICS,
   ACT_TWO_LIFE,
   ACT_THREE_ALEXANDRIA,
+  ACT_THREE_BAGHDAD,
+  ACT_THREE_PARIS,
+  ACT_THREE_PADUA,
 ];
 
 const CHAPTER_IDS = CHAPTERS.map((script) => script.id);
