@@ -111,6 +111,13 @@ export const CHARACTERS: Record<CharacterId, CharacterDefinition> = {
     spriteKey: 'char-turing',
     expressions: {},
   },
+  kant: {
+    id: 'kant',
+    name: 'Immanuel Kant',
+    color: 0xb8c0cc,
+    spriteKey: 'char-kant',
+    expressions: {},
+  },
 };
 
 export function characterName(id: CharacterId): string {

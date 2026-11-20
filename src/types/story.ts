@@ -18,6 +18,7 @@ export const CHARACTER_IDS = [
   'hume',
   'darwin',
   'turing',
+  'kant',
 ] as const;
 
 export type CharacterId = (typeof CHARACTER_IDS)[number];

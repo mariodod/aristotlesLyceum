@@ -125,6 +125,67 @@ export const DOWNHOUSE = {
   shade: 0xc8a468,
 };
 
+/**
+ * The six cities of the long walk. Each has its own sky, stone and one
+ * landmark, so a station reads as a place before anybody speaks.
+ */
+export const STATIONS = {
+  baghdad: {
+    skyTop: 0x2a3a6e,
+    skyBottom: 0xe8a86a,
+    building: 0xc9a26a,
+    buildingDark: 0x9a7648,
+    ground: 0xa88454,
+    groundLight: 0xc09a68,
+    accent: 0x3f8a7a,
+  },
+  paris: {
+    skyTop: 0x4a5a86,
+    skyBottom: 0xb8b4a8,
+    building: 0x9a8f82,
+    buildingDark: 0x6a6058,
+    ground: 0x746a60,
+    groundLight: 0x8a8074,
+    accent: 0xd8cfc0,
+  },
+  padua: {
+    skyTop: 0x3f7ba0,
+    skyBottom: 0xc8dcc8,
+    building: 0xc2a886,
+    buildingDark: 0x8a7258,
+    ground: 0x8a9a68,
+    groundLight: 0xa4b47c,
+    accent: 0x7a4a38,
+  },
+  london: {
+    skyTop: 0x48586a,
+    skyBottom: 0xa8b4b8,
+    building: 0x7a746c,
+    buildingDark: 0x4e4a46,
+    ground: 0x5e5c54,
+    groundLight: 0x747268,
+    accent: 0xc8a45a,
+  },
+  utrecht: {
+    skyTop: 0x587fa0,
+    skyBottom: 0xd0d8c8,
+    building: 0xa89078,
+    buildingDark: 0x74604c,
+    ground: 0x7a8a58,
+    groundLight: 0x94a470,
+    accent: 0x8a6a4a,
+  },
+  konigsberg: {
+    skyTop: 0x3a4a6a,
+    skyBottom: 0x9fa8b8,
+    building: 0x8e887e,
+    buildingDark: 0x5f5a52,
+    ground: 0x5a6a72,
+    groundLight: 0x74848c,
+    accent: 0xd8c8a0,
+  },
+};
+
 export const CLASSROOM = {
   wallTop: 0x9aa89e,
   wallBottom: 0xc2cec2,

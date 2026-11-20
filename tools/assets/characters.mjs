@@ -568,6 +568,16 @@ const SHIRT = {
 };
 
 /*
+ * Kant: the same silhouette as a professor in a coat, with a powdered wig
+ * in place of hair. The face block is shared, so he reacts like everybody
+ * else; only the head above it and the colours of the coat are his.
+ */
+const KANT = {
+  ...SHIRT,
+  face: { shape: 'plain', expression: 'neutral' },
+};
+
+/*
  * Mrs. Okonkwo, who teaches the philosophy class and is going to read the
  * results.
  */
@@ -793,6 +803,20 @@ export const CHARACTERS_DEFS = [
       t: 0xe8dfd0,
       r: 0x6b4a7a,
       R: 0x4c3358,
+    },
+  },
+  {
+    key: 'char-kant',
+    url: 'assets/sprites/char-kant.png',
+    parts: KANT,
+    colors: {
+      ...faceColors(0xdcc0a0, 0xb99878),
+      // The powdered wig is the whole of the silhouette.
+      H: 0xd8d4cc,
+      h: 0xb4b0a8,
+      // A dark coat over a pale cravat.
+      f: 0x3a3f4a,
+      t: 0xe8e2d0,
     },
   },
 ];

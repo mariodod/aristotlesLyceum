@@ -74,6 +74,48 @@
       "height": 52
     },
     {
+      "key": "char-kant-portrait",
+      "url": "assets/portraits/kant.png",
+      "width": 52,
+      "height": 52
+    },
+    {
+      "key": "backdrop-baghdad",
+      "url": "assets/backdrops/baghdad.png",
+      "width": 640,
+      "height": 360
+    },
+    {
+      "key": "backdrop-paris",
+      "url": "assets/backdrops/paris.png",
+      "width": 640,
+      "height": 360
+    },
+    {
+      "key": "backdrop-padua",
+      "url": "assets/backdrops/padua.png",
+      "width": 640,
+      "height": 360
+    },
+    {
+      "key": "backdrop-london",
+      "url": "assets/backdrops/london.png",
+      "width": 640,
+      "height": 360
+    },
+    {
+      "key": "backdrop-utrecht",
+      "url": "assets/backdrops/utrecht.png",
+      "width": 640,
+      "height": 360
+    },
+    {
+      "key": "backdrop-konigsberg",
+      "url": "assets/backdrops/konigsberg.png",
+      "width": 640,
+      "height": 360
+    },
+    {
       "key": "backdrop-bedroom",
       "url": "assets/backdrops/bedroom.png",
       "width": 640,
@@ -1105,6 +1147,89 @@
         },
         {
           "key": "char-examiner-determined",
+          "frames": [
+            9
+          ],
+          "frameRate": 1,
+          "repeat": 0
+        }
+      ]
+    },
+    {
+      "key": "char-kant",
+      "url": "assets/sprites/char-kant.png",
+      "frameWidth": 32,
+      "frameHeight": 48,
+      "frameCount": 10,
+      "animations": [
+        {
+          "key": "char-kant-idle",
+          "frames": [
+            0,
+            1,
+            0
+          ],
+          "frameRate": 2.5,
+          "repeat": -1
+        },
+        {
+          "key": "char-kant-neutral",
+          "frames": [
+            2
+          ],
+          "frameRate": 1,
+          "repeat": 0
+        },
+        {
+          "key": "char-kant-happy",
+          "frames": [
+            3
+          ],
+          "frameRate": 1,
+          "repeat": 0
+        },
+        {
+          "key": "char-kant-sad",
+          "frames": [
+            4
+          ],
+          "frameRate": 1,
+          "repeat": 0
+        },
+        {
+          "key": "char-kant-surprised",
+          "frames": [
+            5
+          ],
+          "frameRate": 1,
+          "repeat": 0
+        },
+        {
+          "key": "char-kant-thinking",
+          "frames": [
+            6
+          ],
+          "frameRate": 1,
+          "repeat": 0
+        },
+        {
+          "key": "char-kant-angry",
+          "frames": [
+            7
+          ],
+          "frameRate": 1,
+          "repeat": 0
+        },
+        {
+          "key": "char-kant-tired",
+          "frames": [
+            8
+          ],
+          "frameRate": 1,
+          "repeat": 0
+        },
+        {
+          "key": "char-kant-determined",
           "frames": [
             9
           ],

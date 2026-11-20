@@ -1,5 +1,5 @@
 import { Canvas, mix } from './pixel.mjs';
-import { BEDROOM, CLASSROOM, DOWNHOUSE, LIBRARY, LYCEUM } from './palette.mjs';
+import { BEDROOM, CLASSROOM, DOWNHOUSE, LIBRARY, LYCEUM, STATIONS } from './palette.mjs';
 
 /**
  * Ordered 4x4 Bayer matrix. Dithering two colours against this threshold
@@ -439,7 +439,145 @@ export function classroomBackdrop(width = 640, height = 360) {
   return canvas;
 }
 
+/**
+ * A city on the long walk: a dithered sky, a skyline of flat buildings, a
+ * landmark that says where we are, and a strip of ground. The landmark and
+ * the skyline stay above y = 232 because the dialogue box covers the rest.
+ */
+export function cityBackdrop(config, width = 640, height = 360) {
+  const canvas = new Canvas(width, height);
+
+  ditherGradient(canvas, 0, 0, width, 232, config.skyTop, config.skyBottom);
+
+  // A skyline of simple blocks, tall in the middle and lower at the edges.
+  for (let index = 0; index < 16; index += 1) {
+    const blockWidth = 32 + ((index * 7) % 18);
+    const x = index * 41 - 8;
+    const blockHeight = 38 + ((index * 13) % 46);
+    const y = 232 - blockHeight;
+    canvas.rect(x, y, blockWidth, blockHeight, config.buildingDark);
+    canvas.rect(x + 3, y + 3, blockWidth - 6, blockHeight - 3, config.building);
+
+    for (let window = 0; window < 3; window += 1) {
+      const wy = y + 12 + window * 14;
+
+      if (wy < 224) {
+        canvas.rect(x + 8, wy, 5, 7, config.accent);
+        canvas.rect(x + 19, wy, 5, 7, config.accent);
+      }
+    }
+  }
+
+  config.landmark(canvas, config);
+
+  canvas.rect(0, 232, width, height - 232, config.ground);
+
+  for (let y = 244; y < height; y += 12) {
+    canvas.hline(0, y, width, config.groundLight);
+  }
+
+  return canvas;
+}
+
+const baghdadLandmark = (canvas, colors) => {
+  // A dome and a minaret against the deserts sky.
+  canvas.rect(72, 142, 14, 90, colors.buildingDark);
+  canvas.ellipse(79, 142, 13, 7, colors.accent);
+  canvas.rect(104, 168, 78, 64, colors.buildingDark);
+  canvas.ellipse(143, 170, 39, 30, colors.accent);
+  canvas.rect(139, 138, 8, 12, colors.accent);
+};
+
+const parisLandmark = (canvas, colors) => {
+  // Two cathedral towers and the spire between them.
+  for (const x of [430, 518]) {
+    canvas.rect(x, 120, 34, 112, colors.buildingDark);
+    canvas.rect(x + 5, 126, 24, 106, colors.accent);
+    canvas.rect(x + 13, 96, 8, 26, colors.accent);
+  }
+  canvas.rect(474, 154, 32, 78, colors.buildingDark);
+  canvas.rect(481, 110, 18, 48, colors.accent);
+};
+
+const paduaLandmark = (canvas, colors) => {
+  // The arcades of an anatomy theatre, with a red roof.
+  canvas.rect(250, 128, 160, 104, colors.buildingDark);
+  canvas.rect(250, 128, 160, 12, colors.accent);
+  for (let index = 0; index < 5; index += 1) {
+    const x = 262 + index * 30;
+    canvas.rect(x, 158, 20, 74, colors.buildingDark);
+    canvas.ellipse(x + 10, 158, 10, 14, colors.building);
+    canvas.rect(x + 7, 172, 6, 60, colors.building);
+  }
+};
+
+const londonLandmark = (canvas, colors) => {
+  // A clock tower over a row of chimneys.
+  canvas.rect(330, 76, 40, 156, colors.buildingDark);
+  canvas.rect(336, 82, 28, 150, colors.building);
+  canvas.ellipse(350, 108, 11, 11, colors.accent);
+  canvas.rect(348, 96, 4, 14, colors.buildingDark);
+  canvas.rect(344, 62, 12, 16, colors.accent);
+  for (const x of [232, 270, 410, 446]) {
+    canvas.rect(x, 156, 12, 76, colors.buildingDark);
+    canvas.rect(x - 2, 152, 16, 6, colors.accent);
+  }
+};
+
+const utrechtLandmark = (canvas, colors) => {
+  // A university hall with a rounded pediment and two tall windows.
+  canvas.rect(238, 132, 152, 100, colors.buildingDark);
+  canvas.rect(246, 140, 136, 92, colors.building);
+  canvas.ellipse(314, 132, 76, 22, colors.accent);
+  for (const x of [274, 334]) {
+    canvas.rect(x, 166, 22, 66, colors.buildingDark);
+    canvas.rect(x + 4, 170, 14, 58, colors.accent);
+  }
+};
+
+const konigsbergLandmark = (canvas, colors) => {
+  // An observatory dome over a bridge across the Pregel.
+  canvas.rect(388, 156, 96, 76, colors.buildingDark);
+  canvas.ellipse(436, 156, 48, 34, colors.accent);
+  canvas.rect(432, 120, 8, 12, colors.accent);
+  canvas.rect(180, 196, 280, 8, colors.building);
+  for (const x of [212, 292, 372]) {
+    canvas.rect(x, 204, 10, 28, colors.buildingDark);
+  }
+  canvas.rect(0, 216, 640, 16, colors.ground);
+};
+
 export const BACKDROP_ASSETS = [
+  {
+    key: 'backdrop-baghdad',
+    url: 'assets/backdrops/baghdad.png',
+    canvas: cityBackdrop({ ...STATIONS.baghdad, landmark: baghdadLandmark }),
+  },
+  {
+    key: 'backdrop-paris',
+    url: 'assets/backdrops/paris.png',
+    canvas: cityBackdrop({ ...STATIONS.paris, landmark: parisLandmark }),
+  },
+  {
+    key: 'backdrop-padua',
+    url: 'assets/backdrops/padua.png',
+    canvas: cityBackdrop({ ...STATIONS.padua, landmark: paduaLandmark }),
+  },
+  {
+    key: 'backdrop-london',
+    url: 'assets/backdrops/london.png',
+    canvas: cityBackdrop({ ...STATIONS.london, landmark: londonLandmark }),
+  },
+  {
+    key: 'backdrop-utrecht',
+    url: 'assets/backdrops/utrecht.png',
+    canvas: cityBackdrop({ ...STATIONS.utrecht, landmark: utrechtLandmark }),
+  },
+  {
+    key: 'backdrop-konigsberg',
+    url: 'assets/backdrops/konigsberg.png',
+    canvas: cityBackdrop({ ...STATIONS.konigsberg, landmark: konigsbergLandmark }),
+  },
   {
     key: 'backdrop-bedroom',
     url: 'assets/backdrops/bedroom.png',
