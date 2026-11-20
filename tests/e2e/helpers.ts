@@ -103,7 +103,13 @@ export async function advanceUntilChoice(page: Page, maxSteps = 24): Promise<voi
  */
 export async function advanceUntilText(page: Page, needle: string, maxSteps = 30): Promise<void> {
   for (let index = 0; index < maxSteps; index += 1) {
-    if ((await readHook<string>(page, 'lineText')).includes(needle)) {
+    // The visible text is only partly revealed while the typewriter runs, so
+    // a needle late in a long line would be missed if we looked there alone.
+    // `lastLine` is the whole line the scene was given.
+    const visible = await readHook<string>(page, 'lineText');
+    const full = await readHook<string>(page, 'lastLine');
+
+    if (visible.includes(needle) || full.includes(needle)) {
       return;
     }
 

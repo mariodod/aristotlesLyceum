@@ -1,5 +1,6 @@
 import type { CodexEntry } from './types.ts';
 import { ACT_ONE_CODEX } from './act-one.ts';
+import { ACT_THREE_CODEX } from './act-three.ts';
 import { ACT_TWO_ETHICS_CODEX } from './act-two-ethics.ts';
 import { ACT_TWO_LIFE_CODEX } from './act-two-life.ts';
 import { ACT_TWO_LOGIC_CODEX } from './act-two-logic.ts';
@@ -24,6 +25,7 @@ export const CODEX_ENTRIES: CodexEntry[] = [
   ...ACT_TWO_ETHICS_CODEX,
   ...ACT_TWO_POETICS_CODEX,
   ...ACT_TWO_LIFE_CODEX,
+  ...ACT_THREE_CODEX,
 ];
 
 export const CODEX_BY_ID = new Map(CODEX_ENTRIES.map((entry) => [entry.id, entry]));
