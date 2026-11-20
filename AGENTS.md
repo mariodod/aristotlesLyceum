@@ -222,6 +222,7 @@ export const ACT_ONE: StoryScript = {
 | `stage`      | Places characters on the stage and optionally swaps the backdrop.                                 |
 | `say`        | One line of dialogue, with an optional expression.                                                |
 | `choice`     | A menu. Options jump to a label and may move a stat or set a flag.                                |
+| `exam`       | The playable exam. Questions are asked one at a time and marked by pure rules.                    |
 | `codex`      | Unlocks a Codex entry. The id must exist.                                                         |
 | `stat`       | Moves a stat directly.                                                                            |
 | `flag`       | Sets a boolean flag.                                                                              |
@@ -625,6 +626,8 @@ human playtest is the one open item, and its protocol is in
 entries that Act II will unlock, in English and in Spanish, and the journal
 lists them. Act II is written: seven chapters from Logic to Life, each
 ending in a dialectic, each filing three of the twenty-one entries, with
-the eight opponents the table needs. The title continues into whichever
-chapter comes next, and the load-bearing choice in Ethics is written to
-the save for Act III to read.
+the eight opponents the table needs. Act III is eight stations from
+Alexandria to Down House, each filing a Codex entry, and Act IV wakes at
+the desk for a playable exam with three endings. The title continues into
+whichever chapter comes next, and the load-bearing choice in Ethics is
+read at both ends of the long walk.

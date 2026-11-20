@@ -64,6 +64,9 @@ function continuations(
     case 'choice':
       return step.options.map((option) => labels.get(option.goto));
 
+    case 'exam':
+      return [labels.get(step.goto)];
+
     case 'end':
       return [];
 

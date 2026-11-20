@@ -5,7 +5,28 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [0.7.0] - 2026-11-20
+
+### Added
+
+- **Act III — The Long Walk.** Eight stations from Alexandria to Down House,
+  each a person, a place and one thing done with Aristotle's work. Each
+  files its own Codex entry, written and translated, so the journal now
+  holds thirty-one sourced entries. Six city backdrops and a Kant sprite are
+  generated from the committed art scripts.
+- **The load-bearing choice comes due.** The flag written in Ethics is read
+  at both ends of the walk: Isaac challenges the teaching in Alexandria and
+  revisits the decision at Down House. An earlier act's choice finally
+  changes what the player reads.
+- **Act IV — The Exam.** Isaac wakes at the desk for six questions answered
+  through the same choice menu, one unanswerable by honesty, and three
+  endings. Marking is a pure system with its own tests; the score is never
+  shown, and a flag names the ending the script displays. A new `exam` step
+  kind carries the paper as data rather than a branch in a scene.
+- **Linter rules for the new steps.** The content check proves every exam
+  question has one correct and one honest answer, the key collector covers
+  exam text in both languages, and reachability follows the exam's `goto`.
+  A browser test plays all three exam endings.
 
 ### Fixed
 

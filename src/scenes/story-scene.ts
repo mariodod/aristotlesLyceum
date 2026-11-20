@@ -19,6 +19,7 @@ import type {
   CharacterId,
   DialogueEvent,
   DialogueState,
+  ExamQuestion,
   ExpressionId,
   StoryScript,
 } from '../types/story.ts';
@@ -30,7 +31,7 @@ interface StorySceneData {
   resumeAt?: string;
 }
 
-type StoryMode = 'line' | 'choice' | 'done';
+type StoryMode = 'line' | 'choice' | 'question' | 'done';
 
 /**
  * The scene every chapter plays in.
@@ -70,6 +71,9 @@ export class StoryScene extends Phaser.Scene {
   private speaker: CharacterId = 'narrator';
   private currentLine = '';
   private choicePrompt = '';
+  private examIndex = 0;
+  private examTotal = 0;
+  private examEnding = '';
   private currentExpression: ExpressionId = 'neutral';
   private endingTitle = '';
   private endingSubtitle = '';
@@ -112,6 +116,9 @@ export class StoryScene extends Phaser.Scene {
     this.endingSubtitleKey = undefined;
     this.currentLine = '';
     this.currentExpression = 'neutral';
+    this.examIndex = 0;
+    this.examTotal = 0;
+    this.examEnding = '';
 
     const script = chapterById(this.chapterId);
 
@@ -205,6 +212,12 @@ export class StoryScene extends Phaser.Scene {
         case 'codex':
           this.unlockCodex(event.entry);
           break;
+        case 'examQuestion':
+          this.showExamQuestion(event.question, event.index, event.total);
+          break;
+        case 'examResult':
+          this.examEnding = event.ending;
+          break;
         case 'stat':
           this.persistStats();
           break;
@@ -281,6 +294,28 @@ export class StoryScene extends Phaser.Scene {
     if (this.anims.exists(key)) {
       sprite.play(key, true);
     }
+  }
+
+  /**
+   * One exam question, in the same menu the choices use. The honest "I
+   * don't know" answer is just another option; the marking lives in the
+   * pure exam system, not here.
+   */
+  private showExamQuestion(question: ExamQuestion, index: number, total: number): void {
+    const box = this.textBox;
+
+    if (!box) {
+      return;
+    }
+
+    this.examIndex = index;
+    this.examTotal = total;
+    this.mode = 'question';
+    box.openChoices(
+      this.tc(question.key, question.text),
+      question.options.map((option) => ({ text: this.tc(option.key, option.label) })),
+    );
+    this.publishHook();
   }
 
   private showChoices(prompt: string, options: ChoiceLabel[]): void {
@@ -680,10 +715,16 @@ export class StoryScene extends Phaser.Scene {
       return;
     }
 
-    if (this.mode === 'choice') {
+    if (this.mode === 'choice' || this.mode === 'question') {
       const index = box.selectedChoice;
       box.closeChoices();
-      this.applyEvents(runtime.choose(index));
+
+      if (this.mode === 'question') {
+        this.applyEvents(runtime.answer(index));
+      } else {
+        this.applyEvents(runtime.choose(index));
+      }
+
       return;
     }
 
@@ -712,7 +753,7 @@ export class StoryScene extends Phaser.Scene {
   }
 
   private moveChoice(delta: number): void {
-    if (this.mode !== 'choice') {
+    if (this.mode !== 'choice' && this.mode !== 'question') {
       return;
     }
 
@@ -762,6 +803,9 @@ export class StoryScene extends Phaser.Scene {
       speaker: CHARACTERS[this.speaker].name,
       typing: box?.isTyping ?? false,
       choosing: this.mode === 'choice',
+      examIndex: this.examIndex,
+      examTotal: this.examTotal,
+      examEnding: this.examEnding,
       choiceCount: box?.choiceCount ?? 0,
       choiceIndex: box?.selectedChoice ?? 0,
       choiceLabels: box?.choiceLabels ?? [],

@@ -2,10 +2,14 @@ import type {
   ChoiceOption,
   DialogueEvent,
   DialogueState,
+  ExamQuestion,
+  ExamStep,
   ExpressionId,
   StoryScript,
   StoryStep,
 } from '../../types/story.ts';
+import type { ExamAnswer } from './exam.ts';
+import { endingFlag, scoreExam } from './exam.ts';
 
 /**
  * The dialogue runtime walks a script and reports what the scene should show.
@@ -21,6 +25,8 @@ export class DialogueRuntime {
   private readonly stepIndex = new Map<StoryStep, number>();
   private cursor = 0;
   private pending: StoryStep | undefined;
+  /** The exam in progress, and the answers given so far. */
+  private exam: { step: ExamStep; answers: ExamAnswer[] } | undefined;
   private readonly flags = new Map<string, boolean>();
   private readonly stats: DialogueState['stats'];
   private readonly unlockedCodex = new Set<string>();
@@ -113,6 +119,12 @@ export class DialogueRuntime {
         ];
       }
 
+      if (this.pending.kind === 'exam' && this.exam) {
+        // The exam only unblocks through `answer`. Repeating the question
+        // is friendlier than throwing or silently skipping ahead.
+        return [this.questionEvent()];
+      }
+
       this.cursor = (this.stepIndex.get(this.pending) ?? this.cursor) + 1;
       this.pending = undefined;
     }
@@ -156,6 +168,76 @@ export class DialogueRuntime {
     this.pending = undefined;
 
     return [...events, ...this.run()];
+  }
+
+  /**
+   * Applies one exam answer. The last answer marks the whole exam and
+   * sets the flag the script branches on for its ending.
+   */
+  answer(optionIndex: number): DialogueEvent[] {
+    if (!this.pending || this.pending.kind !== 'exam' || !this.exam) {
+      throw new Error('answer() was called while no exam question was pending.');
+    }
+
+    const { step, answers } = this.exam;
+    const question = step.questions[answers.length];
+
+    if (!question) {
+      throw new Error('The exam has no question left to answer.');
+    }
+
+    const option = question.options[optionIndex];
+
+    if (!option) {
+      throw new Error(`No exam option at index ${optionIndex}.`);
+    }
+
+    answers.push({ correct: option.correct === true, honest: option.honest === true });
+
+    if (answers.length < step.questions.length) {
+      return [this.questionEvent()];
+    }
+
+    const mark = scoreExam(answers);
+    const flag = endingFlag(mark.ending);
+    this.flags.set(flag, true);
+
+    const target = this.labels.get(step.goto);
+
+    if (target === undefined) {
+      throw new Error(`Exam "${step.at}" continues at unknown label "${step.goto}".`);
+    }
+
+    this.exam = undefined;
+    this.pending = undefined;
+    this.cursor = target;
+
+    return [
+      {
+        type: 'examResult',
+        ending: mark.ending,
+        correct: mark.correct,
+        honest: mark.honest,
+        total: mark.total,
+      },
+      { type: 'flag', flag, value: true },
+      ...this.run(),
+    ];
+  }
+
+  private questionEvent(): Extract<DialogueEvent, { type: 'examQuestion' }> {
+    const question: ExamQuestion | undefined = this.exam?.step.questions[this.exam.answers.length];
+
+    if (!question) {
+      throw new Error('The exam has no question to ask.');
+    }
+
+    return {
+      type: 'examQuestion',
+      question,
+      index: this.exam?.answers.length ?? 0,
+      total: this.exam?.step.questions.length ?? 0,
+    };
   }
 
   private applyStat(stat: keyof DialogueState['stats'], delta: number): DialogueEvent {
@@ -219,6 +301,24 @@ export class DialogueRuntime {
         case 'choice': {
           this.pending = step;
           events.push(this.choiceEvent(step));
+          return events;
+        }
+
+        case 'exam': {
+          const first = step.questions[0];
+
+          if (!first) {
+            throw new Error(`Exam "${step.at}" has no questions.`);
+          }
+
+          this.pending = step;
+          this.exam = { step, answers: [] };
+          events.push({
+            type: 'examQuestion',
+            question: first,
+            index: 0,
+            total: step.questions.length,
+          });
           return events;
         }
 

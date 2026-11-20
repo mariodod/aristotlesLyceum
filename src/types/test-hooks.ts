@@ -30,6 +30,11 @@ export interface LyceumTestHook {
   typing: boolean;
   /** True while a choice menu is open. */
   choosing: boolean;
+  /** Which exam question is on screen, and how many there are. */
+  examIndex: number;
+  examTotal: number;
+  /** The ending the exam earned, once it has been marked. */
+  examEnding: string;
   /** Number of options in the open choice menu. */
   choiceCount: number;
   /** Index of the highlighted choice. */

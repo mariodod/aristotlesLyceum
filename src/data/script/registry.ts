@@ -15,6 +15,7 @@ import { ACT_THREE_LONDON } from './act-three-london.ts';
 import { ACT_THREE_UTRECHT } from './act-three-utrecht.ts';
 import { ACT_THREE_KONIGSBERG } from './act-three-konigsberg.ts';
 import { ACT_THREE_DOWN_HOUSE } from './act-three-down-house.ts';
+import { ACT_FOUR_EXAM } from './act-four-exam.ts';
 
 /**
  * Chapter registry. The order here is the order the game plays them in.
@@ -36,6 +37,7 @@ export const CHAPTERS: StoryScript[] = [
   ACT_THREE_UTRECHT,
   ACT_THREE_KONIGSBERG,
   ACT_THREE_DOWN_HOUSE,
+  ACT_FOUR_EXAM,
 ];
 
 const CHAPTER_IDS = CHAPTERS.map((script) => script.id);

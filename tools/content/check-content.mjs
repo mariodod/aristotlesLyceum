@@ -224,6 +224,39 @@ for (const script of CHAPTERS) {
       }
     }
 
+    if (step.kind === 'exam') {
+      if (!labels.has(step.goto)) {
+        report(where, `exam at "${step.at}" continues at unknown label "${step.goto}"`);
+      }
+
+      if (step.questions.length < 2) {
+        report(where, `exam "${step.at}" has fewer than two questions`);
+      }
+
+      for (const [index, question] of step.questions.entries()) {
+        const correct = question.options.filter((option) => option.correct === true).length;
+        const honest = question.options.filter((option) => option.honest === true).length;
+
+        if (question.options.length < 2) {
+          report(where, `exam "${step.at}" question ${index + 1} has fewer than two options`);
+        }
+
+        if (correct !== 1) {
+          report(
+            where,
+            `exam "${step.at}" question ${index + 1} has ${correct} correct options, not one`,
+          );
+        }
+
+        if (honest !== 1) {
+          report(
+            where,
+            `exam "${step.at}" question ${index + 1} has ${honest} honest options, not one`,
+          );
+        }
+      }
+    }
+
     if (step.kind === 'stage') {
       for (const actor of step.actors) {
         if (!CHARACTER_IDS.includes(actor.character)) {

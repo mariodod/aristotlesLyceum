@@ -18,7 +18,7 @@
 | M4b | Localisation   | The game speaks more than one language                              | Done        |
 | M5  | Codex          | Journal screen complete, Act II entries authored                    | Done        |
 | M6  | Act II         | Seven chapters, forty minutes of writing                            | Done        |
-| M7  | Act III & IV   | Eight stations and a playable exam                                  | Not started |
+| M7  | Act III & IV   | Eight stations and a playable exam                                  | Done        |
 | M8  | Audio & access | Generated music, settings, text speed, accessibility                | Not started |
 | M9  | v1.0           | Polish, credits, licence audit, release                             | Not started |
 
@@ -194,6 +194,18 @@ Aristotle explained" line.
 
 **Done when:** a player who finishes the game can name three people who used
 Aristotle and one who corrected him.
+
+**Progress:**
+
+- [x] Eight stations, from Alexandria to Down House, each with a person, a
+      place and one thing done with Aristotle.
+- [x] One Codex entry per station, written and translated, all now unlocked.
+- [x] The load-bearing choice from Ethics is read at both ends of Act III.
+- [x] Act IV wakes at the desk with a playable six-question exam and three
+      endings, marked by pure rules that never show the score.
+- [x] Chapter progression runs from Act I to the exam, and the browser
+      suite plays every station and all three exam endings.
+- [x] Six new station backdrops and the Kant sprite are generated from code.
 
 ### M8 — Audio & access
 

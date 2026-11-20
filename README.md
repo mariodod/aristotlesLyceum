@@ -2,7 +2,7 @@
 
 **A 2D pixel-art narrative game about Aristotle, his philosophy, and where it still runs.**
 
-> **Status:** `v0.6.0`. The engine, the art pipeline, the dialogue runtime, Act I, the dialectic, the localisation and the Dream Journal exist and are verified end to end. Act I is a finished five-minute chapter with three endings, and Act II is seven chapters from Logic to Life, each ending in a dialectic and filing three Codex entries. Act III onward is still to be written. See [`PLAN.md`](PLAN.md) for the roadmap.
+> **Status:** `v0.7.0`. The engine, the art pipeline, the dialogue runtime, all four acts, the dialectic, the localisation and the Dream Journal exist and are verified end to end. Act I is a finished five-minute chapter with three endings, Act II is seven chapters ending in a dialectic, Act III is eight stations across twenty-four centuries, and Act IV is a playable six-question exam with three endings. See [`PLAN.md`](PLAN.md) for the roadmap.
 
 Isaac has an exam in philosophy tomorrow. He hates the subject, decides that
 reading Aristotle will only make it worse, reads Aristotle anyway, and falls

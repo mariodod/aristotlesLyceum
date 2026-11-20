@@ -107,6 +107,38 @@ export interface ChoiceStep extends BaseStep {
   options: ChoiceOption[];
 }
 
+/** The three endings the exam can reach. */
+export type ExamEnding = 'pass' | 'honest' | 'apostate';
+
+/** One answer on the exam. */
+export interface ExamOption {
+  label: string;
+  key?: string | undefined;
+  /** True when this is the correct answer to the question. */
+  correct?: boolean | undefined;
+  /** True when this is the honest "I don't know" answer. */
+  honest?: boolean | undefined;
+}
+
+/** One question on the exam. */
+export interface ExamQuestion {
+  text: string;
+  key?: string | undefined;
+  options: ExamOption[];
+}
+
+/**
+ * The exam. The runtime asks the questions one at a time, marks them with
+ * the pure rules in `systems/dialogue/exam.ts`, and continues at `goto`.
+ */
+export interface ExamStep extends BaseStep {
+  kind: 'exam';
+  heading: string;
+  headingKey?: string | undefined;
+  questions: ExamQuestion[];
+  goto: string;
+}
+
 export interface CodexStep extends BaseStep {
   kind: 'codex';
   entry: string;
@@ -192,6 +224,7 @@ export interface EndStep extends BaseStep {
 export type StoryStep =
   | SayStep
   | ChoiceStep
+  | ExamStep
   | CodexStep
   | StatStep
   | FlagStep
@@ -232,6 +265,20 @@ export type DialogueEvent =
       options: ChoiceOption[];
     }
   | { type: 'codex'; entry: string }
+  | {
+      type: 'examQuestion';
+      question: ExamQuestion;
+      index: number;
+      total: number;
+    }
+  | {
+      type: 'examResult';
+      /** The ending the answers earned. */
+      ending: ExamEnding;
+      correct: number;
+      honest: number;
+      total: number;
+    }
   | { type: 'stat'; stat: StatId; delta: number; total: number }
   | { type: 'flag'; flag: string; value: boolean }
   | {

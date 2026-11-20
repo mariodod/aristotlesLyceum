@@ -268,9 +268,9 @@ test('plays Act II Chapter 7 to its end card', async ({ page }) => {
   const stats = await readHook<{ reason: number }>(page, 'stats');
   expect(stats.reason).toBe(1);
 
-  // The last chapter of the act hands the player back to the title.
+  // The last chapter of Act II hands the player into the long walk.
   await pressKey(page, 'z');
-  await expect.poll(() => readHook<string>(page, 'scene')).toBe('Title');
+  await expect.poll(() => readHook<string>(page, 'chapter')).toBe('act-three-alexandria');
 
   expect(errors).toEqual([]);
 });

@@ -29,6 +29,24 @@ export function collectContentKeys() {
         }
       }
 
+      if (step.kind === 'exam') {
+        if (step.headingKey) {
+          keys.set(step.headingKey, step.heading);
+        }
+
+        for (const question of step.questions) {
+          if (question.key) {
+            keys.set(question.key, question.text);
+          }
+
+          for (const option of question.options) {
+            if (option.key) {
+              keys.set(option.key, option.label);
+            }
+          }
+        }
+      }
+
       if (step.kind === 'chapterEnd' && step.key) {
         keys.set(step.key, step.title);
 

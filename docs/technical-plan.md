@@ -72,8 +72,10 @@ interface StoryScript {
 ```
 
 Every step carries a unique `at` label. Steps are `chapter`, `stage`, `say`,
-`choice`, `codex`, `stat`, `flag`, `jump`, `branch`, `dialectic`,
-`chapterEnd` and `end`. `branch` tests a flag and jumps one of two ways,
+`choice`, `exam`, `codex`, `stat`, `flag`, `jump`, `branch`, `dialectic`,
+`chapterEnd` and `end`. The `exam` asks six questions and marks them with
+the pure rules in `src/systems/dialogue/exam.ts`; its ending is a flag the
+script branches on. `branch` tests a flag and jumps one of two ways,
 which is how a chapter reaches a different ending. `dialectic` hands the
 chapter to a battle and comes back to `returnTo` when it is won.
 

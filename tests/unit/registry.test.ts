@@ -26,6 +26,7 @@ describe('the chapter registry', () => {
       'act-three-utrecht',
       'act-three-konigsberg',
       'act-three-down-house',
+      'act-four-exam',
     ]);
   });
 
