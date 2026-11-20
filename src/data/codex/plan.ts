@@ -24,29 +24,8 @@ export interface PlannedChapter {
 }
 
 /**
- * No chapter is planned but unwritten now that Act II has shipped. The
+ * No chapter is planned but unwritten now that Act III has shipped. The
  * file stays because it is the contract the linter uses while a chapter
  * is being written: add a claim here and the chapter owes its entries.
  */
-export const PLANNED_CHAPTERS: PlannedChapter[] = [
-  {
-    id: 'act-three-london',
-    title: 'Act III — London',
-    codex: ['baconian-method'],
-  },
-  {
-    id: 'act-three-utrecht',
-    title: 'Act III — Utrecht',
-    codex: ['cartesian-doubt'],
-  },
-  {
-    id: 'act-three-konigsberg',
-    title: 'Act III — Königsberg',
-    codex: ['kantian-categories'],
-  },
-  {
-    id: 'act-three-down-house',
-    title: 'Act III — Down House',
-    codex: ['darwinian-descent'],
-  },
-];
+export const PLANNED_CHAPTERS: PlannedChapter[] = [];

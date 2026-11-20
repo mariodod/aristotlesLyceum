@@ -78,49 +78,32 @@ async function playStation(page: Page, chapter: string, completed: string[]): Pr
   await advanceUntilEndCard(page);
 }
 
-const THROUGH = {
-  baghdad: [
-    'act-one',
-    'act-two-logic',
-    'act-two-physics',
-    'act-two-metaphysics',
-    'act-two-soul',
-    'act-two-ethics',
-    'act-two-poetics',
-    'act-two-life',
-    'act-three-alexandria',
-  ],
-  paris: [
-    'act-one',
-    'act-two-logic',
-    'act-two-physics',
-    'act-two-metaphysics',
-    'act-two-soul',
-    'act-two-ethics',
-    'act-two-poetics',
-    'act-two-life',
-    'act-three-alexandria',
-    'act-three-baghdad',
-  ],
-  padua: [
-    'act-one',
-    'act-two-logic',
-    'act-two-physics',
-    'act-two-metaphysics',
-    'act-two-soul',
-    'act-two-ethics',
-    'act-two-poetics',
-    'act-two-life',
-    'act-three-alexandria',
-    'act-three-baghdad',
-    'act-three-paris',
-  ],
-};
+const ORDER = [
+  'act-one',
+  'act-two-logic',
+  'act-two-physics',
+  'act-two-metaphysics',
+  'act-two-soul',
+  'act-two-ethics',
+  'act-two-poetics',
+  'act-two-life',
+  'act-three-alexandria',
+  'act-three-baghdad',
+  'act-three-paris',
+  'act-three-padua',
+  'act-three-london',
+  'act-three-utrecht',
+  'act-three-konigsberg',
+  'act-three-down-house',
+];
+
+/** Every chapter before the one being played. */
+const through = (id: string): string[] => ORDER.slice(0, ORDER.indexOf(id));
 
 test('Baghdad files the Essence and Existence entry', async ({ page }) => {
   const errors = collectPageErrors(page);
 
-  await playStation(page, 'act-three-baghdad', THROUGH.baghdad);
+  await playStation(page, 'act-three-baghdad', through('act-three-baghdad'));
 
   await expect.poll(() => readHook<string>(page, 'ending')).toBe('THE TWO WORDS');
   await expect.poll(() => readHook<string[]>(page, 'unlockedCodex')).toContain('avicennan-essence');
@@ -131,7 +114,7 @@ test('Baghdad files the Essence and Existence entry', async ({ page }) => {
 test('Paris files the Reason and Doctrine entry', async ({ page }) => {
   const errors = collectPageErrors(page);
 
-  await playStation(page, 'act-three-paris', THROUGH.paris);
+  await playStation(page, 'act-three-paris', through('act-three-paris'));
 
   await expect.poll(() => readHook<string>(page, 'ending')).toBe('THE OPEN DOOR');
   await expect
@@ -144,7 +127,7 @@ test('Paris files the Reason and Doctrine entry', async ({ page }) => {
 test('Padua files the Method Survives entry', async ({ page }) => {
   const errors = collectPageErrors(page);
 
-  await playStation(page, 'act-three-padua', THROUGH.padua);
+  await playStation(page, 'act-three-padua', through('act-three-padua'));
 
   await expect.poll(() => readHook<string>(page, 'ending')).toBe('THE METHOD SURVIVES');
   await expect
@@ -153,6 +136,26 @@ test('Padua files the Method Survives entry', async ({ page }) => {
 
   expect(errors).toEqual([]);
 });
+
+const LAST_STATIONS = [
+  { id: 'act-three-london', ending: 'THE NEW INSTRUMENT', codex: 'baconian-method' },
+  { id: 'act-three-utrecht', ending: 'THE FIRST STEP', codex: 'cartesian-doubt' },
+  { id: 'act-three-konigsberg', ending: 'THE SHAPE OF SEEING', codex: 'kantian-categories' },
+  { id: 'act-three-down-house', ending: 'THE LAST HOUSE', codex: 'darwinian-descent' },
+];
+
+for (const station of LAST_STATIONS) {
+  test(`${station.id} plays to its end card`, async ({ page }) => {
+    const errors = collectPageErrors(page);
+
+    await playStation(page, station.id, through(station.id));
+
+    await expect.poll(() => readHook<string>(page, 'ending')).toBe(station.ending);
+    await expect.poll(() => readHook<string[]>(page, 'unlockedCodex')).toContain(station.codex);
+
+    expect(errors).toEqual([]);
+  });
+}
 
 test('Alexandria answers the choice made in Ethics', async ({ page }) => {
   const errors = collectPageErrors(page);

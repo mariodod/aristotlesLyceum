@@ -22,6 +22,10 @@ describe('the chapter registry', () => {
       'act-three-baghdad',
       'act-three-paris',
       'act-three-padua',
+      'act-three-london',
+      'act-three-utrecht',
+      'act-three-konigsberg',
+      'act-three-down-house',
     ]);
   });
 
@@ -64,7 +68,12 @@ describe('the chapter registry', () => {
     expect(nextChapter('act-three-alexandria')?.id).toBe('act-three-baghdad');
     expect(nextChapter('act-three-baghdad')?.id).toBe('act-three-paris');
     expect(nextChapter('act-three-paris')?.id).toBe('act-three-padua');
-    expect(nextChapter('act-three-padua')).toBeUndefined();
+    // Every chapter except the last hands the player to the one after it.
+    for (let index = 0; index < CHAPTERS.length - 1; index += 1) {
+      expect(nextChapter(CHAPTERS[index]?.id ?? '')?.id).toBe(CHAPTERS[index + 1]?.id);
+    }
+
+    expect(nextChapter(CHAPTERS[CHAPTERS.length - 1]?.id ?? '')).toBeUndefined();
     expect(nextChapter('not-a-chapter')).toBeUndefined();
   });
 });
