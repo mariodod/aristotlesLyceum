@@ -6,6 +6,7 @@ import { centredText } from '../entities/centred-text.ts';
 import { TextBox } from '../entities/textbox.ts';
 import { SyllogismBuilder } from '../entities/syllogism-builder.ts';
 import { metricsFor } from '../i18n/types.ts';
+import type { AudioService } from '../services/audio-service.ts';
 import type { LocaleService } from '../services/locale-service.ts';
 import type { SaveService } from '../services/save-service.ts';
 import { DialecticBattle } from '../systems/dialectic/battle.ts';
@@ -80,6 +81,7 @@ export class DialecticScene extends Phaser.Scene {
     setTestHook({ ready: true, scene: 'Dialectic' });
 
     this.locale = this.registry.get('localeService') as LocaleService;
+    (this.registry.get('audioService') as AudioService | undefined)?.playMusic('music-exam');
 
     // The scene keeps its instance when it is restarted, so the menu of the
     // last battle is still in the list and the cursor would point into it.
@@ -407,6 +409,7 @@ export class DialecticScene extends Phaser.Scene {
     }
 
     this.returning = true;
+    (this.registry.get('audioService') as AudioService | undefined)?.play('argument-won');
 
     const saveService = this.registry.get('saveService') as SaveService;
     saveService.setFlag('dialectic-won', true);

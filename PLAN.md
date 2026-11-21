@@ -2,7 +2,7 @@
 
 **Version:** 0.1
 **Date:** 2026-11-12
-**Status:** Milestone M7 complete. The engine, the art pipeline, the dialogue runtime, the content linter, Act I, Act II, Act III, the playable exam, the dialectic and the Codex exist and are verified end to end.
+**Status:** Milestone M8 complete. The engine, generated art and audio, the dialogue runtime, the content linter, all four acts, the dialectic, the Codex and the settings and accessibility options exist and are verified end to end.
 
 ---
 
@@ -216,19 +216,19 @@ editing a scene.
 
 ## 5. Milestones
 
-| ID      | Outcome                                                                 | State                                                                                              |
-| ------- | ----------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
-| **M0**  | Repository, toolchain, art pipeline, CI/CD, AGENTS.md, this plan        | **Done**                                                                                           |
-| **M1**  | Dialogue runtime, textbox, title screen, save service, content linter   | **Done** (in M0)                                                                                   |
-| **M2**  | Act I complete and playtested, with a proper ending                     | In progress — written and verified; playtest open                                                  |
-| **M3**  | Character art pass: 12 characters, expressions, portraits               | **Done**                                                                                           |
-| **M4**  | Dialectic system and the syllogism builder                              | **Done**                                                                                           |
-| **M4b** | Localisation: catalogues, a language switch, a Spanish translation      | **Done**                                                                                           |
-| **M5**  | Codex screen, codex entries for Act II, codex-driven hints              | Done — the journal lists its entries, and the twenty-one Act II entries are written and translated |
-| **M6**  | Act II written: seven chapters, ~40 minutes                             | Done — all seven chapters, eight opponents and the chapter progression are written and verified    |
-| **M7**  | Act III written: eight stations; Act IV exam playable                   | Done — eight stations, three exam endings and the full act-to-act flow are written and verified    |
-| **M8**  | Audio: generated music and effects, settings, accessibility, text speed | Not started                                                                                        |
-| **M9**  | v1.0: polish, credits, licence audit, Pages release                     | Not started                                                                                        |
+| ID      | Outcome                                                                 | State                                                                                                |
+| ------- | ----------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
+| **M0**  | Repository, toolchain, art pipeline, CI/CD, AGENTS.md, this plan        | **Done**                                                                                             |
+| **M1**  | Dialogue runtime, textbox, title screen, save service, content linter   | **Done** (in M0)                                                                                     |
+| **M2**  | Act I complete and playtested, with a proper ending                     | In progress — written and verified; playtest open                                                    |
+| **M3**  | Character art pass: 12 characters, expressions, portraits               | **Done**                                                                                             |
+| **M4**  | Dialectic system and the syllogism builder                              | **Done**                                                                                             |
+| **M4b** | Localisation: catalogues, a language switch, a Spanish translation      | **Done**                                                                                             |
+| **M5**  | Codex screen, codex entries for Act II, codex-driven hints              | Done — the journal lists its entries, and the twenty-one Act II entries are written and translated   |
+| **M6**  | Act II written: seven chapters, ~40 minutes                             | Done — all seven chapters, eight opponents and the chapter progression are written and verified      |
+| **M7**  | Act III written: eight stations; Act IV exam playable                   | Done — eight stations, three exam endings and the full act-to-act flow are written and verified      |
+| **M8**  | Audio: generated music and effects, settings, accessibility, text speed | Done — four generated moods, five effects, ten settings rows and the accessibility options are wired |
+| **M9**  | v1.0: polish, credits, licence audit, Pages release                     | Not started                                                                                          |
 
 ### The critical path
 

@@ -11,8 +11,11 @@ import { centredText } from '../entities/centred-text.ts';
 import { TextBox } from '../entities/textbox.ts';
 import type { ChoiceLabel } from '../entities/textbox.ts';
 import { metricsFor } from '../i18n/types.ts';
+import type { AudioService } from '../services/audio-service.ts';
 import type { LocaleService } from '../services/locale-service.ts';
 import type { SaveService } from '../services/save-service.ts';
+import type { SettingsService } from '../services/settings-service.ts';
+import { DIALOGUE_TUNING } from '../config/tuning.ts';
 import { DialogueRuntime } from '../systems/dialogue/dialogue-runtime.ts';
 import { collectScriptFlags } from '../systems/dialogue/script-flags.ts';
 import type {
@@ -83,6 +86,7 @@ export class StoryScene extends Phaser.Scene {
   private actTitle = '';
   private actName = '';
   private locale: LocaleService | undefined;
+  private settings: SettingsService | undefined;
 
   constructor() {
     super('Story');
@@ -104,6 +108,16 @@ export class StoryScene extends Phaser.Scene {
     setTestHook({ ready: true, scene: 'Story', chapter: this.chapterId });
 
     this.locale = this.registry.get('localeService') as LocaleService;
+    this.settings = this.registry.get('settingsService') as SettingsService | undefined;
+
+    const audio = this.registry.get('audioService') as AudioService | undefined;
+    audio?.playMusic(
+      this.chapterId === 'act-four-exam'
+        ? 'music-exam'
+        : this.chapterId.startsWith('act-three')
+          ? 'music-walk'
+          : 'music-lyceum',
+    );
 
     // The scene instance survives a restart, so the actors of the previous
     // chapter have to be dropped before the new ones are placed.
@@ -266,7 +280,7 @@ export class StoryScene extends Phaser.Scene {
     const line = this.tc(key, text);
     this.currentLine = line;
     box.setSpeaker(this.tc(`ui.character.${speaker}`, character.name), character.color);
-    box.showText(line);
+    box.showText(line, this.textSpeed());
     this.mode = 'line';
     this.highlightSpeaker();
     // A narrated line has nobody talking, but the person it is about can
@@ -379,13 +393,13 @@ export class StoryScene extends Phaser.Scene {
     this.tweens.add({
       targets: words,
       alpha: 1,
-      duration: 420,
+      duration: this.motion(420),
       onComplete: () => {
         this.tweens.add({
           targets: words,
           alpha: 0,
-          delay: 620,
-          duration: 420,
+          delay: this.motion(620),
+          duration: this.motion(420),
           onComplete: () => {
             overlay.destroy();
             this.card = undefined;
@@ -408,7 +422,25 @@ export class StoryScene extends Phaser.Scene {
       return;
     }
 
-    this.textBox?.showText(this.currentLine);
+    this.textBox?.showText(this.currentLine, this.textSpeed());
+  }
+
+  /** The reveal rate the player chose in the settings. */
+  private textSpeed(): number {
+    const base = DIALOGUE_TUNING.charactersPerSecond;
+
+    return this.settings?.charactersPerSecond(base) ?? base;
+  }
+
+  private applyHoldSpeed(speed: number): void {
+    this.textBox?.setSpeed(
+      Number.isFinite(speed) ? speed : DIALOGUE_TUNING.fastCharactersPerSecond,
+    );
+  }
+
+  /** Zero out tween durations when the player asked for less motion. */
+  private motion(milliseconds: number): number {
+    return this.settings?.snapshot.reducedMotion ? 0 : milliseconds;
   }
 
   private setStage(actors: { character: CharacterId; x: number }[], backdrop?: string): void {
@@ -484,13 +516,13 @@ export class StoryScene extends Phaser.Scene {
     this.tweens.add({
       targets: next,
       alpha: 1,
-      duration: STAGE_TUNING.fadeMs,
+      duration: this.motion(STAGE_TUNING.fadeMs),
     });
 
     this.tweens.add({
       targets: previous,
       alpha: 0,
-      duration: STAGE_TUNING.fadeMs,
+      duration: this.motion(STAGE_TUNING.fadeMs),
       onComplete: () => previous.destroy(),
     });
   }
@@ -518,6 +550,7 @@ export class StoryScene extends Phaser.Scene {
       return;
     }
 
+    (this.registry.get('audioService') as AudioService | undefined)?.play('codex-unlocked');
     this.showToast(this.t('ui.codex.unlocked', { title: this.tc(entry.titleKey, entry.title) }));
   }
 
@@ -534,8 +567,8 @@ export class StoryScene extends Phaser.Scene {
     this.tweens.add({
       targets: toast,
       alpha: 0,
-      delay: 1600,
-      duration: 600,
+      delay: this.motion(1600),
+      duration: this.motion(600),
       onComplete: () => {
         toast.destroy();
 
@@ -685,7 +718,7 @@ export class StoryScene extends Phaser.Scene {
     this.tweens.add({
       targets: card,
       alpha: 1,
-      duration: 400,
+      duration: this.motion(400),
     });
   }
 
@@ -766,6 +799,15 @@ export class StoryScene extends Phaser.Scene {
 
     if (!keyboard) {
       return;
+    }
+
+    const confirmKey = keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Z);
+
+    // With hold-to-skip on, the text reveals at the fast rate while the
+    // confirm key is held and returns to the chosen rate on release.
+    if (this.settings?.snapshot.holdToSkip) {
+      confirmKey.on('down', () => this.applyHoldSpeed(DIALOGUE_TUNING.fastCharactersPerSecond));
+      confirmKey.on('up', () => this.applyHoldSpeed(this.textSpeed()));
     }
 
     keyboard.on('keydown-Z', () => this.confirm());

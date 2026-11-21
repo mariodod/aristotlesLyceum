@@ -5,6 +5,35 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.8.0] - 2026-11-21
+
+### Added
+
+- **Generated audio.** Four music moods — the desk, the Lyceum, the walk and
+  the exam — and five effects for choices, journal unlocks and won arguments.
+  A hand-rolled WAV writer generates them from committed scripts, like the
+  art, so the pack is reproducible byte for byte and `npm run assets`
+  rebuilds both packs together.
+- **A real settings screen.** Ten rows cover language, text speed, three
+  volumes, screen shake, reduced motion, hold-to-skip, colour-blind accents
+  and mute. Every change is saved and survives a reload; a hand-edited store
+  is clamped rather than trusted. The audio service applies volumes to the
+  sounds that are playing, and turning the master down never forgets the
+  saved levels.
+- **Accessibility.** Instant text reveals a whole line at once, reduced
+  motion removes the scene tweens, hold-to-skip reveals quickly while the
+  confirm key is held, and the colour-blind accent set changes the interface
+  highlights without touching the character art.
+- **Music follows the act.** The desk opens the game, the Lyceum plays the
+  dialogues, the walk follows the stations and the exam music covers the
+  battles and the paper. Moods cross-fade.
+
+### Fixed
+
+- The bilingual UI catalogues had drifted: the four new opponent names were
+  missing from English, and two old settings strings were still there with
+  nothing using them. Both catalogues are in step again.
+
 ## [0.7.0] - 2026-11-20
 
 ### Added

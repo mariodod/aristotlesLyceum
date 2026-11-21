@@ -1,0 +1,68 @@
+{
+  "version": 1,
+  "assets": [
+    {
+      "key": "music-desk",
+      "url": "assets/audio/music-desk.wav",
+      "category": "music",
+      "seconds": 16,
+      "volume": 0.5
+    },
+    {
+      "key": "music-lyceum",
+      "url": "assets/audio/music-lyceum.wav",
+      "category": "music",
+      "seconds": 16,
+      "volume": 0.5
+    },
+    {
+      "key": "music-walk",
+      "url": "assets/audio/music-walk.wav",
+      "category": "music",
+      "seconds": 16,
+      "volume": 0.5
+    },
+    {
+      "key": "music-exam",
+      "url": "assets/audio/music-exam.wav",
+      "category": "music",
+      "seconds": 16,
+      "volume": 0.5
+    },
+    {
+      "key": "choice-move",
+      "url": "assets/audio/choice-move.wav",
+      "category": "sfx",
+      "seconds": 0.08,
+      "volume": 0.7
+    },
+    {
+      "key": "choice-confirm",
+      "url": "assets/audio/choice-confirm.wav",
+      "category": "sfx",
+      "seconds": 0.18,
+      "volume": 0.7
+    },
+    {
+      "key": "codex-unlocked",
+      "url": "assets/audio/codex-unlocked.wav",
+      "category": "sfx",
+      "seconds": 0.6,
+      "volume": 0.7
+    },
+    {
+      "key": "argument-won",
+      "url": "assets/audio/argument-won.wav",
+      "category": "sfx",
+      "seconds": 0.9,
+      "volume": 0.7
+    },
+    {
+      "key": "page-turn",
+      "url": "assets/audio/page-turn.wav",
+      "category": "sfx",
+      "seconds": 0.16,
+      "volume": 0.7
+    }
+  ]
+}

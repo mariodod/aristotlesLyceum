@@ -19,7 +19,7 @@
 | M5  | Codex          | Journal screen complete, Act II entries authored                    | Done        |
 | M6  | Act II         | Seven chapters, forty minutes of writing                            | Done        |
 | M7  | Act III & IV   | Eight stations and a playable exam                                  | Done        |
-| M8  | Audio & access | Generated music, settings, text speed, accessibility                | Not started |
+| M8  | Audio & access | Generated music, settings, text speed, accessibility                | Done        |
 | M9  | v1.0           | Polish, credits, licence audit, release                             | Not started |
 
 ---
@@ -216,6 +216,19 @@ Aristotle and one who corrected him.
 
 **Done when:** the game is fully playable with sound off and with text
 appearing instantly.
+
+**Progress:**
+
+- [x] Four generated music moods and five effects, written by committed
+      scripts and loaded from the generated manifest.
+- [x] Ten settings rows: language, text speed, three volumes, screen shake,
+      reduced motion, hold-to-skip, colour-blind accents and mute.
+- [x] Settings persist across scenes and reloads; broken stored values are
+      clamped rather than trusted.
+- [x] Instant text, reduced motion and hold-to-skip change how dialogue is
+      shown; colour-blind accents change the interface highlights.
+- [x] Browser tests play the game muted, with instant text and with reduced
+      motion, with no console errors.
 
 ### M9 — v1.0
 

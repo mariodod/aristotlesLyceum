@@ -146,7 +146,7 @@ export class TextBox extends Phaser.GameObjects.Container {
   }
 
   /** Starts a typewriter reveal of the given line. */
-  showText(text: string, charactersPerSecond = DIALOGUE_TUNING.charactersPerSecond): void {
+  showText(text: string, charactersPerSecond: number = DIALOGUE_TUNING.charactersPerSecond): void {
     const wrapped = wrapText(text, columnsFor(this.geometry));
     this.typewriter = new Typewriter(wrapped, charactersPerSecond);
     this.bodyText.setText('');
@@ -193,6 +193,13 @@ export class TextBox extends Phaser.GameObjects.Container {
 
     if (this.typewriter) {
       this.bodyText.setText(this.typewriter.visibleText);
+    }
+  }
+
+  /** Changes the reveal rate while a line is typing. */
+  setSpeed(charactersPerSecond: number): void {
+    if (this.typewriter && !this.typewriter.isComplete) {
+      this.typewriter.setSpeed(charactersPerSecond);
     }
   }
 

@@ -4,6 +4,7 @@ import { CHARACTERS } from '../data/characters.ts';
 import { CODEX_ENTRIES } from '../data/codex/index.ts';
 import type { CodexEntry } from '../data/codex/index.ts';
 import { centredText } from '../entities/centred-text.ts';
+import type { AudioService } from '../services/audio-service.ts';
 import type { LocaleService } from '../services/locale-service.ts';
 import type { SaveService } from '../services/save-service.ts';
 import { wrapText } from '../systems/dialogue/text-wrap.ts';
@@ -49,6 +50,7 @@ export class CodexScene extends Phaser.Scene {
     setTestHook({ ready: true, scene: 'Codex' });
 
     this.locale = this.registry.get('localeService') as LocaleService;
+    (this.registry.get('audioService') as AudioService | undefined)?.playMusic('music-walk');
 
     // The scene keeps its instance when it is restarted, so the journal would
     // open on whatever the last visit had selected.

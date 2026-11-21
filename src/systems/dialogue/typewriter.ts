@@ -6,7 +6,7 @@
  */
 export class Typewriter {
   private readonly text: string;
-  private readonly charactersPerSecond: number;
+  private charactersPerSecond: number;
   private elapsed = 0;
   private revealed = 0;
 
@@ -30,6 +30,14 @@ export class Typewriter {
   }
 
   /** The part of the text that has been revealed so far. */
+  /** Changes the reveal rate, keeping the characters already shown. */
+  setSpeed(charactersPerSecond: number): void {
+    this.charactersPerSecond = Math.max(1, charactersPerSecond);
+    // Recompute the elapsed time so the next update reveals at the new rate
+    // from the current position rather than jumping ahead.
+    this.elapsed = (this.revealed / this.charactersPerSecond) * 1000;
+  }
+
   get visibleText(): string {
     return this.text.slice(0, this.revealed);
   }

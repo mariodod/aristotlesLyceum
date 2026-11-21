@@ -1,5 +1,7 @@
 import Phaser from 'phaser';
 import { ASSET_MANIFEST, assetUrl } from '../data/assets.ts';
+import { AudioService } from '../services/audio-service.ts';
+import type { SettingsService } from '../services/settings-service.ts';
 import { setTestHook } from '../utils/test-hooks.ts';
 
 /**
@@ -22,6 +24,11 @@ export class PreloadScene extends Phaser.Scene {
         frameHeight: asset.frameHeight,
       });
     }
+
+    const settings = this.registry.get('settingsService') as SettingsService;
+    const audioService = new AudioService(this, settings);
+    this.registry.set('audioService', audioService);
+    audioService.preload();
   }
 
   create(): void {
@@ -39,6 +46,9 @@ export class PreloadScene extends Phaser.Scene {
         });
       }
     }
+
+    const audioService = this.registry.get('audioService') as AudioService;
+    audioService.start();
 
     setTestHook({ ready: true, scene: 'Preload' });
 

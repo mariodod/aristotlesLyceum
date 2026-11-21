@@ -1,4 +1,5 @@
 import manifest from './asset-manifest.json';
+import audioManifest from './audio-manifest.json';
 
 export interface ImageAsset {
   key: string;
@@ -36,6 +37,7 @@ export interface AssetManifest {
  * requires touching a scene.
  */
 export const ASSET_MANIFEST = manifest as AssetManifest;
+export const AUDIO_MANIFEST = audioManifest;
 
 export function assetUrl(path: string): string {
   return `${import.meta.env.BASE_URL}${path.replace(/^\/+/, '')}`;

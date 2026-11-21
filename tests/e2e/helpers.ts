@@ -162,7 +162,9 @@ export async function setLanguage(page: Page, language: 'English' | 'Español'):
     return;
   }
 
-  await pressDown(page, 1);
+  // The language is the first row and LEFT / RIGHT change its value.
+  await pressKey(page, 'ArrowRight');
+  await page.waitForFunction(() => window.__LYCEUM_TEST__?.scene === 'Settings');
   await pressKey(page, 'z');
   await page.waitForFunction(() => window.__LYCEUM_TEST__?.scene === 'Title');
 }

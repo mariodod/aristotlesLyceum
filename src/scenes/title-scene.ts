@@ -2,8 +2,11 @@ import Phaser from 'phaser';
 import { GAME_HEIGHT, GAME_WIDTH } from '../config/constants.ts';
 import { nextUncompletedChapter } from '../data/script/registry.ts';
 import { TITLE_TUNING } from '../config/tuning.ts';
+import { accentsFor } from '../config/theme.ts';
+import type { SettingsService } from '../services/settings-service.ts';
 import { opponentById } from '../data/dialectic/opponents.ts';
 import { centredText } from '../entities/centred-text.ts';
+import type { AudioService } from '../services/audio-service.ts';
 import type { LocaleService } from '../services/locale-service.ts';
 import type { SaveService } from '../services/save-service.ts';
 import { setTestHook } from '../utils/test-hooks.ts';
@@ -14,6 +17,7 @@ import { setTestHook } from '../utils/test-hooks.ts';
 export class TitleScene extends Phaser.Scene {
   private readonly labels: Phaser.GameObjects.BitmapText[] = [];
   private heart!: Phaser.GameObjects.Image;
+  private accent = 0xf2c14e;
   private entries: { labelKey: string; action: () => void }[] = [];
   private locale: LocaleService | undefined;
   private selected = 0;
@@ -27,6 +31,10 @@ export class TitleScene extends Phaser.Scene {
     setTestHook({ ready: true, scene: 'Title' });
 
     this.locale = this.registry.get('localeService') as LocaleService;
+    (this.registry.get('audioService') as AudioService | undefined)?.playMusic('music-desk');
+
+    const settings = this.registry.get('settingsService') as SettingsService | undefined;
+    this.accent = accentsFor(settings?.snapshot.colorBlindSafe ?? false).gold;
 
     // A scene keeps its instance when it is restarted, so the lists from the
     // previous run have to be cleared before anything is added to them.
@@ -79,7 +87,7 @@ export class TitleScene extends Phaser.Scene {
 
     const title = centredText(this, 96, this.t('ui.title.gameName'), { scale: 2 });
     title.setDepth(2);
-    title.setTint(0xf2c14e);
+    title.setTint(this.accent);
 
     const tagline = centredText(this, 124, this.t('ui.title.tagline'));
     tagline.setDepth(2);

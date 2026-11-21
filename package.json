@@ -1,6 +1,6 @@
 {
   "name": "aristotles-lyceum",
-  "version": "0.7.0",
+  "version": "0.8.0",
   "private": true,
   "type": "module",
   "description": "A 2D pixel-art narrative game about Aristotle, his philosophy, and where it still runs.",
@@ -18,7 +18,7 @@
     "preview": "vite preview",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "assets": "node tools/assets/build-assets.mjs",
+    "assets": "node tools/assets/build-assets.mjs && node tools/audio/build-audio.mjs",
     "content:check": "node tools/content/check-content.mjs",
     "i18n:check": "node tools/i18n/check-i18n.mjs",
     "format": "prettier --write .",
