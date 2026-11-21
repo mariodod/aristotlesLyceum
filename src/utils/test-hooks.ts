@@ -18,12 +18,10 @@ export function setTestHook(patch: Partial<LyceumTestHook>): void {
     speaker: '',
     typing: false,
     choosing: false,
-    examIndex: 0,
     examTotal: 0,
     examEnding: '',
     creditsPage: 0,
     creditsPageCount: 0,
-    settingsRow: 0,
     settingsRowCount: 0,
     settingsValues: [],
     choiceCount: 0,
@@ -43,7 +41,6 @@ export function setTestHook(patch: Partial<LyceumTestHook>): void {
     expression: 'neutral',
     opponent: '',
     conviction: 0,
-    building: false,
   };
 
   window.__LYCEUM_TEST__ = { ...current, ...patch };

@@ -90,7 +90,7 @@ export interface BattleState {
 }
 
 /** The four things the player can do in a dialectic. */
-export type BattleAction = 'examine' | 'refute' | 'claim' | 'embrace';
+type BattleAction = 'examine' | 'refute' | 'claim' | 'embrace';
 
 export interface BattleOption {
   id: BattleAction;

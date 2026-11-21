@@ -40,3 +40,6 @@ export function scoreExam(answers: ExamAnswer[]): ExamMark {
 export function endingFlag(ending: ExamEnding): string {
   return `exam-${ending}`;
 }
+
+/** Every ending flag, so a replay can start from a clean slate. */
+export const EXAM_ENDING_FLAGS: string[] = ['exam-pass', 'exam-honest', 'exam-apostate'];

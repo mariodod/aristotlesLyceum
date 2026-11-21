@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import { FONT_KEY, GAME_HEIGHT, GAME_WIDTH } from '../config/constants.ts';
 import { centredText } from '../entities/centred-text.ts';
+import { uiAccent } from '../config/theme.ts';
 import type { AudioService } from '../services/audio-service.ts';
 import type { LocaleService } from '../services/locale-service.ts';
 import type { SettingsService } from '../services/settings-service.ts';
@@ -53,7 +54,7 @@ export class SettingsScene extends Phaser.Scene {
     this.add
       .bitmapText(24, 18, FONT_KEY, this.t('ui.settings.title'))
       .setDepth(2)
-      .setTint(0xf2c14e);
+      .setTint(uiAccent(this, 'gold'));
 
     for (const [index, row] of this.rows.entries()) {
       const y = ROW_TOP + index * ROW_GAP;
@@ -212,7 +213,6 @@ export class SettingsScene extends Phaser.Scene {
 
   private publish(): void {
     setTestHook({
-      settingsRow: this.selected,
       settingsRowCount: this.rows.length,
       settingsValues: this.values.map((value) => value.text),
     });

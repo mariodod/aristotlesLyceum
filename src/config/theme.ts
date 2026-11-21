@@ -19,6 +19,9 @@ export const DEFAULT_ACCENTS: Accents = {
   success: 0x9fe0b0,
 };
 
+import type Phaser from 'phaser';
+import type { SettingsService } from '../services/settings-service.ts';
+
 export const COLOR_BLIND_ACCENTS: Accents = {
   gold: 0xffd24a,
   highlight: 0x6cb8ff,
@@ -28,4 +31,16 @@ export const COLOR_BLIND_ACCENTS: Accents = {
 
 export function accentsFor(colorBlindSafe: boolean): Accents {
   return colorBlindSafe ? COLOR_BLIND_ACCENTS : DEFAULT_ACCENTS;
+}
+
+/**
+ * The accent a scene should use now, read from the settings service.
+ *
+ * Keeping the lookup here means a scene never hardcodes a highlight colour
+ * and the colour-blind option covers every screen, not just the title.
+ */
+export function uiAccent(scene: Phaser.Scene, key: keyof Accents): number {
+  const settings = scene.registry.get('settingsService') as SettingsService | undefined;
+
+  return accentsFor(settings?.snapshot.colorBlindSafe ?? false)[key];
 }

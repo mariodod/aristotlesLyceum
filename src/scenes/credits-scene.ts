@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import { FONT_KEY, GAME_HEIGHT, GAME_WIDTH } from '../config/constants.ts';
 import { centredText } from '../entities/centred-text.ts';
+import { uiAccent } from '../config/theme.ts';
 import type { LocaleService } from '../services/locale-service.ts';
 import { setTestHook } from '../utils/test-hooks.ts';
 
@@ -64,7 +65,10 @@ export class CreditsScene extends Phaser.Scene {
     this.add.image(0, 0, 'backdrop-lyceum').setOrigin(0).setDepth(0);
     this.add.rectangle(0, 0, GAME_WIDTH, GAME_HEIGHT, 0x07070c, 0.88).setOrigin(0).setDepth(1);
 
-    this.add.bitmapText(24, 20, FONT_KEY, this.t('ui.credits.title')).setDepth(2).setTint(0xf2c14e);
+    this.add
+      .bitmapText(24, 20, FONT_KEY, this.t('ui.credits.title'))
+      .setDepth(2)
+      .setTint(uiAccent(this, 'gold'));
 
     this.heading = this.add.bitmapText(24, 42, FONT_KEY, '').setDepth(2).setTint(0xffe6a0);
 

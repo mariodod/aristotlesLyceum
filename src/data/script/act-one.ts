@@ -172,7 +172,7 @@ export const ACT_ONE: StoryScript = {
       speaker: 'narrator',
       text: 'On the fourth reading, the voice stops waiting for him to finish.',
     },
-    { at: 'read-on-merge', kind: 'jump', to: 'merge' },
+    { at: 'read-on-merge', kind: 'jump', to: 'room-goes-1' },
 
     {
       at: 'read-again-1',
@@ -199,7 +199,7 @@ export const ACT_ONE: StoryScript = {
       speaker: 'narrator',
       text: 'He is still reading when the page changes. He does not notice that the page has changed.',
     },
-    { at: 'read-again-merge', kind: 'jump', to: 'merge' },
+    { at: 'read-again-merge', kind: 'jump', to: 'room-goes-1' },
 
     {
       at: 'text-friend-1',
@@ -233,9 +233,8 @@ export const ACT_ONE: StoryScript = {
       speaker: 'narrator',
       text: 'He puts the phone down. He puts his hand on the book. The page has changed. He does not notice that the page has changed.',
     },
-    { at: 'text-friend-merge', kind: 'jump', to: 'merge' },
+    { at: 'text-friend-merge', kind: 'jump', to: 'room-goes-1' },
 
-    { at: 'merge', kind: 'jump', to: 'room-goes-1' },
     {
       at: 'room-goes-1',
       kind: 'say',

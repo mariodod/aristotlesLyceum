@@ -152,9 +152,9 @@ with.
 - No procedural generation, no random events.
 - No online features, no accounts, no cloud saves.
 - No voice acting.
-- English only. The font already carries the Latin-1 accents a Spanish
-  translation will need, and the codex structure is locale-shaped, but no
-  second language ships with v1.0.
+- No third language. The game ships in English and Spanish; adding another
+  language is a folder of catalogues and an entry in `locales.ts`, but that
+  is work for after v1.0.
 
 ---
 

@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import { FONT_KEY } from '../config/constants.ts';
+import { uiAccent } from '../config/theme.ts';
 import { analyseSyllogism, figureOf } from '../systems/dialectic/syllogism.ts';
 import type { Proposition } from '../types/dialectic.ts';
 
@@ -65,13 +66,13 @@ export class SyllogismBuilder extends Phaser.GameObjects.Container {
       .setDepth(BUILDER_DEPTH);
 
     const frame = scene.add.graphics();
-    frame.lineStyle(2, 0xf2c14e, 0.8);
+    frame.lineStyle(2, uiAccent(this.scene, 'gold'), 0.8);
     frame.strokeRect(PANEL.x, PANEL.y, PANEL.width, PANEL.height);
     frame.setDepth(BUILDER_DEPTH + 1);
 
     const header = scene.add.bitmapText(20, 140, FONT_KEY, this.translate('ui.battle.buildTitle'));
     header.setDepth(BUILDER_DEPTH + 1);
-    header.setTint(0xf2c14e);
+    header.setTint(uiAccent(this.scene, 'gold'));
 
     for (let index = 0; index < 3; index += 1) {
       const text = scene.add.bitmapText(20, 160 + index * 14, FONT_KEY, '');

@@ -5,6 +5,30 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Fixed
+
+- **Replaying the exam could name the wrong ending.** The three `exam-*`
+  flags were saved and never cleared when a new paper began, so an apostate
+  flag from the first sitting survived an honest replay and the script
+  branched to the first ending it found. All three are cleared at the start
+  of the exam, with a unit test that reproduces the stale flag.
+- **The colour-blind setting only changed the title.** Every other screen
+  still had hardcoded gold and purple accents. They all read from one
+  `uiAccent()` helper now, and a browser test checks the title and the
+  journal together.
+- The roadmap still listed M9 as not started and the plan still claimed no
+  second language ships with v1.0; both describe the finished game now.
+
+### Changed
+
+- Dead code removed: the redundant jump in Act I; the `building`, `examIndex`
+  and `settingsRow` test hooks; the exam's unused `index`, `heading` and
+  score fields; three locally-used types that were exported; and four types
+  exported only inside their own module. The story, codex and dialectic type
+  files have no fields left that nothing reads.
+
 ## [1.0.0] - 2026-11-21
 
 ### Added

@@ -97,7 +97,7 @@ export function maxLinesFor(geometry: TextBoxGeometry, lineHeight: number): numb
  * long runs over the field below it. The linter uses these numbers to prove
  * that every entry, in every language, still fits.
  */
-export interface CodexLayout {
+interface CodexLayout {
   /** The left edge of the text. */
   textX: number;
   /** How many characters fit on a line of the journal. */
@@ -128,7 +128,7 @@ export const CODEX_LAYOUT: CodexLayout = {
 };
 
 /** The three fields of a journal entry. */
-export type CodexField = 'origin' | 'modern' | 'sources';
+type CodexField = 'origin' | 'modern' | 'sources';
 
 /**
  * How many lines a field of the journal is allowed.

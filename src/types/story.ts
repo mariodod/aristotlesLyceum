@@ -133,8 +133,6 @@ export interface ExamQuestion {
  */
 export interface ExamStep extends BaseStep {
   kind: 'exam';
-  heading: string;
-  headingKey?: string | undefined;
   questions: ExamQuestion[];
   goto: string;
 }
@@ -268,16 +266,12 @@ export type DialogueEvent =
   | {
       type: 'examQuestion';
       question: ExamQuestion;
-      index: number;
       total: number;
     }
   | {
       type: 'examResult';
-      /** The ending the answers earned. */
+      /** The ending the answers earned. The score itself is never shown. */
       ending: ExamEnding;
-      correct: number;
-      honest: number;
-      total: number;
     }
   | { type: 'stat'; stat: StatId; delta: number; total: number }
   | { type: 'flag'; flag: string; value: boolean }

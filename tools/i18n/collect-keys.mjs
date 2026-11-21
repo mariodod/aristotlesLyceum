@@ -30,10 +30,6 @@ export function collectContentKeys() {
       }
 
       if (step.kind === 'exam') {
-        if (step.headingKey) {
-          keys.set(step.headingKey, step.heading);
-        }
-
         for (const question of step.questions) {
           if (question.key) {
             keys.set(question.key, question.text);

@@ -23,23 +23,20 @@ export interface LyceumTestHook {
   /** How firmly the opponent holds its position. */
   conviction: number;
   /** True while the syllogism builder is open. */
-  building: boolean;
   /** Name on the dialogue name plate. */
   speaker: string;
   /** True while the typewriter is still revealing characters. */
   typing: boolean;
   /** True while a choice menu is open. */
   choosing: boolean;
-  /** Which exam question is on screen, and how many there are. */
-  examIndex: number;
+  /** How many questions the exam has. */
   examTotal: number;
   /** The ending the exam earned, once it has been marked. */
   examEnding: string;
   /** The credits page and how many pages there are. */
   creditsPage: number;
   creditsPageCount: number;
-  /** The settings menu row and the values shown beside each row. */
-  settingsRow: number;
+  /** The settings menu and the values shown beside each row. */
   settingsRowCount: number;
   settingsValues: string[];
   /** Number of options in the open choice menu. */

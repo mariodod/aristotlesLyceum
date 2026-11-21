@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import { FONT_KEY, GAME_HEIGHT, GAME_WIDTH } from '../config/constants.ts';
 import { DEFAULT_TEXTBOX } from '../config/layout.ts';
+import { uiAccent } from '../config/theme.ts';
 import { STAGE_TUNING } from '../config/tuning.ts';
 import { animationKey } from '../data/assets.ts';
 import { CHARACTERS } from '../data/characters.ts';
@@ -74,7 +75,6 @@ export class StoryScene extends Phaser.Scene {
   private speaker: CharacterId = 'narrator';
   private currentLine = '';
   private choicePrompt = '';
-  private examIndex = 0;
   private examTotal = 0;
   private examEnding = '';
   private currentExpression: ExpressionId = 'neutral';
@@ -130,7 +130,6 @@ export class StoryScene extends Phaser.Scene {
     this.endingSubtitleKey = undefined;
     this.currentLine = '';
     this.currentExpression = 'neutral';
-    this.examIndex = 0;
     this.examTotal = 0;
     this.examEnding = '';
 
@@ -227,7 +226,7 @@ export class StoryScene extends Phaser.Scene {
           this.unlockCodex(event.entry);
           break;
         case 'examQuestion':
-          this.showExamQuestion(event.question, event.index, event.total);
+          this.showExamQuestion(event.question, event.total);
           break;
         case 'examResult':
           this.examEnding = event.ending;
@@ -315,14 +314,13 @@ export class StoryScene extends Phaser.Scene {
    * don't know" answer is just another option; the marking lives in the
    * pure exam system, not here.
    */
-  private showExamQuestion(question: ExamQuestion, index: number, total: number): void {
+  private showExamQuestion(question: ExamQuestion, total: number): void {
     const box = this.textBox;
 
     if (!box) {
       return;
     }
 
-    this.examIndex = index;
     this.examTotal = total;
     this.mode = 'question';
     box.openChoices(
@@ -370,7 +368,7 @@ export class StoryScene extends Phaser.Scene {
     const titleText = centredText(this, GAME_HEIGHT / 2 - 25, this.tc(titleKey, title), {
       scale: 2,
     });
-    titleText.setTint(0xf2c14e);
+    titleText.setTint(uiAccent(this, 'gold'));
     titleText.setAlpha(0);
     overlay.add(titleText);
 
@@ -662,7 +660,7 @@ export class StoryScene extends Phaser.Scene {
     // Every line on the card is placed by its left edge, on a whole pixel, so
     // the browser never splits a glyph across the colour channels.
     const actLabel = centredText(this, 48, this.actTitle);
-    actLabel.setTint(0xf2c14e);
+    actLabel.setTint(uiAccent(this, 'gold'));
     card.add(actLabel);
 
     const actName = centredText(this, 64, this.actName.toUpperCase(), { scale: 2 });
@@ -845,7 +843,6 @@ export class StoryScene extends Phaser.Scene {
       speaker: CHARACTERS[this.speaker].name,
       typing: box?.isTyping ?? false,
       choosing: this.mode === 'choice',
-      examIndex: this.examIndex,
       examTotal: this.examTotal,
       examEnding: this.examEnding,
       choiceCount: box?.choiceCount ?? 0,

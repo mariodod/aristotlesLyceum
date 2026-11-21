@@ -4,6 +4,7 @@ import { CHARACTERS } from '../data/characters.ts';
 import { CODEX_ENTRIES } from '../data/codex/index.ts';
 import type { CodexEntry } from '../data/codex/index.ts';
 import { centredText } from '../entities/centred-text.ts';
+import { uiAccent } from '../config/theme.ts';
 import type { AudioService } from '../services/audio-service.ts';
 import type { LocaleService } from '../services/locale-service.ts';
 import type { SaveService } from '../services/save-service.ts';
@@ -65,7 +66,10 @@ export class CodexScene extends Phaser.Scene {
     this.add.image(0, 0, 'backdrop-lyceum').setOrigin(0).setDepth(0);
     this.add.rectangle(0, 0, GAME_WIDTH, GAME_HEIGHT, 0x07070c, 0.86).setOrigin(0).setDepth(1);
 
-    this.add.bitmapText(24, 18, FONT_KEY, this.t('ui.codex.title')).setDepth(2).setTint(0xf2c14e);
+    this.add
+      .bitmapText(24, 18, FONT_KEY, this.t('ui.codex.title'))
+      .setDepth(2)
+      .setTint(uiAccent(this, 'gold'));
 
     // Everything the journal draws lives in this container, so switching
     // between the list and an entry is a matter of emptying it.
@@ -256,7 +260,7 @@ export class CodexScene extends Phaser.Scene {
 
     // A frame, so the portrait reads as a portrait and not as a stray image.
     const frame = this.add.graphics();
-    frame.lineStyle(2, 0xf2c14e, 0.7);
+    frame.lineStyle(2, uiAccent(this, 'gold'), 0.7);
     frame.strokeRect(24, 60, PORTRAIT_SIZE, PORTRAIT_SIZE);
     this.root?.add(frame);
 

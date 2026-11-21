@@ -20,7 +20,7 @@
 | M6  | Act II         | Seven chapters, forty minutes of writing                            | Done        |
 | M7  | Act III & IV   | Eight stations and a playable exam                                  | Done        |
 | M8  | Audio & access | Generated music, settings, text speed, accessibility                | Done        |
-| M9  | v1.0           | Polish, credits, licence audit, release                             | Not started |
+| M9  | v1.0           | Polish, credits, licence audit, release                             | Done        |
 
 ---
 

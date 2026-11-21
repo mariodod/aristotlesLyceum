@@ -9,7 +9,7 @@ import type {
   StoryStep,
 } from '../../types/story.ts';
 import type { ExamAnswer } from './exam.ts';
-import { endingFlag, scoreExam } from './exam.ts';
+import { endingFlag, EXAM_ENDING_FLAGS, scoreExam } from './exam.ts';
 
 /**
  * The dialogue runtime walks a script and reports what the scene should show.
@@ -213,13 +213,7 @@ export class DialogueRuntime {
     this.cursor = target;
 
     return [
-      {
-        type: 'examResult',
-        ending: mark.ending,
-        correct: mark.correct,
-        honest: mark.honest,
-        total: mark.total,
-      },
+      { type: 'examResult', ending: mark.ending },
       { type: 'flag', flag, value: true },
       ...this.run(),
     ];
@@ -235,7 +229,6 @@ export class DialogueRuntime {
     return {
       type: 'examQuestion',
       question,
-      index: this.exam?.answers.length ?? 0,
       total: this.exam?.step.questions.length ?? 0,
     };
   }
@@ -311,12 +304,18 @@ export class DialogueRuntime {
             throw new Error(`Exam "${step.at}" has no questions.`);
           }
 
+          // A replay must not inherit the ending of the previous sitting:
+          // the script branches on these flags in order, so a stale one
+          // would name the wrong ending.
+          for (const flag of EXAM_ENDING_FLAGS) {
+            this.flags.delete(flag);
+          }
+
           this.pending = step;
           this.exam = { step, answers: [] };
           events.push({
             type: 'examQuestion',
             question: first,
-            index: 0,
             total: step.questions.length,
           });
           return events;

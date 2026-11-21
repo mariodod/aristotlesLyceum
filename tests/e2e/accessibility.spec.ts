@@ -68,6 +68,36 @@ test('the game plays with sound muted', async ({ page }) => {
   expect(errors).toEqual([]);
 });
 
+test('colour-blind accents reach every screen', async ({ page }) => {
+  const errors = collectPageErrors(page);
+
+  seedSettings(page, { colorBlindSafe: true });
+  await bootToTitle(page);
+
+  const tintOf = (scene: string, text: string) =>
+    page.evaluate(
+      ({ scene, text }) => {
+        const objects = window.__LYCEUM_GAME__?.scene.getScene(scene)?.children.list ?? [];
+        const match = (objects as { type?: string; text?: string; tintTopLeft?: number }[]).find(
+          (item) => item.type === 'BitmapText' && item.text === text,
+        );
+
+        return match?.tintTopLeft;
+      },
+      { scene, text },
+    );
+
+  // The colour-blind gold is 0xffd24a; the default is 0xf2c14e.
+  expect(await tintOf('Title', "ARISTOTLE'S LYCEUM")).toBe(0xffd24a);
+
+  await pressDown(page, 1);
+  await pressKey(page, 'z');
+  await expect.poll(() => readHook<string>(page, 'scene')).toBe('Codex');
+  expect(await tintOf('Codex', 'THE DREAM JOURNAL')).toBe(0xffd24a);
+
+  expect(errors).toEqual([]);
+});
+
 test('reduced motion does not stop the dialogue', async ({ page }) => {
   const errors = collectPageErrors(page);
 

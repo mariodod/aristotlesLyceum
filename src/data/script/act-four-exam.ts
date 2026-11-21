@@ -71,8 +71,6 @@ export const ACT_FOUR_EXAM: StoryScript = {
     {
       at: 'the-exam',
       kind: 'exam',
-      heading: 'PHILOSOPHY — ANSWER ALL QUESTIONS',
-      headingKey: 'act-four-exam.heading',
       goto: 'ending-route',
       questions: [
         {

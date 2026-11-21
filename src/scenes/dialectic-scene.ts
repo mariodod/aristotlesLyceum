@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import { FONT_KEY } from '../config/constants.ts';
 import { BATTLE_BOX } from '../config/layout.ts';
+import { uiAccent } from '../config/theme.ts';
 import { opponentById } from '../data/dialectic/opponents.ts';
 import { centredText } from '../entities/centred-text.ts';
 import { TextBox } from '../entities/textbox.ts';
@@ -146,7 +147,6 @@ export class DialecticScene extends Phaser.Scene {
       scene: 'Dialectic',
       opponent: this.opponentId,
       conviction: this.battle?.state.conviction ?? 0,
-      building: this.mode === 'builder',
     });
   }
 
@@ -399,7 +399,7 @@ export class DialecticScene extends Phaser.Scene {
     this.convictionBar.clear();
     this.convictionBar.fillStyle(0x1a1826, 1);
     this.convictionBar.fillRect(16, 20, 120, 10);
-    this.convictionBar.fillStyle(0xb0a8e0, 1);
+    this.convictionBar.fillStyle(uiAccent(this, 'highlight'), 1);
     this.convictionBar.fillRect(16, 20, 120 * Math.max(0, Math.min(1, value / 3)), 10);
     this.convictionBar.lineStyle(1, 0x6a6478, 1);
     this.convictionBar.strokeRect(16, 20, 120, 10);
