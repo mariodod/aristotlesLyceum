@@ -234,6 +234,24 @@ appearing instantly.
 
 - Polish pass, credits, licence audit, a release on GitHub Pages.
 
+**Progress:**
+
+- [x] The credits name the tools, the generated art and audio, the sources
+      and the people, in both languages, over six readable pages.
+- [x] `docs/licences.md` audits every dependency and every file under
+      `public/`; `npm run assets:check` proves the pack regenerates byte for
+      byte, so there are no hand-placed third-party assets.
+- [x] A browser test plays the whole game from the title to the exam's
+      ending, through all 17 chapters and eight arguments, with no console
+      errors.
+- [x] The game boots and plays in Chromium, Edge, Firefox and Safari: 60
+      cross-browser tests pass with `BROWSER_MATRIX=1`.
+- [x] Polish from the release pass: interpolated messages in the battle
+      readout, a battle that hands back on the second and later fights, and
+      audio that loads after the first frame so slow audio loaders cannot
+      block boot.
+- [x] Released as v1.0.0 and deployed to GitHub Pages from `main`.
+
 ---
 
 ## 3. Definition of done

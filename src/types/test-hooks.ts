@@ -35,6 +35,9 @@ export interface LyceumTestHook {
   examTotal: number;
   /** The ending the exam earned, once it has been marked. */
   examEnding: string;
+  /** The credits page and how many pages there are. */
+  creditsPage: number;
+  creditsPageCount: number;
   /** The settings menu row and the values shown beside each row. */
   settingsRow: number;
   settingsRowCount: number;

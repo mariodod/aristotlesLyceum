@@ -2,7 +2,7 @@
 
 **Everything in this folder is generated. Do not hand-edit it.**
 
-Run `npm run assets` to rebuild it from the scripts in `tools/assets/`. The
+Run `npm run assets` to rebuild it from the scripts in `tools/`. The
 generator writes:
 
 | Path                                         | Source                         |
@@ -11,11 +11,12 @@ generator writes:
 | `sprites/char-*.png`                         | `tools/assets/characters.mjs`  |
 | `backdrops/*.png`                            | `tools/assets/backgrounds.mjs` |
 | `ui/*.png`                                   | `tools/assets/ui.mjs`          |
+| `audio/*.wav`                                | `tools/audio/build-audio.mjs`  |
 
-The list of everything that exists, with its dimensions and animations, is
-written to `src/data/asset-manifest.json`, and `PreloadScene` loads the pack
-from that manifest. No scene names a texture directly, so adding art never
-means editing a scene.
+The list of images, spritesheets, animations and fonts is written to
+`src/data/asset-manifest.json`; audio has its own `audio-manifest.json`.
+The preload scenes load both from those manifests. No scene names a texture
+or a sound by hand, so adding an asset never means editing a scene.
 
 The pack is committed so that a fresh clone runs without a build step. If you
 change a generator, regenerate and commit the result in the same commit.

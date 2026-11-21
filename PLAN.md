@@ -2,7 +2,7 @@
 
 **Version:** 0.1
 **Date:** 2026-11-12
-**Status:** Milestone M8 complete. The engine, generated art and audio, the dialogue runtime, the content linter, all four acts, the dialectic, the Codex and the settings and accessibility options exist and are verified end to end.
+**Status:** Milestone M9 complete — v1.0. The engine, generated art and audio, the dialogue runtime, the content linter, all four acts, the dialectic, the Codex, the settings and accessibility options, the credits and the licence audit are verified end to end.
 
 ---
 
@@ -228,7 +228,7 @@ editing a scene.
 | **M6**  | Act II written: seven chapters, ~40 minutes                             | Done — all seven chapters, eight opponents and the chapter progression are written and verified      |
 | **M7**  | Act III written: eight stations; Act IV exam playable                   | Done — eight stations, three exam endings and the full act-to-act flow are written and verified      |
 | **M8**  | Audio: generated music and effects, settings, accessibility, text speed | Done — four generated moods, five effects, ten settings rows and the accessibility options are wired |
-| **M9**  | v1.0: polish, credits, licence audit, Pages release                     | Not started                                                                                          |
+| **M9**  | v1.0: polish, credits, licence audit, Pages release                     | Done — v1.0.0, full playthrough, four-browser matrix, reproducible pack and licence audit            |
 
 ### The critical path
 

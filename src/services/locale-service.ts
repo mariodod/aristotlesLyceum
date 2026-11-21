@@ -92,7 +92,10 @@ export class LocaleService {
       return interpolate(fallback, params);
     }
 
-    const found = lookup(this.catalogue(this.current), key, '');
+    // Pass the parameters through to lookup: an entry found in the catalogue
+    // needs the same interpolation as the inline fallback, or the player sees
+    // literal {mood} and {figure} in the battle readout.
+    const found = lookup(this.catalogue(this.current), key, '', params);
 
     if (found.length > 0) {
       return found;

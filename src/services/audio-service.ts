@@ -32,14 +32,14 @@ export class AudioService {
     this.settings = settings;
   }
 
-  /** Loads every generated asset. Called from the preload scene. */
-  preload(): void {
-    for (const asset of AUDIO_ASSETS) {
-      this.scene.load.audio(asset.key, assetUrl(asset.url));
-    }
-  }
-
-  /** Applies the saved master volume once the assets are decoded. */
+  /**
+   * Loads audio after the game has started, in the background.
+   *
+   * Browsers without Web Audio use HTML5 <audio> elements, whose loader can
+   * block the start of the game for a long time. Art has to be ready before
+   * the first frame; sound does not, because every play call checks the
+   * cache and silently skips a file that has not arrived yet.
+   */
   start(): void {
     if (this.started) {
       return;
@@ -47,6 +47,19 @@ export class AudioService {
 
     this.started = true;
     this.scene.sound.setVolume(this.settings.volumes().master);
+
+    let queued = false;
+
+    for (const asset of AUDIO_ASSETS) {
+      if (!this.scene.cache.audio.exists(asset.key)) {
+        this.scene.load.audio(asset.key, assetUrl(asset.url));
+        queued = true;
+      }
+    }
+
+    if (queued) {
+      this.scene.load.start();
+    }
   }
 
   /** Re-reads the settings and updates the music that is playing now. */

@@ -5,6 +5,43 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.0] - 2026-11-21
+
+### Added
+
+- **Real credits.** Six paged sections in both languages: the tools, the
+  generated art and audio, the sources behind the Codex and the people
+  depicted. The old placeholder is gone.
+- **A licence audit.** `docs/licences.md` records the MIT licence of the game,
+  the licences of all twelve dependencies and the origin of every file under
+  `public/`. `npm run assets:check` hashes the pack, regenerates it and proves
+  that all 52 files come back byte for byte, so a hand-placed third-party
+  asset cannot slip in.
+- **A full-playthrough test.** One browser test plays from the title through
+  all 17 chapters, every choice and all eight arguments to the exam's ending,
+  with no console errors.
+- **A four-browser matrix.** Chrome, Edge, Firefox and Safari all boot and
+  play: 60 tests pass with `BROWSER_MATRIX=1`.
+
+### Fixed
+
+- **Battle messages showed literal `{mood}` and `{figure}`.** The story
+  lookup never passed its parameters to the interpolator when a key was
+  found in a catalogue, so the battle readout in both English and Spanish
+  showed placeholders instead of the mood and figure. The inline fallback
+  happened to be correct, which is why the unit tests missed it; there is a
+  catalogue-key test now.
+- **The second and later battles never handed back.** The dialectic scene is
+  reused by Phaser, and a flag set by the first win was never cleared, so the
+  next win skipped the hand-off and the playthrough stalled. The full
+  playthrough test catches the regression.
+- **WebKit and Firefox could not boot while audio loaded.** Nine WAV files in
+  the blocking preload stalled browsers without Web Audio. Audio now loads in
+  the background after the first frame, and every play call skips a file that
+  has not arrived.
+- The favicon and the generated-pack README were hand-written files under
+  `public/`; both are written by the asset generator now.
+
 ## [0.8.0] - 2026-11-21
 
 ### Added

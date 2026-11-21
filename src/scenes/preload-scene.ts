@@ -28,7 +28,6 @@ export class PreloadScene extends Phaser.Scene {
     const settings = this.registry.get('settingsService') as SettingsService;
     const audioService = new AudioService(this, settings);
     this.registry.set('audioService', audioService);
-    audioService.preload();
   }
 
   create(): void {

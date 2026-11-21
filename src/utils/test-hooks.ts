@@ -21,6 +21,8 @@ export function setTestHook(patch: Partial<LyceumTestHook>): void {
     examIndex: 0,
     examTotal: 0,
     examEnding: '',
+    creditsPage: 0,
+    creditsPageCount: 0,
     settingsRow: 0,
     settingsRowCount: 0,
     settingsValues: [],

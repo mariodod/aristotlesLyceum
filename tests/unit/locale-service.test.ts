@@ -13,6 +13,7 @@ const CATALOGUES: LocaleDefinition[] = [
       'ui.greeting': 'Hello',
       'ui.count.one': '{n} entry',
       'ui.count.many': '{n} entries',
+      'ui.logic.holds': 'That is {mood} in figure {figure}: {name}. It holds.',
     },
     content: {},
   },
@@ -25,6 +26,7 @@ const CATALOGUES: LocaleDefinition[] = [
       'ui.greeting': 'Hola',
       'ui.count.one': '{n} entrada',
       'ui.count.many': '{n} entradas',
+      'ui.logic.holds': 'Eso es {mood} en la figura {figure}: {name}. Se sostiene.',
     },
     content: {
       'story.line': 'La frase en español.',
@@ -115,6 +117,17 @@ describe('LocaleService', () => {
   it('falls back to the English catalogue for the interface', () => {
     const service = new LocaleService(CATALOGUES, 'es');
     expect(service.t('ui.greeting')).toBe('Hola');
+  });
+
+  it('fills placeholders in a key found in the catalogue', () => {
+    const params = { mood: 'AEE', figure: 2, name: 'Camestres' };
+
+    expect(new LocaleService(CATALOGUES).tc('ui.logic.holds', '', params)).toBe(
+      'That is AEE in figure 2: Camestres. It holds.',
+    );
+    expect(new LocaleService(CATALOGUES, 'es').tc('ui.logic.holds', '', params)).toBe(
+      'Eso es AEE en la figura 2: Camestres. Se sostiene.',
+    );
   });
 
   it('falls back to English for the interface when a key is missing', () => {

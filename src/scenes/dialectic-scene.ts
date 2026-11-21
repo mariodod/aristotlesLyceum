@@ -80,6 +80,10 @@ export class DialecticScene extends Phaser.Scene {
   create(): void {
     setTestHook({ ready: true, scene: 'Dialectic' });
 
+    // Phaser reuses the scene instance. A battle that has already been won
+    // must not leave the next one believing it is still returning.
+    this.returning = false;
+
     this.locale = this.registry.get('localeService') as LocaleService;
     (this.registry.get('audioService') as AudioService | undefined)?.playMusic('music-exam');
 
