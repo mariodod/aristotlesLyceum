@@ -1,6 +1,6 @@
 import Phaser from 'phaser';
 import { FONT_KEY } from '../config/constants.ts';
-import { columnsFor, CURSOR_OFFSET, DEFAULT_TEXTBOX } from '../config/layout.ts';
+import { columnsFor, CURSOR_OFFSET, CURSOR_Y_OFFSET, DEFAULT_TEXTBOX } from '../config/layout.ts';
 import type { TextBoxGeometry } from '../config/layout.ts';
 import { DIALOGUE_TUNING } from '../config/tuning.ts';
 import { Typewriter } from '../systems/dialogue/typewriter.ts';
@@ -318,6 +318,6 @@ export class TextBox extends Phaser.GameObjects.Container {
     }
 
     this.cursorImage.setVisible(true);
-    this.cursorImage.setPosition(option.x - CURSOR_OFFSET, option.y + 4);
+    this.cursorImage.setPosition(option.x - CURSOR_OFFSET, option.y + CURSOR_Y_OFFSET);
   }
 }

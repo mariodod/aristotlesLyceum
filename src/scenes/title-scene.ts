@@ -1,8 +1,7 @@
 import Phaser from 'phaser';
 import { GAME_HEIGHT, GAME_WIDTH } from '../config/constants.ts';
-import { CURSOR_OFFSET } from '../config/layout.ts';
+import { CURSOR_OFFSET, CURSOR_Y_OFFSET } from '../config/layout.ts';
 import { nextUncompletedChapter } from '../data/script/registry.ts';
-import { TITLE_TUNING } from '../config/tuning.ts';
 import { uiAccent } from '../config/theme.ts';
 import { opponentById } from '../data/dialectic/opponents.ts';
 import { centredText } from '../entities/centred-text.ts';
@@ -21,7 +20,6 @@ export class TitleScene extends Phaser.Scene {
   private entries: { labelKey: string; action: () => void }[] = [];
   private locale: LocaleService | undefined;
   private selected = 0;
-  private bobTimer = 0;
 
   constructor() {
     super('Title');
@@ -106,12 +104,6 @@ export class TitleScene extends Phaser.Scene {
     this.installInput();
   }
 
-  override update(_time: number, delta: number): void {
-    this.bobTimer += delta;
-    const bob = Math.sin(this.bobTimer / TITLE_TUNING.bobMs);
-    this.cursorImage.setScale(1 + bob * 0.12);
-  }
-
   private refreshCursor(): void {
     const label = this.labels[this.selected];
 
@@ -119,7 +111,7 @@ export class TitleScene extends Phaser.Scene {
       return;
     }
 
-    this.cursorImage.setPosition(label.x - CURSOR_OFFSET, label.y + 5);
+    this.cursorImage.setPosition(label.x - CURSOR_OFFSET, label.y + CURSOR_Y_OFFSET);
   }
 
   private move(delta: number): void {

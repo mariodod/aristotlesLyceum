@@ -27,8 +27,3 @@ export const STAGE_TUNING = {
   /** Seconds a scene takes to cross-fade. */
   fadeMs: 320,
 } as const;
-
-export const TITLE_TUNING = {
-  /** Seconds the title bob takes to complete one cycle. */
-  bobMs: 2200,
-} as const;

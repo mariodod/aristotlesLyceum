@@ -3,11 +3,23 @@ import { COMMON, LIBRARY } from './palette.mjs';
 
 /**
  * The scroll the player moves through menus. A heart is the genre's default,
- * but this game is about what Aristotle wrote down, so the cursor is a roll
- * of parchment tied with a brass ribbon. The dark rod and the cream sheet
- * keep it distinct from the Codex book that shares the choice margin.
+ * but this game is about what Aristotle wrote down, so the cursor is a hanging
+ * sheet of parchment between two wooden rods with brass knobs. It is drawn
+ * upright so the two rolls read at a glance, and it is bigger than the Codex
+ * book that shares the choice margin without being taller than a menu row.
  */
-const SCROLL = ['.SSSSS.', 'SPPPPPS', 'SPBRBPS', 'SPBRBPS', 'SPPPPPS', '.SSSSS.'];
+const SCROLL = [
+  '..SSSSSS..',
+  '.BBSSSSBB.',
+  '..PPPPPP..',
+  '..PPPPPP..',
+  '..PPPPPP..',
+  '..PPPPPP..',
+  '..PPPPPP..',
+  '..PPPPPP..',
+  '.BBSSSSBB.',
+  '..SSSSSS..',
+];
 
 /**
  * The book that marks a choice the player can answer because they read the
@@ -21,12 +33,11 @@ export const UI_ASSETS = [
     key: 'ui-cursor',
     url: 'assets/ui/cursor.png',
     canvas: (() => {
-      const canvas = new Canvas(7, 6);
+      const canvas = new Canvas(10, 10);
       canvas.drawMap(SCROLL, {
         S: LIBRARY.book,
         P: LIBRARY.scroll,
         B: LIBRARY.brass,
-        R: LIBRARY.light,
       });
       return canvas;
     })(),

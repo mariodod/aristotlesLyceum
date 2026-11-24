@@ -71,11 +71,20 @@ export const BATTLE_BOX: TextBoxGeometry = {
 /**
  * Pixels from the left edge of a menu label to the centre of the cursor.
  *
- * The cursor sprite is seven pixels wide, so this leaves a four-pixel gap
- * between its right edge and the text it points at. One constant keeps every
- * menu in the game pointing at its label from the same distance.
+ * The scroll is ten pixels wide, so this leaves a three-pixel gap between its
+ * right edge and the text it points at. One constant keeps every menu in the
+ * game pointing at its label from the same distance.
  */
 export const CURSOR_OFFSET = 8;
+
+/**
+ * Pixels from the top of a text line to the centre of the cursor.
+ *
+ * A line's ink sits in the upper seven rows of its ten-row cell, so its visual
+ * centre is a little above the middle of the cell. Placing the cursor there
+ * keeps it on the text rather than a few pixels below it.
+ */
+export const CURSOR_Y_OFFSET = 3;
 
 /**
  * How many characters fit on a line of the box.

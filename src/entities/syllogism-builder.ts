@@ -1,6 +1,6 @@
 import Phaser from 'phaser';
 import { FONT_KEY } from '../config/constants.ts';
-import { CURSOR_OFFSET } from '../config/layout.ts';
+import { CURSOR_OFFSET, CURSOR_Y_OFFSET } from '../config/layout.ts';
 import { uiAccent } from '../config/theme.ts';
 import { analyseSyllogism, figureOf } from '../systems/dialectic/syllogism.ts';
 import type { Proposition } from '../types/dialectic.ts';
@@ -223,7 +223,7 @@ export class SyllogismBuilder extends Phaser.GameObjects.Container {
 
     if (selected) {
       this.cursorImage.setVisible(true);
-      this.cursorImage.setPosition(selected.x - CURSOR_OFFSET, selected.y + 4);
+      this.cursorImage.setPosition(selected.x - CURSOR_OFFSET, selected.y + CURSOR_Y_OFFSET);
     } else {
       this.cursorImage.setVisible(false);
     }

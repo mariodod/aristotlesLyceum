@@ -1,6 +1,6 @@
 import Phaser from 'phaser';
 import { FONT_KEY } from '../config/constants.ts';
-import { BATTLE_BOX, CURSOR_OFFSET } from '../config/layout.ts';
+import { BATTLE_BOX, CURSOR_OFFSET, CURSOR_Y_OFFSET } from '../config/layout.ts';
 import { uiAccent } from '../config/theme.ts';
 import { opponentById } from '../data/dialectic/opponents.ts';
 import { centredText } from '../entities/centred-text.ts';
@@ -243,7 +243,7 @@ export class DialecticScene extends Phaser.Scene {
     }
 
     this.cursorImage.setVisible(true);
-    this.cursorImage.setPosition(label.x - CURSOR_OFFSET, label.y + 4);
+    this.cursorImage.setPosition(label.x - CURSOR_OFFSET, label.y + CURSOR_Y_OFFSET);
   }
 
   private moveMenu(delta: number): void {
@@ -314,7 +314,7 @@ export class DialecticScene extends Phaser.Scene {
     }
 
     this.cursorImage.setVisible(true);
-    this.cursorImage.setPosition(item.x - CURSOR_OFFSET, item.y + 4);
+    this.cursorImage.setPosition(item.x - CURSOR_OFFSET, item.y + CURSOR_Y_OFFSET);
   }
 
   private closeList(): void {

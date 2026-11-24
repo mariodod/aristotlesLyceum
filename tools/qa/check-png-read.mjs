@@ -60,10 +60,20 @@ const symbols = {
   [LIBRARY.book]: 'S',
   [LIBRARY.scroll]: 'P',
   [LIBRARY.brass]: 'B',
-  [LIBRARY.light]: 'R',
 };
 const cursor = readPng(join(assetsDir, 'ui', 'cursor.png'));
-const expected = ['.SSSSS.', 'SPPPPPS', 'SPBRBPS', 'SPBRBPS', 'SPPPPPS', '.SSSSS.'];
+const expected = [
+  '..SSSSSS..',
+  '.BBSSSSBB.',
+  '..PPPPPP..',
+  '..PPPPPP..',
+  '..PPPPPP..',
+  '..PPPPPP..',
+  '..PPPPPP..',
+  '..PPPPPP..',
+  '.BBSSSSBB.',
+  '..SSSSSS..',
+];
 
 for (let y = 0; y < expected.length; y += 1) {
   let row = '';

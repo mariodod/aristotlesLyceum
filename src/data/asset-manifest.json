@@ -148,8 +148,8 @@
     {
       "key": "ui-cursor",
       "url": "assets/ui/cursor.png",
-      "width": 7,
-      "height": 6
+      "width": 10,
+      "height": 10
     },
     {
       "key": "ui-book",
