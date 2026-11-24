@@ -97,24 +97,31 @@ src/
   main.ts                  # bootstrap: CSS, canvas attributes, HMR dispose
   game.ts                  # createGame(): the Phaser config and scene list
   config/
-    constants.ts           # resolution, textbox geometry, save keys
+    constants.ts           # resolution, save keys, font key
     layout.ts              # the panel geometries, and the rules that follow from them
+    theme.ts               # the default and colour-blind accent sets
     tuning.ts              # feel constants, each with the reason it exists
   data/
-    assets.ts              # typed access to the generated manifest
-    dialectic/
-      opponents.ts         # the arguments the player has to take apart
+    assets.ts              # typed access to the art and audio manifests
+    asset-manifest.json    # generated art pack (committed)
+    audio-manifest.json    # generated audio pack (committed)
     characters.ts          # the cast: names, colours, sprite keys
     sprite-expressions.ts  # the expression order and the frame maths
+    dialectic/
+      opponents.ts         # the arguments the player has to take apart
     codex/
       index.ts             # aggregates every chapter's codex entries
       types.ts             # the CodexEntry shape
       act-one.ts           # entries unlocked by Act I
       act-two-*.ts         # entries unlocked by each Act II chapter
-      plan.ts              # the entries the unwritten chapters promise
+      act-three.ts         # entries unlocked by the eight stations
+      plan.ts              # claims for chapters that are not written yet
     script/
-      registry.ts          # chapter order
+      registry.ts          # chapter order, and the helpers that walk it
       act-one.ts           # Act I — The Desk
+      act-two-*.ts         # Act II — seven chapters
+      act-three-*.ts       # Act III — eight stations
+      act-four-exam.ts     # Act IV — the playable exam
   entities/
     textbox.ts             # the dialogue box, name plate and choice menu
     centred-text.ts        # whole-pixel text placement
@@ -126,28 +133,34 @@ src/
     ui/<locale>.json       # the words the interface says
     content/<locale>.json  # the words the story says, except in English
   scenes/
-    boot-scene.ts          # loads the font, creates the save service
-    preload-scene.ts       # loads everything in the manifest
-    title-scene.ts         # title and menu
+    boot-scene.ts          # loads the font, creates the services
+    preload-scene.ts       # loads the art and starts the audio load
+    title-scene.ts         # title and menu, including CONTINUE
     story-scene.ts         # plays any chapter; owns presentation only
     dialectic-scene.ts     # the battle: the opponent, the four moves
     codex-scene.ts         # the Dream Journal, with portraits
-    settings-scene.ts      # placeholder until M8
-    credits-scene.ts       # placeholder until M9
+    settings-scene.ts      # ten rows of player settings
+    credits-scene.ts       # six paged, translated credits
   services/
     save-service.ts        # localStorage progress, injectable for tests
+    locale-service.ts      # the current language and the two lookups
+    settings-service.ts    # persistent settings, clamped on read
+    audio-service.ts       # generated music and effects, volumes
   systems/
     dialectic/
-      syllogism.ts        # the mood and figure table (pure)
-      battle.ts           # the battle state machine (pure)
+      syllogism.ts         # the mood and figure table (pure)
+      battle.ts            # the battle state machine (pure)
     dialogue/
       dialogue-runtime.ts  # the script interpreter (pure)
       reachability.ts      # finds steps a script can never reach (pure)
       script-flags.ts      # the flags a script owns (pure)
+      speaker-voice.ts     # narration versus speech (pure)
+      exam.ts              # the exam marking rules (pure)
       typewriter.ts        # character reveal (pure)
       text-wrap.ts         # word wrapping (pure)
   types/
     story.ts               # the script vocabulary and step types
+    dialectic.ts           # the battle vocabulary
     test-hooks.ts          # the shape published to browser tests
   utils/
     test-hooks.ts          # the publisher, DEV-only
@@ -155,13 +168,16 @@ src/
 tools/
   assets/                  # pixel art, font and PNG generation
     faces.mjs              # the shared face block and the expression patches
+  audio/                   # generated WAV music and effects
+    build-audio.mjs        # the only audio entry point
+    wav.mjs                # a hand-rolled 16-bit mono WAV writer
   content/check-content.mjs# the story linter
-  qa/                      # screenshot and production smoke scripts
-  audio/                   # arrives with M8
+  i18n/                    # the localisation linter and key tools
+  qa/                      # screenshots, smoke, asset reproducibility
 
 tests/
   unit/                    # vitest, node environment
-  e2e/                     # playwright
+  e2e/                     # playwright, Chromium plus the four-browser matrix
 ```
 
 ### Layering rules
@@ -589,8 +605,9 @@ cast large, so a sprite can be judged without playing the game, and
 
 A change is done when:
 
-- `npm run typecheck`, `npm run lint`, `npm run format:check`, `npm run test`
-  and `npm run content:check` and `npm run i18n:check` all pass;
+- `npm run typecheck`, `npm run lint`, `npm run format:check`, `npm run test`,
+  `npm run content:check`, `npm run i18n:check` and `npm run assets:check` all
+  pass;
 - `npm run build` succeeds;
 - new behaviour is covered by a unit test or a browser test;
 - new art is regenerated and committed with its generator;
@@ -604,8 +621,8 @@ always the same:
 
 1. Every gate passes: `npm run typecheck`, `npm run lint`,
    `npm run format:check`, `npm run test`, `npm run content:check`,
-   `npm run i18n:check`, `npm run build`, and `npm run test:e2e` when the
-   change touches what the browser suite covers.
+   `npm run i18n:check`, `npm run assets:check`, `npm run build`, and
+   `npm run test:e2e` when the change touches what the browser suite covers.
 2. `git commit`, with a message that says what changed and why.
 3. `git push` to `main`.
 
@@ -617,17 +634,20 @@ working tree is a unit that can be lost.
 
 ## 12. Current state
 
-See [`PLAN.md`](PLAN.md) for the milestone plan and [`docs/roadmap.md`](docs/roadmap.md)
-for the schedule. The short version: the engine, the art pipeline, the dialogue
-runtime, the content linter, Act I, the dialectic and the Codex exist and are
-verified end to end. Act I has three endings and a chapter-complete card; the
-human playtest is the one open item, and its protocol is in
-[`docs/m2-playtest.md`](docs/m2-playtest.md). The Codex holds the twenty-one
-entries that Act II will unlock, in English and in Spanish, and the journal
-lists them. Act II is written: seven chapters from Logic to Life, each
-ending in a dialectic, each filing three of the twenty-one entries, with
-the eight opponents the table needs. Act III is eight stations from
-Alexandria to Down House, each filing a Codex entry, and Act IV wakes at
-the desk for a playable exam with three endings. The title continues into
-whichever chapter comes next, and the load-bearing choice in Ethics is
-read at both ends of the long walk.
+The game is released as **v1.0.0** and deployed from `main` to GitHub Pages.
+All milestones M0–M9 are done; the plan is [`PLAN.md`](PLAN.md), the schedule
+is [`docs/roadmap.md`](docs/roadmap.md), and the licence audit is
+[`docs/licences.md`](docs/licences.md).
+
+The complete path runs from the title screen through Act I, seven chapters of
+Act II, eight stations of Act III and the playable exam of Act IV, with a
+browser test that plays all 17 chapters to an ending. The Codex holds 31
+sourced entries in English and Spanish; eight opponents cover the dialectic;
+generated art and audio are reproducible from `tools/`. Settings cover sound,
+motion, text speed and colour-blind accents, and the four-browser matrix
+passes in Chrome, Edge, Firefox and Safari.
+
+The one open item is the **human playtest** of Act I. Its protocol and results
+table are in [`docs/m2-playtest.md`](docs/m2-playtest.md): one row is filled
+and nine are waiting. That document is kept outside commits — the feedback
+lives in conversation, not in the repository.

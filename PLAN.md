@@ -1,7 +1,7 @@
 # Aristotle's Lyceum — Project Plan
 
-**Version:** 0.1
-**Date:** 2026-11-12
+**Version:** 1.0
+**Date:** 2026-11-24
 **Status:** Milestone M9 complete — v1.0. The engine, generated art and audio, the dialogue runtime, the content linter, all four acts, the dialectic, the Codex, the settings and accessibility options, the credits and the licence audit are verified end to end.
 
 ---
@@ -260,8 +260,8 @@ Act II chapters.
 - All seven Act II chapters and all eight Act III stations written and
   fact-checked.
 - Every codex entry has at least one source.
-- `npm run format:check`, `lint`, `typecheck`, `test`, `content:check`, `build`
-  and `test:e2e` all green in CI.
+- `npm run format:check`, `lint`, `typecheck`, `test`, `content:check`,
+  `i18n:check`, `assets:check`, `build` and `test:e2e` all green in CI.
 - The game is deployed to GitHub Pages and playable in Chrome, Edge, Firefox
   and Safari.
 - No third-party assets. `public/` is fully regenerable from `tools/`.
@@ -270,14 +270,17 @@ Act II chapters.
 
 ## 8. Decision log
 
-| Date       | Decision                                  | Alternatives                | Why                                                                                               |
-| ---------- | ----------------------------------------- | --------------------------- | ------------------------------------------------------------------------------------------------- |
-| 2026-11-12 | TypeScript + Phaser 4 + Vite              | Godot 4, custom Canvas      | Type system for story data; proven toolchain; terminal-verifiable.                                |
-| 2026-11-12 | 640×360 base resolution with integer zoom | 480×270, 1280×720           | 640×360 is exactly 2× of 320×180 and scales cleanly to 1080p and 720p.                            |
-| 2026-11-12 | Custom typed script format                | Ink, Twine                  | Unit-testable and lintable; the branch model still reads like Ink.                                |
-| 2026-11-12 | Art and audio generated from code         | Hand-drawn assets, Aseprite | The only pipeline that works without a human illustrator; output is reproducible and diffable.    |
-| 2026-11-12 | `.ts` extensions in relative imports      | Extensionless               | Lets Node execute the game's modules, which the content linter depends on.                        |
-| 2026-11-12 | Three stats: reason, wisdom, empathy      | AT/DEF, HP                  | A story game should not have a health bar.                                                        |
-| 2026-11-12 | A chapter owns the flags it sets          | Flags persist globally      | Replaying a chapter must not inherit the previous run's choices.                                  |
-| 2026-11-12 | Localisation from the start               | Translate at the end        | A story game is mostly text. Retrofitting keys into a finished script is the expensive way round. |
-| 2026-11-12 | The English story stays in the scripts    | A catalogue for everything  | A writer should read the English where it is written, and a translator should get one file.       |
+| Date       | Decision                                  | Alternatives                   | Why                                                                                               |
+| ---------- | ----------------------------------------- | ------------------------------ | ------------------------------------------------------------------------------------------------- |
+| 2026-11-12 | TypeScript + Phaser 4 + Vite              | Godot 4, custom Canvas         | Type system for story data; proven toolchain; terminal-verifiable.                                |
+| 2026-11-12 | 640×360 base resolution with integer zoom | 480×270, 1280×720              | 640×360 is exactly 2× of 320×180 and scales cleanly to 1080p and 720p.                            |
+| 2026-11-12 | Custom typed script format                | Ink, Twine                     | Unit-testable and lintable; the branch model still reads like Ink.                                |
+| 2026-11-12 | Art and audio generated from code         | Hand-drawn assets, Aseprite    | The only pipeline that works without a human illustrator; output is reproducible and diffable.    |
+| 2026-11-12 | `.ts` extensions in relative imports      | Extensionless                  | Lets Node execute the game's modules, which the content linter depends on.                        |
+| 2026-11-12 | Three stats: reason, wisdom, empathy      | AT/DEF, HP                     | A story game should not have a health bar.                                                        |
+| 2026-11-12 | A chapter owns the flags it sets          | Flags persist globally         | Replaying a chapter must not inherit the previous run's choices.                                  |
+| 2026-11-12 | Localisation from the start               | Translate at the end           | A story game is mostly text. Retrofitting keys into a finished script is the expensive way round. |
+| 2026-11-12 | The English story stays in the scripts    | A catalogue for everything     | A writer should read the English where it is written, and a translator should get one file.       |
+| 2026-11-21 | Audio loads after the first frame         | Blocking preload               | Browsers without Web Audio stall on WAV decoding; they must still be able to boot and play.       |
+| 2026-11-21 | The lockfile is the install authority     | Regenerating from package.json | A pin to a version that no longer exists breaks a clean `npm ci`, and with it every deploy.       |
+| 2026-11-21 | `npm run assets:check` is a release gate  | Trust the committed pack       | A hand-edited or unattributed file under `public/` would break the no-third-party-assets claim.   |

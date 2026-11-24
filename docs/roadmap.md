@@ -1,8 +1,8 @@
 # Roadmap — Aristotle's Lyceum
 
-**Version:** 0.1
-**Date:** 2026-11-12
-**Status:** M5 complete.
+**Version:** 1.0
+**Date:** 2026-11-24
+**Status:** M0–M9 complete. v1.0.0 is deployed; the Act I playtest is open.
 
 ---
 

@@ -1,21 +1,21 @@
 # Technical Plan — Aristotle's Lyceum
 
-**Version:** 0.1
-**Date:** 2026-11-12
-**Status:** Implemented for M0–M5.
+**Version:** 1.0
+**Date:** 2026-11-24
+**Status:** Implemented and released for M0–M9 as v1.0.0.
 
 ---
 
 ## 1. Technical goals
 
-| Goal                                              | Measure                                                                      |
-| ------------------------------------------------- | ---------------------------------------------------------------------------- |
-| A chapter can be written without touching a scene | Add a file to `src/data/script/`, one line to the registry                   |
-| The story layer is verifiable without a browser   | 100% of `data/` and `systems/` covered by Vitest, no Phaser import in either |
-| A broken script fails before a player sees it     | `npm run content:check` reports every problem at once                        |
-| The art is reproducible                           | `npm run assets` regenerates `public/assets` byte for byte                   |
-| The frame is always crisp                         | 640×360 internal resolution, integer zoom only                               |
-| The game runs anywhere a browser does             | No server, no accounts, no network calls                                     |
+| Goal                                              | Measure                                                                    |
+| ------------------------------------------------- | -------------------------------------------------------------------------- |
+| A chapter can be written without touching a scene | Add a file to `src/data/script/`, one line to the registry                 |
+| The story layer is verifiable without a browser   | `data/` and `systems/` are unit tested in Node, no Phaser import in either |
+| A broken script fails before a player sees it     | `npm run content:check` reports every problem at once                      |
+| Art and audio are reproducible                    | `npm run assets:check` regenerates all of `public/` byte for byte          |
+| The frame is always crisp                         | 640×360 internal resolution, integer zoom only                             |
+| The game runs anywhere a browser does             | No server, no accounts, no network calls                                   |
 
 ---
 
@@ -38,9 +38,10 @@ bitmap font never lands on a fractional pixel.
 ### The font
 
 A generated 5×7 bitmap font on a 7-pixel advance. At the dialogue box's width
-that gives roughly 80 characters per line, which is the density the script
+that gives roughly 83 characters per line, which is the density the script
 format is written against. The generator carries the Latin-1 accented
-characters a future Spanish locale will need.
+characters the Spanish catalogue needs; `npm run i18n:check` proves every
+character in every catalogue, and in the inline English story, can be drawn.
 
 ---
 
@@ -81,8 +82,10 @@ chapter to a battle and comes back to `returnTo` when it is won.
 
 The interpreter is a cursor over the step list. `advance()` consumes the
 acknowledged step and reports every event produced until the script blocks
-again on a line or a choice. `choose(index)` applies the option's side
-effects, moves the cursor to the target label, and continues.
+again on a line, a choice, a dialectic or an exam. `choose(index)` applies the
+option's side effects and follows its target; `answer(index)` records one exam
+answer, asks the next question or marks the paper, then follows the exam's
+`goto`. Both are pure, so the whole story layer can be tested in Node.
 
 This is the shape of an Inky or Ink script, with types. The difference is
 that the interpreter is a tested module and the format is linted.
@@ -113,16 +116,22 @@ committed scripts:
 | `tools/assets/characters.mjs`    | Characters as authored pixel maps                                     |
 | `tools/assets/backgrounds.mjs`   | Backdrops from shapes and ordered dithering                           |
 | `tools/assets/ui.mjs`            | Interface sprites                                                     |
-| `tools/assets/build-assets.mjs`  | The single entry point                                                |
+| `tools/assets/build-assets.mjs`  | The art entry point, also writes the favicon and pack README          |
 | `tools/assets/png-decode.mjs`    | Reads a PNG back into pixels, so an outside sprite can be brought in  |
 | `tools/assets/import-sprite.mjs` | Finds the figure in an image, scales it into the character grid       |
+| `tools/audio/wav.mjs`            | A hand-rolled 16-bit mono WAV writer                                  |
+| `tools/audio/build-audio.mjs`    | The audio entry point: four moods and five effects                    |
 
 ### Contract
 
-`build-assets.mjs` writes `public/assets/**` and
-`src/data/asset-manifest.json`. The manifest lists every image, spritesheet,
-animation and font, and `PreloadScene` loads everything from it. **No scene
-names a texture.** Adding art never means editing a scene.
+The two generators write `public/**`, `src/data/asset-manifest.json` and
+`src/data/audio-manifest.json`. The manifests list every image, spritesheet,
+animation, font and WAV; `PreloadScene` loads the art from its manifest and
+starts the audio load in the background, because browsers without Web Audio
+can take a long time to decode WAV files and must not be blocked at boot.
+**No scene names a texture or a sound.** Adding an asset never means editing a
+scene. `npm run assets:check` hashes the whole pack, regenerates it and fails
+if a byte changed, so a hand-edited or unattributed file cannot ship.
 
 ### Authored characters
 
@@ -149,19 +158,23 @@ nobody sees.
 
 ## 5. Testing strategy
 
-| Layer   | Tool                                   | Scope                                            |
-| ------- | -------------------------------------- | ------------------------------------------------ |
-| Unit    | Vitest, Node environment               | `systems/`, `data/`, `services/`                 |
-| Content | `node tools/content/check-content.mjs` | Every script, codex entry and source list        |
-| Browser | Playwright                             | Scene flow, input, dialogue, choices, save state |
-| Visual  | `node tools/qa/screenshots.mjs`        | Capture the title and Act I                      |
+| Layer        | Tool                            | Scope                                           |
+| ------------ | ------------------------------- | ----------------------------------------------- |
+| Unit         | Vitest, Node environment        | `systems/`, `data/`, `services/`, `config/`     |
+| Content      | `npm run content:check`         | Every script, codex entry and source list       |
+| Localisation | `npm run i18n:check`            | Keys, placeholders and font coverage            |
+| Reproducible | `npm run assets:check`          | Every byte under `public/` regenerates          |
+| Browser      | Playwright                      | Scene flow, the full playthrough, four browsers |
+| Visual       | `node tools/qa/screenshots.mjs` | Capture the title and Act I                     |
 
 ### The test hook
 
 `src/utils/test-hooks.ts` publishes `window.__LYCEUM_TEST__`: a flat snapshot
-of the current scene, chapter, line, speaker, typing state, choice state,
-unlocked codex ids and stats. It is DEV-only, and `tools/qa/` asserts that the
-hook is absent from a production bundle.
+of the current scene, chapter, line, speaker, typing state, choice and exam
+state, unlocked codex ids, stats and the settings and credits screens. It is
+DEV-only, and the smoke script asserts that the hook is absent from a
+production bundle. The game handle `window.__LYCEUM_GAME__` is published the
+same way, for the tests that walk the scene graph.
 
 The hook is deliberately small. A browser test should be able to assert "the
 line changed" without knowing anything about the scene graph.
@@ -180,48 +193,55 @@ depend on how fast the text is revealing.
 `.github/workflows/ci.yml` runs on every push and pull request:
 
 ```
-format:check → lint → typecheck → content:check → test → build → test:e2e
+format:check → lint → typecheck → content:check → i18n:check → test → build → test:e2e
 ```
 
-`.github/workflows/deploy.yml` runs on `main`: the same gates, then
-`upload-pages-artifact` and `deploy-pages`.
+`.github/workflows/deploy.yml` runs on `main` with the same gates (minus the
+format check), then `upload-pages-artifact` and `deploy-pages`. A failure at
+any gate stops the deploy, so the live site is always the last green commit.
 
-Node 24 is pinned in both, with npm caching and `npm ci`.
+Node 24 is pinned in both, with npm caching and `npm ci`. The lockfile is the
+authority: a pin to a version that no longer exists breaks a clean install,
+as it did once after the audio milestone.
 
 ### Deployment
 
 The base path is `/aristotlesLyceum/`, set in `vite.config.ts` and
-overridable with `VITE_BASE_PATH` for a preview deployment. Enabling Pages
-requires **Settings → Pages → Source → GitHub Actions** in the repository
-settings, once.
+overridable with `VITE_BASE_PATH` for a preview deployment. Pages is already
+enabled with GitHub Actions as its source; the live game is at
+`https://mariodod.github.io/aristotlesLyceum/`.
 
 ---
 
 ## 7. Known limitations
 
-- **The art is blocky.** Character sprites are 32×48 authored maps; they read
-  as pixel art but they are not expressive yet. The art pass in M3 is the
-  remedy.
-- **There is no audio.** The audio pipeline is planned for M8.
-- **No localisation.** The structure is locale-shaped and the font has the
-  accents, but only English ships.
+- **The art is deliberately blocky.** Character sprites are 32×48 authored
+  maps with eight expressions. They read as pixel art, not as portraits with
+  fine detail, and that is a choice rather than an unfinished pass.
+- **Audio is simple.** Four synthesized music moods and five effects, no
+  voice acting and no dynamic mixing. Generated wavs keep the pack
+  reproducible; they are not a composed score.
+- **Two languages ship.** English and Spanish are complete; the font and the
+  catalogue format make a third language a data change, but none is planned.
 - **Save data is not versioned beyond a single integer.** A save from an
-  incompatible build is discarded rather than migrated.
+  incompatible build is discarded rather than migrated. Settings have a
+  separate store and are clamped on read.
 - **Frame rate is not instrumented.** The performance budget below is a
-  design target, not a measured figure.
+  design target, not a measured figure. The smoke script reports the time to
+  the first frame.
 
 ---
 
 ## 8. Performance budget
 
-| Target               | Budget                              |
-| -------------------- | ----------------------------------- |
-| Internal resolution  | 640×360                             |
-| Draw calls per frame | Under 40 in the busiest scene       |
-| Active game objects  | Under 60                            |
-| Audio channels       | Under 8                             |
-| Time to first frame  | Under 1500 ms on a mid-range laptop |
-| Production bundle    | Under 1.6 MB uncompressed           |
+| Target               | Budget                                       |
+| -------------------- | -------------------------------------------- |
+| Internal resolution  | 640×360                                      |
+| Draw calls per frame | Under 40 in the busiest scene                |
+| Active game objects  | Under 60                                     |
+| Audio channels       | Under 8                                      |
+| Time to first frame  | Under 1500 ms on a mid-range laptop          |
+| Production bundle    | About 1.6 MB uncompressed (Phaser dominates) |
 
 The game is a handful of sprites and a bitmap font, so the budget is not
 close to binding. The measurement that matters is the time to first frame,

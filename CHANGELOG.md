@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **CI and Pages had been red since the audio milestone.** The lockfile
+  pinned `@eslint/config-helpers@0.8.0`, a version that no longer exists on
+  the registry, so `npm ci` failed on every clean machine. Three lines were
+  repaired; CI and the deploy both pass again, and the live build catches up
+  to v1.0.0.
 - **Replaying the exam could name the wrong ending.** The three `exam-*`
   flags were saved and never cleared when a new paper began, so an apostate
   flag from the first sitting survived an honest replay and the script

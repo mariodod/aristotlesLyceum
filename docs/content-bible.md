@@ -1,12 +1,15 @@
 # Content Bible — Aristotle's Lyceum
 
-**Version:** 0.1
-**Date:** 2026-11-12
-**Status:** Act I specified. Act II and Act III outlined with sources.
+**Version:** 1.0
+**Date:** 2026-11-24
+**Status:** All four acts written and sourced; the Codex holds 31 entries.
 
 This document is the outline of what the game teaches and what it claims. It
 exists so that the writing can be checked against something before it is
 written, and so that the Codex entries have a source before they are authored.
+Every claim below is now reflected in a script and an entry in
+`src/data/codex/`; `npm run content:check` proves that each of them has a
+source.
 
 **Rule:** every concept below must end up as a Codex entry with at least one
 Aristotelian source, and the modern side of the entry must name a specific
