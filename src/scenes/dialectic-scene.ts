@@ -1,6 +1,6 @@
 import Phaser from 'phaser';
 import { FONT_KEY } from '../config/constants.ts';
-import { BATTLE_BOX } from '../config/layout.ts';
+import { BATTLE_BOX, CURSOR_OFFSET } from '../config/layout.ts';
 import { uiAccent } from '../config/theme.ts';
 import { opponentById } from '../data/dialectic/opponents.ts';
 import { centredText } from '../entities/centred-text.ts';
@@ -54,7 +54,7 @@ export class DialecticScene extends Phaser.Scene {
   private locale: LocaleService | undefined;
   private readonly menuItems: Phaser.GameObjects.BitmapText[] = [];
   private readonly listItems: Phaser.GameObjects.BitmapText[] = [];
-  private heart!: Phaser.GameObjects.Image;
+  private cursorImage!: Phaser.GameObjects.Image;
   private convictionBar!: Phaser.GameObjects.Graphics;
   private convictionLabel!: Phaser.GameObjects.BitmapText;
   private mode: 'menu' | 'list' | 'builder' = 'menu';
@@ -124,9 +124,9 @@ export class DialecticScene extends Phaser.Scene {
     });
     this.textBox.setVisible(false);
 
-    this.heart = this.add.image(0, 0, 'ui-heart');
-    this.heart.setOrigin(0.5, 0.5);
-    this.heart.setDepth(120);
+    this.cursorImage = this.add.image(0, 0, 'ui-cursor');
+    this.cursorImage.setOrigin(0.5, 0.5);
+    this.cursorImage.setDepth(120);
 
     this.buildMenu();
 
@@ -230,7 +230,7 @@ export class DialecticScene extends Phaser.Scene {
     if (visible) {
       this.refreshMenuCursor();
     } else {
-      this.heart.setVisible(false);
+      this.cursorImage.setVisible(false);
     }
   }
 
@@ -238,12 +238,12 @@ export class DialecticScene extends Phaser.Scene {
     const label = this.menuItems[this.menuCursor * 2];
 
     if (!label) {
-      this.heart.setVisible(false);
+      this.cursorImage.setVisible(false);
       return;
     }
 
-    this.heart.setVisible(true);
-    this.heart.setPosition(MENU_X + 4, label.y + 4);
+    this.cursorImage.setVisible(true);
+    this.cursorImage.setPosition(label.x - CURSOR_OFFSET, label.y + 4);
   }
 
   private moveMenu(delta: number): void {
@@ -309,12 +309,12 @@ export class DialecticScene extends Phaser.Scene {
     const item = this.listItems[this.listCursor + 1];
 
     if (!item) {
-      this.heart.setVisible(false);
+      this.cursorImage.setVisible(false);
       return;
     }
 
-    this.heart.setVisible(true);
-    this.heart.setPosition(MENU_X, item.y + 4);
+    this.cursorImage.setVisible(true);
+    this.cursorImage.setPosition(item.x - CURSOR_OFFSET, item.y + 4);
   }
 
   private closeList(): void {

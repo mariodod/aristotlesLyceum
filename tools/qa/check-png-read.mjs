@@ -6,6 +6,7 @@
  * would notice until the character looked wrong on the stage.
  */
 import { readPng } from '../assets/png-decode.mjs';
+import { LIBRARY } from '../assets/palette.mjs';
 import { readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -51,30 +52,37 @@ function walk(dir) {
 walk(assetsDir);
 
 /**
- * The heart is seven by six and its pixels are known, so it proves the
+ * The scroll cursor is seven by six and its pixels are known, so it proves the
  * reader gives back the colours that were written rather than merely the
  * right number of bytes.
  */
-const heart = readPng(join(assetsDir, 'ui', 'heart.png'));
-const expected = ['.RR.RR.', 'RRRRRRR', 'RRRRRRR', '.RRRRR.', '..RRR..', '...R...'];
+const symbols = {
+  [LIBRARY.book]: 'S',
+  [LIBRARY.scroll]: 'P',
+  [LIBRARY.brass]: 'B',
+  [LIBRARY.light]: 'R',
+};
+const cursor = readPng(join(assetsDir, 'ui', 'cursor.png'));
+const expected = ['.SSSSS.', 'SPPPPPS', 'SPBRBPS', 'SPBRBPS', 'SPPPPPS', '.SSSSS.'];
 
 for (let y = 0; y < expected.length; y += 1) {
   let row = '';
 
-  for (let x = 0; x < heart.width; x += 1) {
-    const index = (y * heart.width + x) * 4;
+  for (let x = 0; x < cursor.width; x += 1) {
+    const index = (y * cursor.width + x) * 4;
 
-    if (heart.data[index + 3] === 0) {
+    if (cursor.data[index + 3] === 0) {
       row += '.';
       continue;
     }
 
-    row += (heart.data[index] << 16) | (heart.data[index + 1] << 8 === 0xd63b3b) ? 'R' : '?';
+    const rgb = (cursor.data[index] << 16) | (cursor.data[index + 1] << 8) | cursor.data[index + 2];
+    row += symbols[rgb] ?? '?';
   }
 
   if (row !== expected[y]) {
-    throw new Error(`heart.png row ${y} is "${row}", expected "${expected[y]}".`);
+    throw new Error(`cursor.png row ${y} is "${row}", expected "${expected[y]}".`);
   }
 }
 
-console.log(`read ${checked} PNGs without a mismatch, and the heart reads back exactly.`);
+console.log(`read ${checked} PNGs without a mismatch, and the scroll cursor reads back exactly.`);

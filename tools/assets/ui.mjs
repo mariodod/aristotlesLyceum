@@ -2,25 +2,32 @@ import { Canvas } from './pixel.mjs';
 import { COMMON, LIBRARY } from './palette.mjs';
 
 /**
- * The heart the player moves through menus. Undertale-style games lean on it
- * hard, so it ships as a real sprite rather than a shape drawn at runtime.
+ * The scroll the player moves through menus. A heart is the genre's default,
+ * but this game is about what Aristotle wrote down, so the cursor is a roll
+ * of parchment tied with a brass ribbon. The dark rod and the cream sheet
+ * keep it distinct from the Codex book that shares the choice margin.
  */
-const HEART = ['.RR.RR.', 'RRRRRRR', 'RRRRRRR', '.RRRRR.', '..RRR..', '...R...'];
+const SCROLL = ['.SSSSS.', 'SPPPPPS', 'SPBRBPS', 'SPBRBPS', 'SPPPPPS', '.SSSSS.'];
 
 /**
  * The book that marks a choice the player can answer because they read the
- * Codex. Same shape language as the heart: a small solid sprite, so the
- * menu says why an option is there without a line of text.
+ * Codex. Same size as the cursor: a small solid sprite, so the menu says why
+ * an option is there without a line of text.
  */
 const BOOK = ['.CCCCC.', 'CPPPCPC', 'CPPPCPC', 'CPPPCPC', 'CPPPCPC', '.CCCCC.'];
 
 export const UI_ASSETS = [
   {
-    key: 'ui-heart',
-    url: 'assets/ui/heart.png',
+    key: 'ui-cursor',
+    url: 'assets/ui/cursor.png',
     canvas: (() => {
       const canvas = new Canvas(7, 6);
-      canvas.drawMap(HEART, { R: 0xd63b3b, r: 0xa32222 });
+      canvas.drawMap(SCROLL, {
+        S: LIBRARY.book,
+        P: LIBRARY.scroll,
+        B: LIBRARY.brass,
+        R: LIBRARY.light,
+      });
       return canvas;
     })(),
   },

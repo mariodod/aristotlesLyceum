@@ -1,6 +1,6 @@
 import Phaser from 'phaser';
 import { FONT_KEY } from '../config/constants.ts';
-import { columnsFor, DEFAULT_TEXTBOX } from '../config/layout.ts';
+import { columnsFor, CURSOR_OFFSET, DEFAULT_TEXTBOX } from '../config/layout.ts';
 import type { TextBoxGeometry } from '../config/layout.ts';
 import { DIALOGUE_TUNING } from '../config/tuning.ts';
 import { Typewriter } from '../systems/dialogue/typewriter.ts';
@@ -12,7 +12,7 @@ const PANEL_COLOR = 0x07070c;
 /**
  * Where the choice text starts, measured from the left edge of the box.
  *
- * The margin has to hold the heart the player moves and the book that marks
+ * The margin has to hold the scroll the player moves and the book that marks
  * an option the Codex has opened, so the text sits further right than the
  * prompt above it.
  */
@@ -52,7 +52,7 @@ export class TextBox extends Phaser.GameObjects.Container {
   private readonly nameText: Phaser.GameObjects.BitmapText;
   private readonly bodyText: Phaser.GameObjects.BitmapText;
   private readonly indicator: Phaser.GameObjects.Graphics;
-  private readonly heart: Phaser.GameObjects.Image;
+  private readonly cursorImage: Phaser.GameObjects.Image;
   private readonly optionTexts: Phaser.GameObjects.GameObject[] = [];
   private readonly choiceLabelTexts: Phaser.GameObjects.BitmapText[] = [];
 
@@ -103,9 +103,9 @@ export class TextBox extends Phaser.GameObjects.Container {
     );
     this.indicator.setVisible(false);
 
-    this.heart = scene.add.image(0, 0, 'ui-heart');
-    this.heart.setOrigin(0.5, 0.5);
-    this.heart.setVisible(false);
+    this.cursorImage = scene.add.image(0, 0, 'ui-cursor');
+    this.cursorImage.setOrigin(0.5, 0.5);
+    this.cursorImage.setVisible(false);
 
     this.add([
       this.background,
@@ -115,7 +115,7 @@ export class TextBox extends Phaser.GameObjects.Container {
       this.nameText,
       this.bodyText,
       ...this.optionTexts,
-      this.heart,
+      this.cursorImage,
       this.indicator,
     ]);
 
@@ -259,7 +259,7 @@ export class TextBox extends Phaser.GameObjects.Container {
       }
     });
 
-    this.heart.setVisible(options.length > 0);
+    this.cursorImage.setVisible(options.length > 0);
     this.refreshChoiceCursor();
   }
 
@@ -273,7 +273,7 @@ export class TextBox extends Phaser.GameObjects.Container {
 
     this.optionTexts.length = 0;
     this.choiceLabelTexts.length = 0;
-    this.heart.setVisible(false);
+    this.cursorImage.setVisible(false);
   }
 
   moveChoice(delta: number): void {
@@ -313,11 +313,11 @@ export class TextBox extends Phaser.GameObjects.Container {
     const option = this.choiceLabelTexts[this.choiceIndex];
 
     if (!option) {
-      this.heart.setVisible(false);
+      this.cursorImage.setVisible(false);
       return;
     }
 
-    this.heart.setVisible(true);
-    this.heart.setPosition(option.x - 12, option.y + 4);
+    this.cursorImage.setVisible(true);
+    this.cursorImage.setPosition(option.x - CURSOR_OFFSET, option.y + 4);
   }
 }

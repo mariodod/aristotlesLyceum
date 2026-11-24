@@ -146,8 +146,8 @@
       "height": 360
     },
     {
-      "key": "ui-heart",
-      "url": "assets/ui/heart.png",
+      "key": "ui-cursor",
+      "url": "assets/ui/cursor.png",
       "width": 7,
       "height": 6
     },

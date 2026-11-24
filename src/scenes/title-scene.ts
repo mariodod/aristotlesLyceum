@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import { GAME_HEIGHT, GAME_WIDTH } from '../config/constants.ts';
+import { CURSOR_OFFSET } from '../config/layout.ts';
 import { nextUncompletedChapter } from '../data/script/registry.ts';
 import { TITLE_TUNING } from '../config/tuning.ts';
 import { uiAccent } from '../config/theme.ts';
@@ -15,7 +16,7 @@ import { setTestHook } from '../utils/test-hooks.ts';
  */
 export class TitleScene extends Phaser.Scene {
   private readonly labels: Phaser.GameObjects.BitmapText[] = [];
-  private heart!: Phaser.GameObjects.Image;
+  private cursorImage!: Phaser.GameObjects.Image;
 
   private entries: { labelKey: string; action: () => void }[] = [];
   private locale: LocaleService | undefined;
@@ -95,7 +96,7 @@ export class TitleScene extends Phaser.Scene {
       this.labels.push(label);
     });
 
-    this.heart = this.add.image(0, 0, 'ui-heart').setOrigin(0.5, 0.5).setDepth(2);
+    this.cursorImage = this.add.image(0, 0, 'ui-cursor').setOrigin(0.5, 0.5).setDepth(2);
     this.refreshCursor();
 
     const hint = centredText(this, GAME_HEIGHT - 24, this.t('ui.title.hint'));
@@ -108,7 +109,7 @@ export class TitleScene extends Phaser.Scene {
   override update(_time: number, delta: number): void {
     this.bobTimer += delta;
     const bob = Math.sin(this.bobTimer / TITLE_TUNING.bobMs);
-    this.heart.setScale(1 + bob * 0.12);
+    this.cursorImage.setScale(1 + bob * 0.12);
   }
 
   private refreshCursor(): void {
@@ -118,7 +119,7 @@ export class TitleScene extends Phaser.Scene {
       return;
     }
 
-    this.heart.setPosition(label.x - label.width / 2 - 14, label.y + 5);
+    this.cursorImage.setPosition(label.x - CURSOR_OFFSET, label.y + 5);
   }
 
   private move(delta: number): void {

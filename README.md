@@ -35,7 +35,7 @@ Then open <http://127.0.0.1:5173>.
   branches, stats, flags and codex unlocks, driven by a pure interpreter that
   is unit tested and linted.
 - **The dialogue box.** Typewriter reveal, a name plate that follows the
-  speaker, a heart cursor in the choice menu, and a blinking continue marker.
+  speaker, a scroll cursor in the choice menu, and a blinking continue marker.
 - **Generated art and audio.** Every file in `public/` is produced by
   committed Node scripts: a dependency-free pixel canvas, a hand-rolled PNG
   and WAV encoder, authored character sprites, dithered backdrops, four music

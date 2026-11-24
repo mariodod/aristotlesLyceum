@@ -36,6 +36,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **The menu cursor is a parchment scroll now, and it sits closer to the text.**
+  The heart was the genre's default rather than this game's; a rolled scroll
+  tied with a brass ribbon fits a story about what Aristotle wrote down and is
+  distinct from the Codex book in the same margin. Every menu reads one
+  `CURSOR_OFFSET`, so the cursor now points from four pixels away instead of
+  drifting up to half a label width from it on the title screen.
 - Dead code removed: the redundant jump in Act I; the `building`, `examIndex`
   and `settingsRow` test hooks; the exam's unused `index`, `heading` and
   score fields; three locally-used types that were exported; and four types

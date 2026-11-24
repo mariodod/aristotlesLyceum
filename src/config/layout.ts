@@ -69,6 +69,15 @@ export const BATTLE_BOX: TextBoxGeometry = {
 };
 
 /**
+ * Pixels from the left edge of a menu label to the centre of the cursor.
+ *
+ * The cursor sprite is seven pixels wide, so this leaves a four-pixel gap
+ * between its right edge and the text it points at. One constant keeps every
+ * menu in the game pointing at its label from the same distance.
+ */
+export const CURSOR_OFFSET = 8;
+
+/**
  * How many characters fit on a line of the box.
  */
 export function columnsFor(geometry: TextBoxGeometry): number {

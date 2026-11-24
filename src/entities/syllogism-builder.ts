@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import { FONT_KEY } from '../config/constants.ts';
+import { CURSOR_OFFSET } from '../config/layout.ts';
 import { uiAccent } from '../config/theme.ts';
 import { analyseSyllogism, figureOf } from '../systems/dialectic/syllogism.ts';
 import type { Proposition } from '../types/dialectic.ts';
@@ -38,7 +39,7 @@ export class SyllogismBuilder extends Phaser.GameObjects.Container {
   private readonly slotTexts: Phaser.GameObjects.BitmapText[] = [];
   private readonly readout: Phaser.GameObjects.BitmapText;
   private readonly listTexts: Phaser.GameObjects.BitmapText[] = [];
-  private readonly heart: Phaser.GameObjects.Image;
+  private readonly cursorImage: Phaser.GameObjects.Image;
   private cursor = 0;
   private ready = false;
   private analysisKey = '';
@@ -84,9 +85,9 @@ export class SyllogismBuilder extends Phaser.GameObjects.Container {
     this.readout.setDepth(BUILDER_DEPTH + 1);
     this.readout.setTint(0xbfb6a2);
 
-    this.heart = scene.add.image(0, 0, 'ui-heart');
-    this.heart.setOrigin(0.5, 0.5);
-    this.heart.setDepth(BUILDER_DEPTH + 2);
+    this.cursorImage = scene.add.image(0, 0, 'ui-cursor');
+    this.cursorImage.setOrigin(0.5, 0.5);
+    this.cursorImage.setDepth(BUILDER_DEPTH + 2);
 
     this.setDepth(BUILDER_DEPTH);
     this.refresh();
@@ -221,10 +222,10 @@ export class SyllogismBuilder extends Phaser.GameObjects.Container {
     const selected = this.listTexts[this.cursor];
 
     if (selected) {
-      this.heart.setVisible(true);
-      this.heart.setPosition(26, selected.y + 4);
+      this.cursorImage.setVisible(true);
+      this.cursorImage.setPosition(selected.x - CURSOR_OFFSET, selected.y + 4);
     } else {
-      this.heart.setVisible(false);
+      this.cursorImage.setVisible(false);
     }
   }
 

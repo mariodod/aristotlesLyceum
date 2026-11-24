@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import { FONT_KEY, GAME_HEIGHT, GAME_WIDTH } from '../config/constants.ts';
+import { CURSOR_OFFSET } from '../config/layout.ts';
 import { CHARACTERS } from '../data/characters.ts';
 import { CODEX_ENTRIES } from '../data/codex/index.ts';
 import type { CodexEntry } from '../data/codex/index.ts';
@@ -134,7 +135,7 @@ export class CodexScene extends Phaser.Scene {
     if (selected) {
       const y = LIST_TOP + (this.index - this.firstVisible) * LIST_ROW_HEIGHT;
 
-      this.root?.add(this.add.image(LIST_TEXT_X - 12, y + 4, 'ui-heart'));
+      this.root?.add(this.add.image(LIST_TEXT_X - CURSOR_OFFSET, y + 4, 'ui-cursor'));
     }
 
     this.root?.add(

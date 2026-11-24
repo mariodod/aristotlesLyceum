@@ -62,7 +62,7 @@ display list for free, and its WebGL renderer handles a 640×360 pixel-art
 canvas without trouble.
 
 **A visual scripting tool (Twine, Ink).** Excellent for pure branching
-narrative, but this game needs sprites on a stage, a choice menu with a heart
+narrative, but this game needs sprites on a stage, a choice menu with a scroll
 cursor, a codex screen and stat-driven dialogue options. A custom script
 format with a typed interpreter gives more control and, crucially, something
 that can be unit tested and linted. The branch format is deliberately
@@ -129,7 +129,8 @@ with.
 ### 3.4 Mechanics
 
 1. **Dialogue.** A typewriter box with a name plate, speaker highlighting, and
-   a heart-cursed choice menu. The genre's core loop, done properly.
+   a choice menu whose options are pointed at with a parchment scroll. The
+   genre's core loop, done properly.
 2. **Dialectic.** The battle system, reimagined. Instead of _Fight / Act /
    Item / Mercy_, the options are **Claim / Examine / Refute / Embrace**. The
    opponent is a philosophical error given a face — Skepticism, Certainty,
