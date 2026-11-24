@@ -9,6 +9,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **Accented letters in Spanish were smaller and carried the wrong mark.** The
+  accent was painted over the top two rows of the glyph, which were the first
+  two rows of a capital, so `Á`, `É`, `Í`, `Ó` and `Ú` lost the top of their
+  letter. The acute also sloped the wrong way and the capitals wore a
+  circumflex. Accents now live in two rows above the cell, the base glyph is
+  reused unchanged, and the whole cell is drawn two pixels higher so the body
+  stays exactly where it was. A unit test checks every accented letter against
+  its base and the direction of the acute.
 - **CI and Pages had been red since the audio milestone.** The lockfile
   pinned `@eslint/config-helpers@0.8.0`, a version that no longer exists on
   the registry, so `npm ci` failed on every clean machine. Three lines were

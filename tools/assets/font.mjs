@@ -247,50 +247,23 @@ export const GLYPHS = {
   '~': {
     rows: ['.....', '.....', '.#..#', '#.#.#', '#..#.', '.....', '.....'],
   },
-  // Latin-1 accents. The game ships in English, but a Spanish translation is
-  // an explicit goal, so the glyphs exist from the first day.
-  á: {
-    rows: ['.#...', '..#..', '.###.', '....#', '.####', '#...#', '.####'],
-  },
-  é: {
-    rows: ['.#...', '..#..', '.###.', '#...#', '#####', '#....', '.###.'],
-  },
-  í: {
-    rows: ['.#...', '..#..', '##.', '.#.', '.#.', '.#.', '###'],
-  },
-  ó: {
-    rows: ['.#...', '..#..', '.###.', '#...#', '#...#', '#...#', '.###.'],
-  },
-  ú: {
-    rows: ['.#...', '..#..', '#...#', '#...#', '#...#', '#...#', '.####'],
-  },
-  ñ: {
-    rows: ['.#.#.', '..#..', '####.', '#...#', '#...#', '#...#', '#...#'],
-  },
-  ü: {
-    rows: ['.#.#.', '..#..', '.....', '#...#', '#...#', '#...#', '.####'],
-  },
-  Á: {
-    rows: ['.#.#.', '..#..', '.###.', '#...#', '#####', '#...#', '#...#'],
-  },
-  É: {
-    rows: ['.#.#.', '..#..', '#####', '#....', '####.', '#....', '#####'],
-  },
-  Í: {
-    rows: ['.#.#.', '..#..', '###', '.#.', '.#.', '.#.', '###'],
-  },
-  Ó: {
-    rows: ['.#.#.', '..#..', '.###.', '#...#', '#...#', '#...#', '.###.'],
-  },
-  Ú: {
-    rows: ['.#.#.', '..#..', '#...#', '#...#', '#...#', '#...#', '.###.'],
-  },
-  Ñ: {
-    rows: ['.#.#.', '..#..', '#...#', '##..#', '#.#.#', '#..##', '#...#'],
-  },
-  Ü: {
-    rows: ['.#.#.', '.....', '#...#', '#...#', '#...#', '#...#', '.###.'],
-  },
+  // Latin-1 letters are a base glyph plus a mark above it. The base rows stay
+  // untouched: an accented capital keeps its full height because the mark sits
+  // in two spare rows above the cap, not in place of the cap's top two rows.
+  á: { base: 'a', accent: 'acute' },
+  é: { base: 'e', accent: 'acute' },
+  í: { base: 'i', accent: 'acute' },
+  ó: { base: 'o', accent: 'acute' },
+  ú: { base: 'u', accent: 'acute' },
+  ñ: { base: 'n', accent: 'tilde' },
+  ü: { base: 'u', accent: 'diaeresis' },
+  Á: { base: 'A', accent: 'acute' },
+  É: { base: 'E', accent: 'acute' },
+  Í: { base: 'I', accent: 'acute' },
+  Ó: { base: 'O', accent: 'acute' },
+  Ú: { base: 'U', accent: 'acute' },
+  Ñ: { base: 'N', accent: 'tilde' },
+  Ü: { base: 'U', accent: 'diaeresis' },
   '¿': {
     rows: ['.##', '.##', '..#', '..#', '.#.', '...', '.#.'],
   },
@@ -317,13 +290,30 @@ export const GLYPHS = {
   },
 };
 
-const GLYPH_HEIGHT = 9;
+/**
+ * Every cell carries two rows above the cap height. Unaccented glyphs leave
+ * them blank, so a mark never has to eat into the letter it sits on. The
+ * rendered glyph is lifted by the same two rows (see yoffset below), which
+ * keeps the body of every letter exactly where it was before.
+ */
+const ACCENT_ROWS = 2;
+const GLYPH_HEIGHT = 7 + ACCENT_ROWS + 2;
+const LINE_HEIGHT = 10;
 const BASELINE_HEIGHT = 7;
 const GLYPH_GAP = 1;
 const ATLAS_WIDTH = 128;
 
+const ACCENTS = {
+  // Top row to the right of the bottom row: a rising stroke, not a grave.
+  acute: ['...#.', '..#..'],
+  tilde: ['.#.#.', '#.#.#'],
+  diaeresis: ['.#.#.', '.....'],
+};
+
 function glyphRows(entry) {
-  const rows = [...entry.rows];
+  const mark = entry.accent ? ACCENTS[entry.accent] : undefined;
+  const body = entry.base ? GLYPHS[entry.base].rows : entry.rows;
+  const rows = [...(mark ?? ['', '']), ...body];
 
   while (rows.length < GLYPH_HEIGHT) {
     rows.push('');
@@ -332,21 +322,32 @@ function glyphRows(entry) {
   return rows.map((row) => row.padEnd(Math.max(...rows.map((value) => value.length)), '.'));
 }
 
-export function createPixelFont() {
-  const entries = Object.entries(GLYPHS).map(([character, entry]) => {
-    const rows = glyphRows(entry);
-    const width = Math.max(1, Math.max(...rows.map((row) => row.length)));
+/** The full atlas cell for one character, accent rows included. */
+export function glyphCell(character) {
+  const entry = GLYPHS[character];
 
-    return {
-      character,
-      rows,
-      width,
-      // Two pixels of gap. At the game's 640px width a 5px body on a 7px
-      // advance gives roughly 80 characters per dialogue line, which is the
-      // reading density the script format is written against.
-      advance: entry.advance ?? width + 2,
-    };
-  });
+  if (!entry) {
+    return undefined;
+  }
+
+  const rows = glyphRows(entry);
+  const width = Math.max(1, Math.max(...rows.map((row) => row.length)));
+
+  return {
+    rows,
+    width,
+    // Two pixels of gap. At the game's 640px width a 5px body on a 7px
+    // advance gives roughly 80 characters per dialogue line, which is the
+    // reading density the script format is written against.
+    advance: entry.advance ?? width + 2,
+  };
+}
+
+export function createPixelFont() {
+  const entries = Object.entries(GLYPHS).map(([character]) => ({
+    character,
+    ...glyphCell(character),
+  }));
 
   let cursorX = 0;
   let cursorY = 0;
@@ -385,7 +386,9 @@ export function createPixelFont() {
       width: placement.width,
       height: GLYPH_HEIGHT,
       xoffset: 0,
-      yoffset: 0,
+      // Cancel the accent rows so the letter body still starts on the same
+      // scanline as the unaccented glyph it is built from.
+      yoffset: -ACCENT_ROWS,
       xadvance: placement.advance,
     });
   }
@@ -395,7 +398,7 @@ export function createPixelFont() {
     '<font>',
     '  <info face="Lyceum Pixel" size="7" bold="0" italic="0" charset="" unicode="1" stretchH="100" smooth="0" aa="1" padding="0,0,0,0" spacing="0,0"/>',
     '  <common lineHeight="' +
-      (GLYPH_HEIGHT + 1) +
+      LINE_HEIGHT +
       '" base="' +
       BASELINE_HEIGHT +
       '" scaleW="128" scaleH="' +
